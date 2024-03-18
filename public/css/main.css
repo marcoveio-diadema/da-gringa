@@ -32,6 +32,17 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--border-radius);
 } */
 
+/* NAVIGATION BAR */
+.custom-dropdown {
+    width: 100%; /* Full width on small screens */
+}
+
+@media (min-width: 768px) { /* From md screens and up */
+    .custom-dropdown {
+        width: 500px; /* Set width to 500px */
+    }
+}
+
 /* INDEX PAGE */
 
 /* heading section */

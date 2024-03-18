@@ -20,4 +20,20 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET - Create post
+router.get('/create-post', async (req, res) => {
+    try {
+        const locals = {
+            title: "Create post",
+            description: "Create a new post"
+        }        
+        res.render("admin/create-post.ejs", { 
+            locals,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 export default router;

@@ -2,7 +2,7 @@
     <div class="container-fluid px-xl-5 py-4 mx-xl-5 px-3">
         <!-- logo -->
         <div class="logo">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img src="img/manual_logo.png" alt="" width="130px">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,11 +35,20 @@
             </ul>
         </div>
         <!-- search form -->
-        <div class="form-container">
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-search"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButton">
+              <form class="px-4 py-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Busca rápida">
+                  <button class="btn btn-light" type="button">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
     </div>
 </nav>
