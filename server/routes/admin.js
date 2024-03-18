@@ -20,6 +20,38 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET - login
+router.get('/login', async (req, res) => {
+    try {
+        const locals = {
+            title: "Login",
+            description: "Login to admin"
+        }        
+        res.render("admin/login.ejs", { 
+            locals,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// GET - signup
+router.get('/signup', async (req, res) => {
+    try {
+        const locals = {
+            title: "Signup",
+            description: "Signup to admin"
+        }        
+        res.render("admin/signup.ejs", { 
+            locals,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 // GET - Create post
 router.get('/create-post', async (req, res) => {
     try {

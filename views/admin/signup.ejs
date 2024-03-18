@@ -1,0 +1,57 @@
+<!-- SECTION HEADER -->
+<section class="section-small-heading" style="background-image: url(../img/qt.jpg);">
+    <!-- text on landing page -->
+    <div class="landing-page">
+        <h1 class="index-text">Partiu mundão?</h1>
+        <h3 class="index-text">Se inscreva e faça parte da nossa comunidade</h3>
+    </div>
+</section>
+
+<section class="section-signup">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 py-3 my-3">
+                <form action="/admin/signup" method="POST">
+                    <!-- first name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="firstName" class="form-control" id="firstNameInput" placeholder="Nome">
+                        <label for="firstNameInput">Nome</label>
+                    </div>
+                    <!-- last name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="lastName" class="form-control" id="lastNameInput" placeholder="Sobrenome">
+                        <label for="lastNameInput">Sobrenome</label>
+                    </div>
+                    <!-- email -->
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
+                        <label for="emailInput">Email</label>
+                    </div>
+                    <!-- password -->
+                    <div class="form-floating mb-3">
+                        <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Senha">
+                        <label for="passwordInput">Senha</label>
+                    </div>
+                    <!-- profile picture -->
+                    <div class="form-floating mb-3">
+                        <input type="file" name="profilePicture" class="form-control" id="profilePictureInput" placeholder="URL da foto de perfil">
+                        <label for="profilePictureInput">URL da foto de perfil</label>
+                    </div>
+                    <!-- user bio -->
+                    <div class="form-floating mb-3">
+                        <textarea name="bio" class="form-control" id="bioInput" placeholder="Fale um pouco sobre você" style="height: 100px"></textarea>
+                        <label for="bioInput">Fale um pouco sobre você</label>
+                    </div>
+                    <!-- submit button -->
+                    <div class="submit-button text-center mb-3">
+                        <button type="submit" class="btn btn-primary">Inscrever-se</button>
+                    </div>
+                    <!-- link to login -->
+                    <div class="text-center">
+                        <a href="/admin/login">Já tem uma conta? Faça login <span style="color: red;">aqui</span>.</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

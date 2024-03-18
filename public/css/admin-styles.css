@@ -1,0 +1,52 @@
+:root {
+    --black: #494746;
+    --gray: #7e7e7e;
+    --gray-light: #F2F2F2;
+    --mid-blue: #4682A9;
+    --orange: #F05454;
+    --border-radius: 10px;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    color: var(--black);
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: var(--black);
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Ubuntu', sans-serif;
+    color: var(--mid-blue);
+}
+
+
+/* INDEX PAGE */
+
+/* heading section */
+.section-big-heading {
+    position: relative;
+    height: 800px;
+    width: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    top: 0;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.section-big-heading::before {
+    content: ""; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black color with 50% opacity */
+}
