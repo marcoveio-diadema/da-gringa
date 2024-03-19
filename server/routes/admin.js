@@ -19,21 +19,6 @@ const { uploadImage } = config;
 // set number of salts
 const saltRounds = 10;
 
-// middleware for sessions
-router.use(session({
-  secret: "something secret",
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }
-}))
-
-// passport middleware
-router.use(passport.initialize());
-router.use(passport.session());
-
-
 // Layouts
 const adminLayout = '../views/layouts/admin-layout.ejs';
 
@@ -44,8 +29,18 @@ router.use(express.static("public"));
 // multer storage
 const upload = multer({ dest: 'uploads/' });
 
+// Middleware to check if user is authenticated
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    } else {
+      // Redirect to login page if not authenticated
+      res.redirect('/admin/login');
+    }
+  }
+
 // GET - Admin page
-router.get('/', async (req, res) => {
+router.get('/', ensureAuthenticated, async (req, res) => {
     try {
         const locals = {
             title: "Admin",
@@ -53,6 +48,7 @@ router.get('/', async (req, res) => {
         }        
         res.render("admin/admin-index.ejs", { 
             locals,
+            user: req.user,
         });
     } catch (error) {
         console.log(error);
@@ -68,6 +64,7 @@ router.get('/login', async (req, res) => {
         }        
         res.render("admin/login.ejs", { 
             locals,
+            user: req.user,
         });
     } catch (error) {
         console.log(error);
@@ -83,6 +80,7 @@ router.get('/signup', async (req, res) => {
         }        
         res.render("admin/signup.ejs", { 
             locals,
+            user: req.user,
         });
     } catch (error) {
         console.log(error);
@@ -144,38 +142,49 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
 // POST - login
 router.post("/login", passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/login"
+    failureRedirect: "/admin/login"
 }));
 
-// passport local strategy
-passport.use(new LocalStrategy(async function verify(username, password, cb) {
-try {
-    const result = await db.query("SELECT * FROM users WHERE email = $1",[
-    username
-    ]);
-
-    if (result.rows.length > 0) {
-    const user = result.rows[0];
-    const storedHashedPassword = user.password;
-
-    // compare password
-    bcrypt.compare(password, storedHashedPassword, (err, result) => {
-        if (err) {
-        return cb(err);
-    } else {
-        if (result) {
-        return cb(null, user);
-        } else {
-        return cb(null, false);
-        }
-    }
+// GET - logout
+router.get('/logout', (req, res) => {
+    req.logout(() => {
+        res.redirect('/admin/login');
     });
+});
 
-    } else {
-    return cb("user not found");}
-} catch (err) {
-    return cb(err);
-}
+// passport local strategy
+passport.use(new LocalStrategy({
+    usernameField: "email",
+    passwordField: "password"
+    },
+    async function verify(email, password, cb) {
+    try {
+        const result = await db.query("SELECT * FROM users WHERE email = $1",[
+        email
+        ]);
+
+        if (result.rows.length > 0) {
+        const user = result.rows[0];
+        const storedHashedPassword = user.password;
+
+        // compare password
+        bcrypt.compare(password, storedHashedPassword, (err, result) => {
+            if (err) {
+            return cb(err);
+        } else {
+            if (result) {
+            return cb(null, user);
+            } else {
+            return cb(null, false);
+            }
+        }
+        });
+
+        } else {
+        return cb("user not found");}
+    } catch (err) {
+        return cb(err);
+    }
 }));
 
 // serialize and deserialize user
@@ -188,7 +197,7 @@ passport.deserializeUser((user, cb) => {
 });
 
 // GET - Create post
-router.get('/create-post', async (req, res) => {
+router.get('/create-post', ensureAuthenticated, async (req, res) => {
     try {
         const locals = {
             title: "Create post",

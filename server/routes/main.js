@@ -9,6 +9,7 @@ router.get('/', (req, res) => {
     }
     res.render('main/index.ejs', { 
         locals,
+        user: req.user,
      });
 });
 
@@ -20,6 +21,7 @@ router.get('/contact', (req, res) => {
     }
     res.render('main/contact.ejs', { 
         locals,
+        user: req.user,
      });
 });
 
@@ -31,6 +33,7 @@ router.get('/about', (req, res) => {
     }
     res.render('main/about.ejs', { 
         locals,
+        user: req.user,
      });
 });
 

@@ -21,16 +21,29 @@
               <li class="nav-item">
                   <a class="nav-link" href="/about">Sobre Nós</a>
               </li>
-              <li class="nav-item dropdown">
+              <!-- check if logged in -->
+              <% if (!loggedIn) { %>
+                <li class="nav-item">
+                  <a class="nav-link" href="/admin/login">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/admin/signup">Registre-se</a>
+                </li>
+              <% } else { %>
+                <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Usuário
+                  <%= user.first_name %>
                   </a>
                   <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Perfil</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Sair</a></li>
+                    <% if (user.is_admin) { %>
+                      <li><a class="dropdown-item" href="/admin/">Dashboard</a></li>
+                    <% } %>
+                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/admin/logout">Sair</a></li>
                   </ul>
-              </li>
+                </li>
+              <% } %>
             </ul>
         </div>
         <!-- search form -->
