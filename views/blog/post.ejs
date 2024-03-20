@@ -1,8 +1,8 @@
 <!-- SECTION HEADER -->
-<section class="section-heading" style="background-image: url(../img/GOPR1432.JPG);">
+<section class="section-heading" style="background-image: url(<%= post.img_background %>);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae optio ipsam commodi quod voluptatum molestiae?</h1>
+        <h1 class="index-text"><%= post.title %></h1>
     </div>
 </section>
 
@@ -13,15 +13,15 @@
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3">
                 <!-- post intro -->
-                <h4 class="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero, minus, consequatur est magnam accusamus error enim beatae neque porro numquam nemo inventore sequi quos! Consequuntur alias molestiae nihil rerum esse.</h4>
+                <h4 class=""><%= post.intro %></h4>
                 <!-- post details -->
                 <div class="container">
                     <div class="row text-center">
                         <div class="col-4">
-                            <p class=""><small class="">Por: <strong>Marquinhos</strong></small></p>
+                            <p class=""><small class="">Por: <strong><%= post.author_username %></strong></small></p>
                         </div>
                         <div class="col-4">
-                            <p class="small">Postado em 02/02/2002 <br>
+                            <p class="small"><%= post.created_at %> <br>
                                 Atualizado em 02/02/2002
                             </p>
                         </div>
@@ -40,19 +40,9 @@
                 </div>
 
                 <hr>
-               
+                <!-- post content -->
                 <div class="post-content my-3 px-3">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-                    <div class="container my-3">
-                        <img src="../img/GOPR1432.JPG" class="img-fluid rounded" alt="">
-                    </div>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, ex. Eveniet excepturi laboriosam explicabo architecto optio dolores tenetur ab, dolorem, provident praesentium, consectetur quod? Molestiae quisquam tenetur possimus. Rem veniam totam animi voluptatum maiores doloremque modi, aliquam rerum at officia?</p>
-
-                
+                    <p><%- post.content %></p>                
                 </div>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->

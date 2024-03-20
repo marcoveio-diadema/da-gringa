@@ -46,6 +46,35 @@ app.use('/', mainRoutes);
 app.use('/user', userRoutes);
 app.use('/blog', blogRoutes);
 
+
+// 500 route
+app.use((err, req, res, next) => {
+     // locals and render the home page
+     const locals = {
+        title: 'Erro nos Servidores',
+        description: "Tudo sobre como se virar na gringa!"
+    }
+
+    console.error(err.stack);
+    res.status(500).render('500.ejs', { 
+        message: 'Algo deu errado com os nossos servidores.',
+        locals,
+    });
+});
+
+// 404 route
+app.use((req, res) => {
+    // locals and render the home page
+    const locals = {
+        title: 'Página não encontrada',
+        description: "Tudo sobre como se virar na gringa!"
+    }
+    res.status(404).render('404.ejs', { 
+        message: 'Página não encontrada.',
+        locals,
+    });
+});
+
 // app listener
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}.`)

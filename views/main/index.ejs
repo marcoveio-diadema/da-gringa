@@ -16,37 +16,41 @@
             <div class="col-md-9 mt-3 py-3">
                 <h2 class="section-title">Últimos Posts:</h2>
                 <div class="blog-posts my-3">
-                    <!-- card with posts -->
-                    <div class="card mb-3">
-                        <div class="row g-0">
-                          <div class="col-md-4">
-                            <!-- post image -->
-                            <img src="img/qt.jpg" class="img-fluid shadow rounded" alt="...">
-                          </div>
-                          <div class="col-md-8">
-                            <div class="card-body">
-                                <!-- post category, title, intro -->
-                              <h6 class="card-title">Category</h5>
-                              <h5 class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h5>
-                              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
-                            </div>
-                            <div class="card-details py-3">
-                                <!-- post date, author and read more -->
-                                <div class="row text-center">
-                                    <div class="col-4">
-                                        <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
+                    <% posts.forEach(post => { %>
+                        <a href="/blog/post/<%= post.slug %>">
+                            <!-- card with posts -->
+                            <div class="card mb-3">
+                                <div class="row g-0">
+                                <div class="col-md-4">
+                                    <!-- post image -->
+                                    <img src="<%= post.img_background %>" class="img-fluid shadow rounded" alt="Foto de capa do artigo">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <!-- post category, title, intro -->
+                                    <h6 class="card-title"><%= post.category_name %></h6>
+                                    <h5 class="card-text"><%= post.title %></h5>
+                                    <p class="card-text"><%= post.intro %></p>
                                     </div>
-                                    <div class="col-4">
-                                        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                                    </div>
-                                    <div class="col-4">
-                                        <button class="btn btn-primary">Leia Mais</button>
+                                    <div class="card-details py-3">
+                                        <!-- post date, author and read more -->
+                                        <div class="row text-center">
+                                            <div class="col-4">
+                                                <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                                            </div>
+                                            <div class="col-4">
+                                                <button class="btn btn-primary">Leia Mais</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                </div>
                             </div>
-                          </div>
-                        </div>
-                      </div>
+                        </a> 
+                    <% }) %>                   
                 </div>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->

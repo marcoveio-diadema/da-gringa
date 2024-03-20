@@ -11,9 +11,9 @@ import sanitizeHtml from 'sanitize-html';
 // import db
 import db from '../config/db.js';
 
-// import upload image
+// import functions
 import config from '../helpers/functions.js';
-const { uploadImage } = config;
+const { uploadImage, customSanitizeHtml, generateSlug } = config;
 
 // set number of salts
 const saltRounds = 10;
@@ -47,13 +47,17 @@ router.get('/admin', ensureAuthenticated, async (req, res) => {
         }   
         
         // fetch data from db
-        const result = await db.query("SELECT * FROM categories");
-        const categories = result.rows;
+        const categoriesResult = await db.query("SELECT * FROM categories");
+        const categories = categoriesResult.rows;
+
+        const usersResult = await db.query("SELECT * FROM users");
+        const users = usersResult.rows;
 
         res.render("user/admin-index.ejs", { 
             locals,
             user: req.user,
             categories,
+            users,
         });
     } catch (error) {
         console.log(error);
@@ -344,17 +348,67 @@ passport.deserializeUser((user, cb) => {
 // GET - Create post
 router.get('/create-post', ensureAuthenticated, async (req, res) => {
     try {
+        // Fetch all categories from the database
+        const result = await db.query('SELECT * FROM categories');
+        const categories = result.rows;
+
         const locals = {
             title: "Create post",
-            description: "Create a new post"
+            description: "Create a new post",
         }        
         res.render("user/create-post.ejs", { 
             locals,
+            categories,
+            user: req.user,
         });
     } catch (error) {
         console.log(error);
     }
 });
+
+// POST - create post
+router.post('/create-post', ensureAuthenticated, upload.single('img_background'), async(req, res) => {
+    // Upload the image to Google Cloud Storage
+    const imageUrl = await uploadImage(req.file, 'posts/');
+    // other data from form
+    const title = req.body["title"];
+    const intro = req.body["intro"];
+    const content = customSanitizeHtml(req.body["content"]);
+    const categoryId = req.body["category"];
+
+    // Generate the slug from the title
+    const slug = generateSlug(title);
+
+    // Get the author's ID from the session or JWT
+    const authorId = req.user.id;
+
+    try {
+        // Insert the post into the database
+        const result = await db.query('INSERT INTO post (title, slug, intro, content, img_background, category, author) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [title, slug, intro, content, imageUrl, categoryId, authorId ]);
+        const newPost = result.rows[0];
+    
+        // Redirect to the post page
+        res.redirect(`/blog/post/${newPost.slug}`);
+    } catch (error) {
+        console.error('Error creating post:', error);
+        // Set the error message
+        const errorMessage = 'Error creating post';
+
+        // Fetch all categories from the database
+        const result = await db.query('SELECT * FROM categories');
+        const categories = result.rows;
+        
+        // Redirect to the create-post page with the error message
+        res.render('user/create-post.ejs', { 
+            title: 'Novo post',
+            errorMessage,
+            categories,
+            user: req.user,
+        });
+    }
+
+});
+
 
 // POST - Create category
 router.post('/new-category', async (req, res) => {
