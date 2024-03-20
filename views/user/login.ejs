@@ -1,0 +1,28 @@
+<!-- SECTION HEADER -->
+<section class="section-big-heading" style="background-image: url(../img/qt.jpg);">
+    <!-- login form -->
+    <div class="landing-page">
+        <h1 class="index-text">Bem-vindo(a) de volta!</h1>
+        <h3 class="index-text">Faça login para continuar</h3>
+        <form action="/user/login" method="POST">
+            <!--email -->
+            <div class="form-floating mb-3">
+                <input type="email" name="email" class="form-control" id="emailInput" placeholder="name@example.com">
+                <label for="emailInput">Email address</label>
+            </div>
+            <!-- password -->
+            <div class="form-floating mb-3">
+                <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password">
+                <label for="passwordInput">Password</label>
+            </div>
+            <!-- submit button -->
+            <div class="submit-button mb-3">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <!-- link to signup -->
+            <div class="text-center mb-3">
+                <a href="/user/signup" class="text-white">Não tem uma conta? Inscreva-se <span style="color: red;">aqui</span>.</a>
+            </div>
+        </form>
+    </div>
+</section>

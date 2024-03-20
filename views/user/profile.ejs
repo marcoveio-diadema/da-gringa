@@ -1,0 +1,124 @@
+<!-- SECTION HEADER -->
+<section class="section-small-heading" style="background-image: url(../img/background3.jpg);">
+     <!-- text on landing page -->
+     <div class="landing-page">
+        <h1 class="index-text">Olá <%= user.username %></h1>
+        <h3 class="index-text">Precisa atualizar os seus dados?</h3>
+        <i class="fa-solid fa-circle-down fa-xl" id="landing-icon"></i>
+    </div>
+</section>
+
+<!-- SECTION PROFILE -->
+<section class="section-profile">
+    <div class="container px-3 py-3 mt-4">
+        <div class="row">
+            <!-- left side -->
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <!-- profile picture -->
+                    <div class="card-header">
+                        <h6>Foto do Perfil</h6>
+                    </div>
+                    <div class="card-body text-center"> 
+                        <img class="img-fluid rounded-circle shadow mb-2" src="<%= user.profile_img ? user.profile_img : 'img/profile_pic.png' %>" alt="Foto de perfil do usuário">
+                        <div class="small font-italic text-muted mb-4">JPG ou PNG tamanho maximo: 5 MB</div> 
+                        <form action="/user/update-picture" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="profilePicture" class="mb-3" accept="image/png, image/jpeg" required>
+                            <button class="btn btn-primary" type="submit">Mudar de foto</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- delete profile -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6>Deletar Perfil</h6>
+                    </div>
+                    <div class="card-body text-center"> 
+                        <p class="small text">Tem certeza que deseja deletar o seu perfil?</p>
+                        <form action="/user/delete-profile" method="POST">
+                            <button class="btn btn-danger" type="submit">Deletar Perfil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- roght side -->
+            <div class="col-md-9">
+                <!-- alert -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Tudo certo!</strong> Os seus dados foram atualizados com sucesso!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <!-- profile data -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6>Dados do Perfil</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="/user/edit-profile" method="POST">
+                            <!-- username -->
+                            <div class="mb-3"> 
+                                <label class="small mb-1" for="inputUsername">Usuário (como o seu nome vai aparecer para outros usuários do site)</label> 
+                                <input class="form-control" name="inputUsername" id="inputUsername" type="text" placeholder="Enter your username" value="<%= user.username %>">
+                            </div>
+                            <!-- name and last name-->
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6"> 
+                                    <label class="small mb-1" for="inputFirstName">Nome</label> 
+                                    <input class="form-control" name="inputFirstName" id="inputFirstName" type="text" placeholder="Enter your first name" value="<%= user.first_name %>">
+                                </div>
+                                <div class="col-md-6"> 
+                                    <label class="small mb-1" for="inputLastName">Sobrenome</label> 
+                                    <input class="form-control" name="inputLastName" id="inputLastName" type="text" placeholder="Enter your last name" value="<%= user.last_name %>">
+                                </div>
+                            </div>
+                            <!-- email -->
+                            <div class="mb-3"> 
+                                <label class="small mb-1" for="inputEmail">Email</label> 
+                                <input class="form-control" name="inputEamil" id="inputEmail" type="email" placeholder="Enter your email address" value="<%= user.email %>">
+                            </div>
+                            <!-- bio -->
+                            <div class="row gx-3 mb-3">
+                                <div class="col-12"> 
+                                    <label class="small mb-1" for="inputBio">Bio</label> 
+                                    <textarea class="form-control" name="inputBio" id="inputBio" rows="4" placeholder="Escreva um pouco sobre você"><%= user.bio %></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary" type="submit">Confirmar mudanças</button>
+                            </div> 
+                        </form>
+                    </div>
+                </div>
+                <!-- change password -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6>Nova senha</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="/user/change-password" method="POST">
+                            <!-- current password -->
+                            <div class="mb-3"> 
+                                <label class="small mb-1" for="inputCurrentPassword">Senha atual</label> 
+                                <input class="form-control" name="inputCurrentPassword" id="inputCurrentPassword" type="password" placeholder="Sua senha atual">
+                            </div>
+                            <!-- new password and confirmation-->
+                            <div class="row gx-3 mb-3">
+                                <div class="col-md-6"> 
+                                    <label class="small mb-1" for="inputNewPassword">Nova senha</label> 
+                                    <input class="form-control" name="inputNewPassword" id="inputNewPassword" type="password" placeholder="Digite sua nova senha">
+                                </div>
+                                <div class="col-md-6"> 
+                                    <label class="small mb-1" for="inputConfirmPassword">Confirmar nova senha</label> 
+                                    <input class="form-control" name="inputConfirmPassword" id="inputConfirmPassword" type="password" placeholder="Confirme sua nova senha">
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary" type="submit">Salvar nova senha</button>
+                            </div> 
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

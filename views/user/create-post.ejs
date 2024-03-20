@@ -1,0 +1,53 @@
+<!-- SECTION HEADER -->
+<section class="section-small-heading" style="background-image: url(../img/qt.jpg);">
+    <!-- text on landing page -->
+    <div class="landing-page">
+        <h1 class="index-text">Está inspirado?</h1>
+        <h3 class="index-text">Escreve aqui meu jovem!</h3>
+    </div>
+</section>
+
+<!-- SECTION CREATE POST -->
+<section class="section-create-post">
+    <div class="container py-3 my-3">
+        <div class="row">
+            <div class="col-lg-12">
+                <form action="/user/create-post" method="post" enctype="multipart/form-data">
+                    <!-- title -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="title" class="form-control" id="floatingInput" placeholder="Título do artigo">
+                        <label for="floatingInput">Title</label>
+                    </div>
+                    <!-- intro -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="intro" class="form-control" id="floatingInput" placeholder="Introdução do artigo">
+                        <label for="floatingInput">Intro</label>
+                    </div>
+                    <!-- category -->
+                    <div class="form-floating mb-3">
+                        <select name="category" class="form-select" id="floatingSelect" aria-label="Floating label select">
+                          <option selected>Category</option>
+                          <option value="1">One</option>
+                          <option value="2">Two</option>
+                          <option value="3">Three</option>
+                        </select>
+                        <label for="floatingSelect">Choose Category</label>
+                    </div>
+                    <!-- image background -->
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Image background</label>
+                        <input class="form-control" name="img_background" type="file" id="formFile">
+                    </div>
+                    <!-- content -->
+                    <div class="mb-3">
+                        <label for="textarea" class="form-label">Content</label>
+                        <textarea class="form-control" name="content" id="textarea" rows="5"></textarea>
+                    </div>
+                    <!-- submit -->
+                    <div class="submit-post text-center">
+                        <button type="submit" class="btn btn-primary">Postar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</section>

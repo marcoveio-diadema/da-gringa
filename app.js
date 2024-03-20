@@ -7,7 +7,7 @@ import session from 'express-session';
 
 // import routes
 import mainRoutes from './server/routes/main.js';
-import adminRoutes from './server/routes/admin.js';
+import userRoutes from './server/routes/user.js';
 import blogRoutes from './server/routes/blog.js';
 
 // express
@@ -24,14 +24,14 @@ app.set('view engine', 'ejs');
 
 // Passport.js and session middleware
 app.use(session({ 
-    secret: 'your-session-secret', 
+    secret: process.env.SESSION_SECRET, 
     resave: false, 
     saveUninitialized: true,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7
       }
  }));
- 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 
 
 app.use('/', mainRoutes);
-app.use('/admin', adminRoutes);
+app.use('/user', userRoutes);
 app.use('/blog', blogRoutes);
 
 // app listener
