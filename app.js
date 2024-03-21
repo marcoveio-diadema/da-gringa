@@ -9,6 +9,7 @@ import session from 'express-session';
 import mainRoutes from './server/routes/main.js';
 import userRoutes from './server/routes/user.js';
 import blogRoutes from './server/routes/blog.js';
+import adminRoutes from './server/routes/admin.js';
 
 // express
 const app = express();
@@ -42,10 +43,11 @@ app.use((req, res, next) => {
     next();
 });
 
-
+// routes
 app.use('/', mainRoutes);
 app.use('/user', userRoutes);
 app.use('/blog', blogRoutes);
+app.use('/admin', adminRoutes);
 
 
 // 500 route

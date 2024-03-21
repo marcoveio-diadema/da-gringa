@@ -7,7 +7,7 @@
                     <h4>Painel de Controle</h4>
                     <ul class="list-group">
                         <li class="list-group">
-                            <a href="/user/create-post" class="list-group-item list-group-item-action">Novo Post</a>
+                            <a href="/admin/create-post" class="list-group-item list-group-item-action">Novo Post</a>
                         </li>
                         <hr>
                         <li class="list-group">
@@ -56,7 +56,7 @@
                                     <td> <%= post.category_name %></td>
                                     <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
                                     <td><%= post.edited_at %></td>
-                                    <td><a href="">Edit</a> / <form action="/user/delete-post" method="POST">
+                                    <td><a href="">Edit</a> / <form action="/admin/delete-post" method="POST">
                                         <input type="hidden" name="postId" value="<%= post.id %>">
                                         <button type="submit" class="btn">Delete</button>
                                     </form></td>
@@ -69,7 +69,7 @@
                 <h4>Categorias</h4>
                 <div class="new-category col-md-6 mx-auto">
                     <h6>Nova Categoria</h6>
-                    <form action="/user/new-category" method="POST">
+                    <form action="/admin/new-category" method="POST">
                         <div class="form-floating mb-3">
                             <input type="text" name="categoryName" class="form-control" id="categoryNameInput" placeholder="Nome da categoria">
                             <label for="categoryNameInput">Nome da categoria</label>
@@ -95,7 +95,7 @@
                                     <th scope="row"><%= category.id %></th>
                                     <td><%= category.category %></td>
                                     <td>
-                                        <form action="/user/delete-category" method="POST">
+                                        <form action="/admin/delete-category" method="POST">
                                             <input type="hidden" name="categoryId" value="<%= category.id %>">
                                             <button type="submit" class="btn">Delete</button>
                                         </form>
