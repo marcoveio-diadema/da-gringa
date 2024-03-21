@@ -28,6 +28,27 @@ router.use(express.static("public"));
 // multer storage
 const upload = multer({ dest: 'uploads/' });
 
+
+// middleware to check if user is admin
+function isAdmin(req, res, next) {
+    if (req.user) {
+        if (req.user.is_admin) {
+            next();
+        } else {
+            const locals = {
+                title: 'Acesso negado',
+                description: 'Você não tem permissão para realizar esta ação.'
+            }
+            res.status(403).render('403.ejs', { 
+                message: 'Acesso negado, você não tem permissão para realizar esta ação',
+                locals,
+            });
+        }
+    } else {
+        next();
+    }
+}
+
 // Middleware to check if user is authenticated
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -38,8 +59,10 @@ function ensureAuthenticated(req, res, next) {
     }
   }
 
+
+
 // GET - Admin page
-router.get('/admin', ensureAuthenticated, async (req, res) => {
+router.get('/admin', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         const locals = {
             title: "Admin",
@@ -47,17 +70,27 @@ router.get('/admin', ensureAuthenticated, async (req, res) => {
         }   
         
         // fetch data from db
-        const categoriesResult = await db.query("SELECT * FROM categories");
+        const categoriesResult = await db.query("SELECT * FROM categories ORDER BY id DESC");
         const categories = categoriesResult.rows;
 
-        const usersResult = await db.query("SELECT * FROM users");
+        const usersResult = await db.query("SELECT * FROM users ORDER BY id DESC");
         const users = usersResult.rows;
+
+        const allPostsResult = await db.query(`
+        SELECT post.*, categories.category AS category_name, users.username AS author_username 
+        FROM post
+        INNER JOIN categories ON post.category = categories.id 
+        INNER JOIN users ON post.author = users.id 
+        ORDER BY post.created_at DESC
+    `);
+        const allPosts = allPostsResult.rows;
 
         res.render("user/admin-index.ejs", { 
             locals,
             user: req.user,
             categories,
             users,
+            allPosts,
         });
     } catch (error) {
         console.log(error);
@@ -346,7 +379,7 @@ passport.deserializeUser((user, cb) => {
 });
 
 // GET - Create post
-router.get('/create-post', ensureAuthenticated, async (req, res) => {
+router.get('/create-post', ensureAuthenticated, isAdmin, async (req, res) => {
     try {
         // Fetch all categories from the database
         const result = await db.query('SELECT * FROM categories');
@@ -367,7 +400,7 @@ router.get('/create-post', ensureAuthenticated, async (req, res) => {
 });
 
 // POST - create post
-router.post('/create-post', ensureAuthenticated, upload.single('img_background'), async(req, res) => {
+router.post('/create-post', ensureAuthenticated, isAdmin, upload.single('img_background'), async(req, res) => {
     // Upload the image to Google Cloud Storage
     const imageUrl = await uploadImage(req.file, 'posts/');
     // other data from form
@@ -409,24 +442,46 @@ router.post('/create-post', ensureAuthenticated, upload.single('img_background')
 
 });
 
+// DELETE - delete post
+router.post('/delete-post', ensureAuthenticated, isAdmin, async (req, res) => {
+    try {
+        // fetch post data
+        const postId = req.body.postId;
+        // Delete the post from the database
+        const result = await db.query('DELETE FROM post WHERE id = $1', [postId]);
+    
+        // Redirect to the admin page
+        res.redirect('/user/admin');
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        // Set the error message
+        const errorMessage = 'Error deleting post';
+        
+        // Redirect to the admin page with the error message
+        res.redirect('/user/admin', { 
+            errorMessage,
+            user: req.user,
+        });
+    }
+});
 
 // POST - Create category
-router.post('/new-category', async (req, res) => {
+router.post('/new-category', ensureAuthenticated, isAdmin, async (req, res) => {
     try {
         const category = sanitizeHtml(req.body.categoryName);
         const result = await db.query("INSERT INTO categories (category) VALUES ($1) RETURNING *", [category]);
-        res.redirect('/user/');
+        res.redirect('/user/admin');
     } catch (error) {
         console.log(error);
     }
 });
 
 // POST - Delete category
-router.post('/delete-category', async (req, res) => {
+router.post('/delete-category', ensureAuthenticated, isAdmin, async (req, res) => {
     try {
         const categoryId = req.body.categoryId;
         const result = await db.query("DELETE FROM categories WHERE id = $1", [categoryId]);
-        res.redirect('/user/');
+        res.redirect('/user/admin');
     } catch (error) {
         console.log(error);
     }

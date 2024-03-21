@@ -9,6 +9,7 @@
                         <li class="list-group">
                             <a href="/user/create-post" class="list-group-item list-group-item-action">Novo Post</a>
                         </li>
+                        <hr>
                         <li class="list-group">
                             <a href="#" class="list-group-item list-group-item-action">Todos os posts</a>
                         </li>
@@ -26,7 +27,7 @@
                         </li>
                         <hr>
                         <li class="list-group">
-                            <a href="#" class="list-group-item btn btn-primary">Logout</a>
+                            <a href="/user/logout" class="list-group-item btn btn-primary">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -43,19 +44,24 @@
                             <th scope="col">Title</th>
                             <th scope="col">Category</th>
                             <th scope="col">Date</th>
-                            <th scope="col">Last Edit</th>
+                            <th scope="col">Updated</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis, natus.</td>
-                            <td>Brasil</td>
-                            <td>02/02/2002</td>
-                            <td>02/02/2002</td>
-                            <td><a href="">Edit</a> / <a href="">Delete</a></td>
-                          </tr>
+                            <% allPosts.forEach(post => { %>
+                                <tr>
+                                    <th scope="row"><%= post.id %></th>
+                                    <td> <%= post.title %></td>
+                                    <td> <%= post.category_name %></td>
+                                    <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
+                                    <td><%= post.edited_at %></td>
+                                    <td><a href="">Edit</a> / <form action="/user/delete-post" method="POST">
+                                        <input type="hidden" name="postId" value="<%= post.id %>">
+                                        <button type="submit" class="btn">Delete</button>
+                                    </form></td>
+                                  </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>

@@ -38,6 +38,7 @@ app.use(passport.session());
 // middleware to set loggedIn variable
 app.use((req, res, next) => {
     res.locals.loggedIn = req.user ? true : false;
+    res.locals.user = req.user ? req.user : null;
     next();
 });
 
