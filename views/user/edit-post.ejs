@@ -1,0 +1,54 @@
+<!-- SECTION HEADER -->
+<section class="section-small-heading" style="background-image: url(../img/gliereswinter1.jpeg);">
+    <!-- text on landing page -->
+    <div class="landing-page">
+        <h1 class="index-text">Precisa editar o post?</h1>
+        <h3 class="index-text">Vai que vai!</h3>
+    </div>
+</section>
+
+<!-- SECTION EDIT POST -->
+<section class="section-create-post">
+    <div class="container py-3 my-3">
+        <div class="row">
+            <div class="col-lg-12">
+                <form action="/admin/edit-post" method="post" enctype="multipart/form-data">
+                    <!-- post slug -->
+                    <input type="hidden" name="postId" value="<%= post.id %>">
+                    <!-- title -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="title" class="form-control" id="floatingInput" placeholder="Título do artigo" value="<%= post.title %>">
+                        <label for="floatingInput">Title</label>
+                    </div>
+                    <!-- intro -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="intro" class="form-control" id="floatingInput" placeholder="Introdução do artigo" value="<%= post.intro %>">
+                        <label for="floatingInput">Intro</label>
+                    </div>
+                    <!-- category -->
+                    <div class="form-floating mb-3">
+                        <select name="category" class="form-select" id="floatingSelect" aria-label="Floating label select">
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category.id %>"><%= category.category %></option>
+                            <% }) %>
+                        </select>
+                        <label for="floatingSelect">Choose Category</label>
+                    </div>
+                    <!-- image background -->
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Image background</label>
+                        <input class="form-control" name="img_background" type="file" id="formFile">
+                    </div>
+                    <!-- content -->
+                    <div class="mb-3">
+                        <label for="textarea" class="form-label">Content</label>
+                        <textarea class="form-control tiny-mce" name="content" id="textarea"><%= post.content %></textarea>
+                    </div>
+                    <!-- submit -->
+                    <div class="submit-post text-center">
+                        <button type="submit" class="btn btn-primary">Postar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</section>

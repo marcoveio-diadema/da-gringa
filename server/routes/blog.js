@@ -7,6 +7,9 @@ import db from '../config/db.js';
 // GET - Post page
 router.get('/post/:slug', async (req, res) => {
     try {
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
         // Get the slug from the URL
         const slug = req.params.slug;
 
@@ -33,6 +36,7 @@ router.get('/post/:slug', async (req, res) => {
             res.render('blog/post.ejs', { 
                 locals,
                 post,
+                categories,
             });
         } else {
             // No post was found, render a 404 page
@@ -46,25 +50,89 @@ router.get('/post/:slug', async (req, res) => {
 });
 
 // GET - Category page
-router.get('/category', (req, res) => {
-    const locals = {
+router.get('/category/:categoryId', async (req, res) => {
+    try {
+        // fetch category ID from the URL
+        const categoryId = req.params.categoryId;
+
+        // fetch posts from the database
+        const result = await db.query(`
+        SELECT post.*, categories.category AS category_name, users.username AS author_username
+        FROM post
+        INNER JOIN categories ON post.category = categories.id
+        INNER JOIN users ON post.author = users.id
+        WHERE post.category = $1
+        ORDER BY post.created_at DESC
+        `, [categoryId]);
+
+        const posts = result.rows;
+
+        // Fetch the specific category from the database
+        const categoryResult = await db.query('SELECT * FROM categories WHERE id = $1', [categoryId]);
+        const category = categoryResult.rows[0];
+
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const otherCategories = categoriesResult.rows.filter(category => category.id != categoryId);
+    
+        const locals = {
         title: 'Categoria',
         description: "Tudo sobre como se virar na gringa!"
+        }
+        res.render('blog/category.ejs', { 
+            locals,
+            user: req.user,
+            posts,
+            category,
+            otherCategories,
+         });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        // Render an error page
+        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts' });
     }
-    res.render('blog/category.ejs', { 
-        locals,
-     });
 });
 
-// GET - serch page
-router.get('/search', (req, res) => {
-    const locals = {
-        title: 'Busca',
-        description: "Tudo sobre como se virar na gringa!"
+
+// GET - Search page
+router.get('/search', async (req, res) => {
+    try {
+        // Fetch the search term from the query parameters
+        const searchTerm = req.query.q;
+
+        // Fetch posts from the database
+        const result = await db.query(`
+            SELECT post.*, categories.category AS category_name, users.username AS author_username 
+            FROM post
+            INNER JOIN categories ON post.category = categories.id 
+            INNER JOIN users ON post.author = users.id 
+            WHERE post.content ILIKE $1 OR post.title ILIKE $1 OR post.intro ILIKE $1
+            ORDER BY post.created_at DESC
+        `, [`%${searchTerm}%`]);
+
+        const posts = result.rows;
+
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
+        const locals = {
+            title: 'Search',
+            description: "Search results"
+        }
+
+        res.render('blog/search.ejs', { 
+            locals,
+            user: req.user,
+            posts,
+            categories,
+            searchTerm,
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        // Render an error page
+        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts' });
     }
-    res.render('blog/search.ejs', { 
-        locals,
-     });
 });
 
 export default router;

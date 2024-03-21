@@ -21,8 +21,10 @@
                             <p class=""><small class="">Por: <strong><%= post.author_username %></strong></small></p>
                         </div>
                         <div class="col-4">
-                            <p class="small"><%= post.created_at %> <br>
-                                Atualizado em 02/02/2002
+                            <p class="small">Postado: <%= post.created_at.toLocaleDateString('pt-BR'); %> <br>
+                               <% if (post.updated_at) { %>
+                                <span>Atualizado: <%= post.updated_at.toLocaleDateString('pt-BR') %> </span>
+                               <% } %>
                             </p>
                         </div>
                         <div class="col-4">
@@ -51,12 +53,12 @@
                 <h2 class="section-title text-center">Categorias:</h2>
                 <div class="categories my-3 py-3">
                     <ul class="list-group">
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                      </ul>
+                        <% categories.forEach(category => { %>
+                            <a href="/blog/category/<%= category.id %>">
+                                <li class="list-group-item"><%= category.category %></li>
+                            </a>
+                        <% }) %>
+                    </ul>
                 </div>
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>

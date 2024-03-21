@@ -7,6 +7,10 @@ import db from '../config/db.js';
 // GET - home page
 router.get('/', async (req, res) => {
     try {
+        // fetch categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+        
         // Fetch posts from the database
         const result = await db.query(`
             SELECT post.*, categories.category AS category_name, users.username AS author_username 
@@ -28,6 +32,7 @@ router.get('/', async (req, res) => {
             locals,
             user: req.user,
             posts,
+            categories,
         });
     } catch (error) {
         console.error('Error fetching posts:', error);

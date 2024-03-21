@@ -39,7 +39,9 @@
                                                 <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
                                             </div>
                                             <div class="col-4">
-                                                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                                                <% if (post.updated_at) { %>
+                                                    <p class="card-text"><small class="text-body-secondary"><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                <% } %>
                                             </div>
                                             <div class="col-4">
                                                 <button class="btn btn-primary">Leia Mais</button>
@@ -59,18 +61,18 @@
                 <h2 class="section-title text-center">Categorias:</h2>
                 <div class="categories my-3 py-3">
                     <ul class="list-group">
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                      </ul>
+                        <% categories.forEach(category => { %>
+                            <a href="/blog/category/<%= category.id %>">
+                                <li class="list-group-item"><%= category.category %></li>
+                            </a>
+                        <% }) %>
+                    </ul>
                 </div>
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
-                    <form action="">
-                        <input type="text" class="form-control" placeholder="Search...">
+                    <form action="/blog/search" method="GET">
+                        <input type="text" class="form-control" name="q" placeholder="Busca rápida">
                         <button class="btn btn-primary mt-2">Search</button>
                     </form>
                 </div>

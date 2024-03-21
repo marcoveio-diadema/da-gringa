@@ -41,7 +41,14 @@ function isAdmin(req, res, next) {
             });
         }
     } else {
-        next();
+        const locals = {
+            title: 'Acesso negado',
+            description: 'Você não tem permissão para realizar esta ação.'
+        }
+        res.status(403).render('403.ejs', { 
+            message: 'Acesso negado, você não tem permissão para realizar esta ação',
+            locals,
+        });
     }
 }
 
@@ -93,7 +100,7 @@ router.get('/', isAdmin, ensureAuthenticated, async (req, res) => {
 });
 
 // GET - Create post
-router.get('/create-post', ensureAuthenticated, isAdmin, async (req, res) => {
+router.get('/create-post', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         // Fetch all categories from the database
         const result = await db.query('SELECT * FROM categories');
@@ -114,7 +121,7 @@ router.get('/create-post', ensureAuthenticated, isAdmin, async (req, res) => {
 });
 
 // POST - create post
-router.post('/create-post', ensureAuthenticated, isAdmin, upload.single('img_background'), async(req, res) => {
+router.post('/create-post', isAdmin, ensureAuthenticated, upload.single('img_background'), async(req, res) => {
     // Upload the image to Google Cloud Storage
     const imageUrl = await uploadImage(req.file, 'posts/');
     // other data from form
@@ -156,8 +163,88 @@ router.post('/create-post', ensureAuthenticated, isAdmin, upload.single('img_bac
 
 });
 
+// GET - Edit post
+router.get('/edit-post/:slug', isAdmin, ensureAuthenticated, async (req, res) => {
+    try {
+        // Fetch the post data from the database
+        const result = await db.query('SELECT * FROM post WHERE slug = $1', [req.params.slug]);
+        const post = result.rows[0];
+
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
+        const locals = {
+            title: "Editar post",
+            description: "Editar um post",
+        }        
+        res.render('user/edit-post.ejs', { 
+            locals,
+            post,
+            categories,
+            user: req.user,
+        });
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        // Set the error message
+        const errorMessage = 'Error fetching post';
+        
+        // Redirect to the admin page
+        res.redirect('/', { 
+            errorMessage,
+            user: req.user,
+        });
+    }
+});
+
+// POST - Edit post
+router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_background'), async (req, res) => {
+    // image url
+    let imageUrl;
+
+    // other data from form
+    const title = req.body["title"];
+    const intro = req.body["intro"];
+    const content = customSanitizeHtml(req.body["content"]);
+    const categoryId = req.body["category"];
+    const postId = req.body["postId"];
+    const slug = generateSlug(title);
+
+    try {
+        // Fetch the current post data from the database
+        const currentPostResult = await db.query('SELECT * FROM post WHERE id = $1', [postId]);
+        const currentPost = currentPostResult.rows[0];
+
+        // Check if a new image file has been uploaded
+        if (req.file) {
+            // Upload the new image to Google Cloud Storage
+            imageUrl = await uploadImage(req.file, 'posts/');
+        } else {
+            // Use the existing image URL from the database
+            imageUrl = currentPost.img_background;
+        }
+        
+        // Update the post in the database
+        const result = await db.query('UPDATE post SET title = $1, slug = $2, intro = $3, content = $4, img_background = $5, category = $6 WHERE id = $7 RETURNING *', [title, slug, intro, content, imageUrl, categoryId, postId]);
+        const updatedPost = result.rows[0];
+    
+        // Redirect to the post page
+        res.redirect(`/blog/post/${updatedPost.slug}`);
+    } catch (error) {
+        console.error('Error updating post:', error);
+        // Set the error message
+        const errorMessage = 'Error updating post';
+        
+        // Redirect to the admin page
+        res.redirect('/', { 
+            errorMessage,
+            user: req.user,
+        });
+    }
+});
+
 // DELETE - delete post
-router.post('/delete-post', ensureAuthenticated, isAdmin, async (req, res) => {
+router.post('/delete-post', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         // fetch post data
         const postId = req.body.postId;
@@ -180,7 +267,7 @@ router.post('/delete-post', ensureAuthenticated, isAdmin, async (req, res) => {
 });
 
 // POST - Create category
-router.post('/new-category', ensureAuthenticated, isAdmin, async (req, res) => {
+router.post('/new-category', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         const category = sanitizeHtml(req.body.categoryName);
         const result = await db.query("INSERT INTO categories (category) VALUES ($1) RETURNING *", [category]);
@@ -191,7 +278,7 @@ router.post('/new-category', ensureAuthenticated, isAdmin, async (req, res) => {
 });
 
 // POST - Delete category
-router.post('/delete-category', ensureAuthenticated, isAdmin, async (req, res) => {
+router.post('/delete-category', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         const categoryId = req.body.categoryId;
         const result = await db.query("DELETE FROM categories WHERE id = $1", [categoryId]);

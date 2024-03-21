@@ -1,8 +1,8 @@
 <!-- SECTION HEADER -->
-<section class="section-small-heading" style="background-image: url(../img/GOPR1432.JPG);">
+<section class="section-small-heading" style="background-image: url(/img/GOPR1432.JPG);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text"> Todos os posts sobre: Brasil</h1>
+        <h1 class="index-text"> Todos os posts sobre: <%= category.category %></h1>
     </div>
 </section>
 
@@ -17,37 +17,43 @@
                 <!-- post details -->
                 <div class="container">
                     <div class="blog-posts my-3">
-                        <!-- card with posts -->
-                        <div class="card mb-3">
-                            <div class="row g-0">
-                              <div class="col-md-4">
-                                <!-- post image -->
-                                <img src="/img/qt.jpg" class="img-fluid shadow rounded" alt="...">
-                              </div>
-                              <div class="col-md-8">
-                                <div class="card-body">
-                                    <!-- post category, title, intro -->
-                                  <h6 class="card-title">Category</h5>
-                                  <h5 class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</h5>
-                                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
-                                </div>
-                                <div class="card-details py-3">
-                                    <!-- post date, author and read more -->
-                                    <div class="row text-center">
-                                        <div class="col-4">
-                                            <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
+                        <% posts.forEach(post => { %>
+                            <a href="/blog/post/<%= post.slug %>">
+                                <!-- card with posts -->
+                                <div class="card mb-3">
+                                    <div class="row g-0">
+                                    <div class="col-md-4">
+                                        <!-- post image -->
+                                        <img src="<%= post.img_background %>" class="img-fluid shadow rounded" alt="Foto de capa do artigo">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <!-- post category, title, intro -->
+                                        <h6 class="card-title"><%= post.category_name %></h6>
+                                        <h5 class="card-text"><%= post.title %></h5>
+                                        <p class="card-text"><%= post.intro %></p>
                                         </div>
-                                        <div class="col-4">
-                                            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                                        </div>
-                                        <div class="col-4">
-                                            <button class="btn btn-primary">Leia Mais</button>
+                                        <div class="card-details py-3">
+                                            <!-- post date, author and read more -->
+                                            <div class="row text-center">
+                                                <div class="col-4">
+                                                    <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
+                                                </div>
+                                                <div class="col-4">
+                                                    <% if (post.updated_at) { %>
+                                                        <p class="card-text"><small class="text-body-secondary"><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                    <% } %>
+                                                </div>
+                                                <div class="col-4">
+                                                    <button class="btn btn-primary">Leia Mais</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    </div>
                                 </div>
-                              </div>
-                            </div>
-                          </div>
+                            </a> 
+                        <% }) %>  
                     </div>
                 </div>
             </div>
@@ -57,27 +63,27 @@
                 <h2 class="section-title text-center">Outras categorias:</h2>
                 <div class="categories my-3 py-3">
                     <ul class="list-group">
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                        <li class="list-group-item">Category</li>
-                      </ul>
+                        <% otherCategories.forEach(category => { %>
+                            <a href="/blog/category/<%= category.id %>">
+                                <li class="list-group-item"><%= category.category %></li>
+                            </a>
+                        <% }) %>
+                    </ul>
                 </div>
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
-                    <form action="">
-                        <input type="text" class="form-control" placeholder="Search...">
-                        <button class="btn btn-primary mt-2">Search</button>
+                    <form action="/search" method="GET">
+                        <input type="text" name="q" placeholder="Search">
+                        <button type="submit">Search</button>
                     </form>
                 </div>
                 <!-- subscribe -->
                 <h2 class="section-title text-center">Subscribe:</h2>
                 <div class="subscribe my-3 py-3">
-                    <form action="">
-                        <input type="email" class="form-control" placeholder="Your email...">
-                        <button class="btn btn-primary mt-2">Subscribe</button>
+                    <form action="/blog/search" method="GET">
+                        <input type="text" class="form-control" name="q" placeholder="Busca rápida">
+                        <button class="btn btn-primary mt-2">Search</button>
                     </form>
                 </div>
                 <!-- about -->
