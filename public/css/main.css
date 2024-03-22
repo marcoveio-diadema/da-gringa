@@ -24,24 +24,117 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--mid-blue);
 }
 
-/* img {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0px 0px 25px rgba(0, 0, 0, 0.25));
-    overflow: hidden;
+.password-toggle {
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    cursor: pointer;
+}
+
+.btn-custom {
+    background-color: var(--mid-blue);
+    color: var(--gray-light);
+    border: none;
+    padding: 10px 20px;
     border-radius: var(--border-radius);
-} */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #183153;
+    border: none;
+    color: var(--gray-light);
+}
+
+#login-button {
+    background-color: #183153;
+}
+
+#login-button:hover {
+    background-color: var(--mid-blue);
+}
+
+.go-button {
+    border-top: solid 1px #DEE2E6;
+    border-right: solid 1px #DEE2E6;
+    border-bottom: solid 1px #DEE2E6;
+}
+
+.card {
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+}
+
+
+.card-category {
+    color: var(--orange);
+}
+
+h5.card-text {
+    color: var(--black) !important;
+}
+
+p.intro {
+    color: var(--gray);
+
+}
+
+.card-details {
+    color: var(--gray);
+}
+
+.img-custom {
+    height: 100%;
+    object-fit: cover;
+}
+
+img {
+    filter: drop-shadow(0px 0px 25px rgba(0, 0, 0, 0.25));
+}
 
 /* NAVIGATION BAR */
-.custom-dropdown {
-    width: 100%; /* Full width on small screens */
+.search-button {
+    border-top: 1px solid #DEE2E6;
+    border-right: 1px solid #DEE2E6;
+    border-bottom: 1px solid #DEE2E6;
 }
 
 @media (min-width: 768px) { /* From md screens and up */
-    .custom-dropdown {
-        width: 500px; /* Set width to 500px */
+    .nav-item {
+        padding: 0.5rem 1rem;
     }
 }
+
+a.nav-link {
+    color: var(--black);
+    position: relative;
+}
+
+a.nav-link::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    border-radius: 5px;
+    background-color: var(--black);
+    bottom: 0;
+    left: 0;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+}
+
+a.nav-link:hover::before {
+transform-origin: left;
+transform: scaleX(1);
+}
+
 
 /* INDEX PAGE */
 

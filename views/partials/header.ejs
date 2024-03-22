@@ -1,66 +1,64 @@
-<nav class="navbar navbar-expand-md bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid px-xl-5 py-4 mx-xl-5 px-3">
-        <!-- logo -->
-        <div class="logo">
-            <a class="navbar-brand" href="/">
-                <img src="/img/manual_logo.png" alt="" width="130px">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <!-- navbar -->
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+      <!-- logo -->
+      <div class="logo">
+          <a class="navbar-brand" href="/">
+              <img src="/img/manual_logo.png" alt="" width="130px">
+          </a>
+      </div>
+      <!-- navbar -->
+      <!-- toggle button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- links -->
+      <div class="collapse navbar-collapse" id="menuCollapse">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Blog</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/contact">Contato</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about">Sobre Nós</a>
+            </li>
+            <!-- check if logged in -->
+            <% if (!loggedIn) { %>
               <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/">Blog</a>
+                <a class="btn btn-custom" href="/user/login" id="login-button">Login</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="/contact">Contato</a>
+                <a class="btn btn-custom" href="/user/signup">Registre-se</a>
               </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="/about">Sobre Nós</a>
+            <% } else { %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <%= user.first_name %>
+                </a>
+                <ul class="dropdown-menu">
+                  <% if (user.is_admin) { %>
+                    <li><a class="dropdown-item" href="/admin">Dashboard</a></li>
+                  <% } %>
+                  <li><a class="dropdown-item" href="/user/profile">Perfil</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/user/logout">Sair</a></li>
+                </ul>
               </li>
-              <!-- check if logged in -->
-              <% if (!loggedIn) { %>
-                <li class="nav-item">
-                  <a class="nav-link" href="/user/login">Login</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/user/signup">Registre-se</a>
-                </li>
-              <% } else { %>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <%= user.first_name %>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <% if (user.is_admin) { %>
-                      <li><a class="dropdown-item" href="/admin">Dashboard</a></li>
-                    <% } %>
-                    <li><a class="dropdown-item" href="/user/profile">Perfil</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/user/logout">Sair</a></li>
-                  </ul>
-                </li>
-              <% } %>
-            </ul>
-        </div>
-        <!-- search form -->
-        <div class="dropdown">
-            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-search"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButton">
-              <form action="/blog/search" method="GET" class="px-4 py-3">
-                <div class="input-group">
-                  <input type="text" name="q" class="form-control" placeholder="Busca rápida">
-                  <button class="btn btn-light" type="submit">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </form>
+            <% } %>
+          </ul>
+      </div>
+      
+        <!-- search form -->       
+        <div class="search-nav">
+          <form action="/blog/search" method="GET" class="px-4 py-3">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Busca rápida">
+              <button class="btn btn-light search-button" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
             </div>
-          </div>
+          </form>
+        </div>
     </div>
 </nav>

@@ -13,3 +13,35 @@ tinymce.init({
     ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
     });
 
+// Truncate text
+function truncateText(text, limit) {
+    const words = text.split(' ');
+
+    if (words.length > limit) {
+        return words.slice(0, limit).join(' ') + '...';
+    }
+
+    return text;
+}
+
+$('.intro').each(function() {
+    var text = $(this).text();
+    var truncated = truncateText(text, 20);
+    $(this).text(truncated);
+});
+
+// Show/hide password
+$('.password-toggle').click(function() {
+    var icon = $(this);
+    var input = icon.siblings('input');
+
+    if (input.attr('type') === 'password') {
+        // Password is hidden, show it and change the icon
+        input.attr('type', 'text');
+        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+    } else {
+        // Password is shown, hide it and change the icon
+        input.attr('type', 'password');
+        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+    }
+});

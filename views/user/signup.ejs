@@ -10,37 +10,40 @@
 <section class="section-signup">
     <div class="container">
         <div class="row">
-            <div class="col-12 py-3 my-3">
+            <div class="col-md-10 offset-md-1 py-3 my-3">
                 <form action="/user/signup" method="POST" enctype="multipart/form-data">
                     <!-- first name -->
                     <div class="form-floating mb-3">
                         <input type="text" name="firstName" class="form-control" id="firstNameInput" placeholder="Nome">
-                        <label for="firstNameInput">Nome</label>
+                        <label for="firstNameInput">Nome *</label>
                     </div>
                     <!-- last name -->
                     <div class="form-floating mb-3">
                         <input type="text" name="lastName" class="form-control" id="lastNameInput" placeholder="Sobrenome">
-                        <label for="lastNameInput">Sobrenome</label>
+                        <label for="lastNameInput">Sobrenome *</label>
                     </div>
                     <!-- email -->
                     <div class="form-floating mb-3">
                         <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
-                        <label for="emailInput">Email</label>
+                        <label for="emailInput">Email *</label>
                     </div>
                     <!-- username -->
                     <div class="form-floating mb-3">
                         <input type="text" name="username" class="form-control" id="usernameInput" placeholder="Email">
-                        <label for="usernameInput">Username</label>
+                        <label for="usernameInput">Username *</label>
                     </div>
                     <!-- password -->
-                    <div class="form-floating mb-3">
+                    <div class="form-floating mb-3 position-relative">
                         <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Senha">
-                        <label for="passwordInput">Senha</label>
+                        <label for="passwordInput">Senha *</label>
+                        <i class="fa-regular fa-eye password-toggle"></i>
+
                     </div>
                      <!-- confirm password -->
-                     <div class="form-floating mb-3">
+                     <div class="form-floating mb-3 position-relative">
                         <input type="password" name="confirmPassword" class="form-control" id="confirmPasswordInput" placeholder="Senha">
-                        <label for="confirmPasswordInput">Senha</label>
+                        <label for="confirmPasswordInput">Confirme a senha *</label>
+                        <i class="fa-regular fa-eye password-toggle"></i>
                     </div>
                     <!-- profile picture -->
                     <div class="form-floating mb-3">
@@ -54,7 +57,7 @@
                     </div>
                     <!-- submit button -->
                     <div class="submit-button text-center mb-3">
-                        <button type="submit" class="btn btn-primary">Inscrever-se</button>
+                        <button type="submit" class="btn btn-custom">Inscrever-se</button>
                     </div>
                     <!-- link to login -->
                     <div class="text-center">

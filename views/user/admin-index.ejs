@@ -57,7 +57,11 @@
                                     </td>
                                     <td> <%= post.category_name %></td>
                                     <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
-                                    <td><%= post.updated_at.toLocaleDateString('pt-BR'); %></td>
+                                    <% if (post.updated_at) { %>
+                                        <td><%= post.updated_at.toLocaleDateString('pt-BR'); %></td>
+                                    <% } else { %>
+                                        <td class="text-center"> - </td>
+                                    <% } %>
                                     <td>
                                         <!-- edit post -->
                                         <a href="/admin/edit-post/<%= post.slug %>" target="_blank">Edit</a> / 

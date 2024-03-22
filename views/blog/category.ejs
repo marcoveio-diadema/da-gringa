@@ -31,7 +31,7 @@
                                             <!-- post category, title, intro -->
                                         <h6 class="card-title"><%= post.category_name %></h6>
                                         <h5 class="card-text"><%= post.title %></h5>
-                                        <p class="card-text"><%= post.intro %></p>
+                                        <p class="card-text intro"><%= post.intro %></p>
                                         </div>
                                         <div class="card-details py-3">
                                             <!-- post date, author and read more -->
@@ -45,7 +45,9 @@
                                                     <% } %>
                                                 </div>
                                                 <div class="col-4">
-                                                    <button class="btn btn-primary">Leia Mais</button>
+                                                    <button class="btn btn-custom">
+                                                        <i class="fa-solid fa-arrow-right-long"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -74,16 +76,24 @@
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
                     <form action="/search" method="GET">
-                        <input type="text" name="q" placeholder="Search">
-                        <button type="submit">Search</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" placeholder="Busca rápida">
+                            <button class="btn btn-light go-button" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <!-- subscribe -->
                 <h2 class="section-title text-center">Subscribe:</h2>
                 <div class="subscribe my-3 py-3">
                     <form action="/blog/search" method="GET">
-                        <input type="text" class="form-control" name="q" placeholder="Busca rápida">
-                        <button class="btn btn-primary mt-2">Search</button>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your email...">
+                            <button type="submit" class="btn btn-light go-button">
+                                <i class="fa-regular fa-envelope"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <!-- about -->

@@ -19,32 +19,36 @@
                     <% posts.forEach(post => { %>
                         <a href="/blog/post/<%= post.slug %>">
                             <!-- card with posts -->
-                            <div class="card mb-3">
+                            <div class="card mb-3 card-custom">
                                 <div class="row g-0">
                                 <div class="col-md-4">
                                     <!-- post image -->
-                                    <img src="<%= post.img_background %>" class="img-fluid shadow rounded" alt="Foto de capa do artigo">
+                                    <img src="<%= post.img_background %>" class="img-fluid shadow rounded img-custom" alt="Foto de capa do artigo">
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-8 card-container">
                                     <div class="card-body">
                                         <!-- post category, title, intro -->
-                                    <h6 class="card-title"><%= post.category_name %></h6>
-                                    <h5 class="card-text"><%= post.title %></h5>
-                                    <p class="card-text"><%= post.intro %></p>
+                                        <h6 class="card-title card-category"><%= post.category_name %></h6>
+                                        <h5 class="card-text card-title-h5"><%= post.title %></h5>
+                                        <p class="card-text intro"><%= post.intro %></p>
                                     </div>
-                                    <div class="card-details py-3">
+                                    <hr class="mb-0">
+                                    <div class="card-details text-center py-2">
+                                        
                                         <!-- post date, author and read more -->
-                                        <div class="row text-center">
+                                        <div class="row">
                                             <div class="col-4">
                                                 <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
                                             </div>
                                             <div class="col-4">
-                                                <% if (post.updated_at) { %>
-                                                    <p class="card-text"><small class="text-body-secondary"><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                <% if (post.created_at) { %>
+                                                    <p class="card-text"><small class=""><%= post.created_at.toLocaleDateString('pt-BR') %> </small></p>
                                                 <% } %>
                                             </div>
                                             <div class="col-4">
-                                                <button class="btn btn-primary">Leia Mais</button>
+                                                <button class="btn btn-custom btn-sm">
+                                                    <i class="fa-solid fa-arrow-right-long"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -72,16 +76,24 @@
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
                     <form action="/blog/search" method="GET">
-                        <input type="text" class="form-control" name="q" placeholder="Busca rápida">
-                        <button class="btn btn-primary mt-2">Search</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" placeholder="Busca rápida">
+                            <button class="btn btn-light go-button" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <!-- subscribe -->
                 <h2 class="section-title text-center">Subscribe:</h2>
                 <div class="subscribe my-3 py-3">
                     <form action="">
-                        <input type="email" class="form-control" placeholder="Your email...">
-                        <button class="btn btn-primary mt-2">Subscribe</button>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your email...">
+                            <button type="submit" class="btn btn-light go-button">
+                                <i class="fa-regular fa-envelope"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <!-- about -->
