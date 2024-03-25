@@ -41,8 +41,10 @@
                                                 <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
                                             </div>
                                             <div class="col-4">
-                                                <% if (post.created_at) { %>
-                                                    <p class="card-text"><small class=""><%= post.created_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                <% if (post.updated_at) { %>
+                                                    <p class="card-text"><small class=""><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                <% } else { %>
+                                                    <p class="card-text"><small class=""><%= post.created_at.toLocaleDateString('pt-BR') %></small></p>
                                                 <% } %>
                                             </div>
                                             <div class="col-4">

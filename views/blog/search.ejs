@@ -1,5 +1,5 @@
 <!-- SECTION HEADER -->
-<section class="section-small-heading" style="background-image: url(../img/GOPR1432.JPG);">
+<section class="section-small-heading" style="background-image: url(../img/gliereswinter1.jpeg);">
     <!-- text on landing page -->
     <div class="landing-page">
         <h1 class="index-text"> Fique por dentro de tudo o que rola no Blog da Gringa</h1>
@@ -18,43 +18,56 @@
                 <!-- post details -->
                 <div class="container">
                     <div class="blog-posts my-3">
-                        <% posts.forEach(post => { %>
-                            <a href="/blog/post/<%= post.slug %>">
-                                <!-- card with posts -->
-                                <div class="card mb-3">
-                                    <div class="row g-0">
-                                    <div class="col-md-4">
-                                        <!-- post image -->
-                                        <img src="<%= post.img_background %>" class="img-fluid shadow rounded" alt="Foto de capa do artigo">
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card-body">
-                                            <!-- post category, title, intro -->
-                                        <h6 class="card-title"><%= post.category_name %></h6>
-                                        <h5 class="card-text"><%= post.title %></h5>
-                                        <p class="card-text intro"><%= post.intro %></p>
-                                        </div>
-                                        <div class="card-details py-3">
-                                            <!-- post date, author and read more -->
-                                            <div class="row text-center">
-                                                <div class="col-4">
-                                                    <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
-                                                </div>
-                                                <div class="col-4">
-                                                    <% if (post.updated_at) { %>
-                                                        <p class="card-text"><small class="text-body-secondary"><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
-                                                    <% } %>
-                                                </div>
-                                                <div class="col-4">
-                                                    <button class="btn btn-primary">Leia Mais</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                            </a> 
-                        <% }) %>  
+                        <!-- check if there are results -->
+                        <% if (posts && posts.length > 0) { %>
+                            <!-- show results -->
+                            <% posts.forEach(post => { %>
+                                <a href="/blog/post/<%= post.slug %>">
+                                   <!-- card with posts -->
+                                   <div class="card col-md-8 offset-md-2 mb-3 card-custom">
+                                       <div class="row g-0">
+                                       <div class="col-md-12 col-lg-4">
+                                           <!-- post image -->
+                                           <img src="<%= post.img_background %>" class="img-fluid shadow rounded img-custom" alt="Foto de capa do artigo">
+                                       </div>
+                                           <div class="col-md-12 col-lg-8 card-container">
+                                               <div class="card-body">
+                                                   <!-- post category, title, intro -->
+                                                   <h6 class="card-title card-category"><%= post.category_name %></h6>
+                                                   <h5 class="card-text card-title-h5"><%= post.title %></h5>
+                                                   <p class="card-text intro d-md-none d-lg-none d-xl-block "><%= post.intro %></p>
+                                               </div>
+                                               <hr class="mb-0">
+                                               <div class="card-details text-center py-2">
+                                                   
+                                                   <!-- post date, author and read more -->
+                                                   <div class="row">
+                                                       <div class="col-4">
+                                                           <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
+                                                       </div>
+                                                       <div class="col-4">
+                                                           <% if (post.updated_at) { %>
+                                                               <p class="card-text"><small class=""><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
+                                                           <% } else { %>
+                                                               <p class="card-text"><small class=""><%= post.created_at.toLocaleDateString('pt-BR') %></small></p>
+                                                           <% } %>
+                                                       </div>
+                                                       <div class="col-4">
+                                                           <button class="btn btn-custom btn-sm">
+                                                               <i class="fa-solid fa-arrow-right-long"></i>
+                                                           </button>
+                                                       </div>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </a> 
+                           <% }) %>  
+                        <!-- else no results -->
+                        <% } else { %>
+                            <p>Nenhum artigo encontrado com essas palavras-chaves.</p>
+                        <% } %>                        
                     </div>
                 </div>
             </div>

@@ -262,3 +262,26 @@ transform: scaleX(1);
     transform: scale(1.5);
 }
 
+/* SIDE NAV */
+.about img {
+    max-width: 80%;
+}
+
+.about p {
+    padding: 2rem 0;
+}
+
+/* FOOTER */
+footer .nav-item a {
+    color: var(--black);
+    transition: 0.3s;
+}
+
+footer .nav-item a:hover {
+    color: var(--mid-blue);
+}
+
+footer img {
+    max-width: 70%;
+}
+
