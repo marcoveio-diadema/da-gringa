@@ -45,3 +45,8 @@ $('.password-toggle').click(function() {
         icon.removeClass('fa-eye-slash').addClass('fa-eye');
     }
 });
+
+// Show/hide mobile menu
+$('#searchButton').click(function() {
+    $('#searchNav').slideToggle();
+  });

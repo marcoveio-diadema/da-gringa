@@ -1,14 +1,57 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid px-xl-5 py-4 mx-xl-5 px-3">
+    <div class="container-fluid px-xl-5 py-4 mx-xl-5 px-3 navigation">
       <!-- logo -->
-      <div class="logo">
+      <div class="logo d-flex">
           <a class="navbar-brand" href="/">
-              <img src="/img/manual_logo.png" alt="" width="130px">
+              <img src="/img/manual_logo.png" alt="logo manual da gringa" width="130px">
           </a>
       </div>
-      <!-- navbar -->
+      <!-- search form -->
+      <div class="container-search-nav mx-auto">
+        <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#searchModal" id="search-btn">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-caret-down mx-1"></i>
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">Busca no site</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- search form -->
+                <div class="search-nav-modal" id="searchNav">
+                  <form action="/blog/search" method="GET" class="px-4 py-3">
+                    <div class="input-group">
+                      <input type="text" name="q" class="form-control" placeholder="Busca rápida">
+                      <button class="btn btn-light search-button" type="submit">
+                        <i class="fas fa-search"></i>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- search form -->
+        <div class="search-nav">
+          <form action="/blog/search" method="GET" class="d-flex px-4 py-3">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Busca rápida">
+              <button class="btn btn-light search-button" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div> 
+       <!-- navbar -->
       <!-- toggle button -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuCollapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- links -->
@@ -29,7 +72,7 @@
                 <a class="btn btn-custom" href="/user/login" id="login-button">Login</a>
               </li>
               <li class="nav-item">
-                <a class="btn btn-custom" href="/user/signup">Registre-se</a>
+                <a class="btn btn-custom" href="/user/signup">Sigup</a>
               </li>
             <% } else { %>
               <li class="nav-item dropdown">
@@ -48,17 +91,8 @@
             <% } %>
           </ul>
       </div>
-      
-        <!-- search form -->       
-        <div class="search-nav">
-          <form action="/blog/search" method="GET" class="px-4 py-3">
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Busca rápida">
-              <button class="btn btn-light search-button" type="submit">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </form>
-        </div>
+            
     </div>
 </nav>
+
+

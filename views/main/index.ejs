@@ -19,18 +19,18 @@
                     <% posts.forEach(post => { %>
                         <a href="/blog/post/<%= post.slug %>">
                             <!-- card with posts -->
-                            <div class="card mb-3 card-custom">
+                            <div class="card col-md-8 offset-md-2 mb-3 card-custom">
                                 <div class="row g-0">
-                                <div class="col-md-4">
+                                <div class="col-md-12 col-lg-4">
                                     <!-- post image -->
                                     <img src="<%= post.img_background %>" class="img-fluid shadow rounded img-custom" alt="Foto de capa do artigo">
                                 </div>
-                                <div class="col-md-8 card-container">
+                                <div class="col-md-12 col-lg-8 card-container">
                                     <div class="card-body">
                                         <!-- post category, title, intro -->
                                         <h6 class="card-title card-category"><%= post.category_name %></h6>
                                         <h5 class="card-text card-title-h5"><%= post.title %></h5>
-                                        <p class="card-text intro"><%= post.intro %></p>
+                                        <p class="card-text intro d-md-none d-lg-none d-xl-block "><%= post.intro %></p>
                                     </div>
                                     <hr class="mb-0">
                                     <div class="card-details text-center py-2">
@@ -64,7 +64,7 @@
                 <!-- categories -->
                 <h2 class="section-title text-center">Categorias:</h2>
                 <div class="categories my-3 py-3">
-                    <ul class="list-group">
+                    <ul class="list-group shadow">
                         <% categories.forEach(category => { %>
                             <a href="/blog/category/<%= category.id %>">
                                 <li class="list-group-item"><%= category.category %></li>
@@ -72,10 +72,11 @@
                         <% }) %>
                     </ul>
                 </div>
+                <hr class="w-80">
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
-                    <form action="/blog/search" method="GET">
+                    <form action="/blog/search" class="shadow" method="GET">
                         <div class="input-group">
                             <input type="text" class="form-control" name="q" placeholder="Busca rápida">
                             <button class="btn btn-light go-button" type="submit">
@@ -84,10 +85,11 @@
                         </div>
                     </form>
                 </div>
+                <hr class="w-80">
                 <!-- subscribe -->
                 <h2 class="section-title text-center">Subscribe:</h2>
                 <div class="subscribe my-3 py-3">
-                    <form action="">
+                    <form action="" class="shadow">
                         <div class="input-group">
                             <input type="email" class="form-control" placeholder="Your email...">
                             <button type="submit" class="btn btn-light go-button">
@@ -96,6 +98,7 @@
                         </div>
                     </form>
                 </div>
+                <hr class="w-80">
                 <!-- about -->
                 <h2 class="section-title text-center">Sobre:</h2>
                 <div class="about my-3 py-3 text-center">
