@@ -4,6 +4,7 @@ import express from 'express';
 import expressLayout from 'express-ejs-layouts';
 import passport from 'passport';
 import session from 'express-session';
+import flash from 'express-flash';
 
 // import routes
 import mainRoutes from './server/routes/main.js';
@@ -17,6 +18,9 @@ const PORT = 3000 || process.env.PORT;
 
 // static
 app.use(express.static('public'));
+
+// flash messages
+app.use(flash());
 
 // middleware for templating
 app.use(expressLayout);

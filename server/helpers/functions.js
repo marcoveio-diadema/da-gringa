@@ -4,6 +4,7 @@ import { Storage } from '@google-cloud/storage';
 import path from 'path';
 import sanitizeHtml from 'sanitize-html';
 import slugify from 'slugify';
+import nodemailer from 'nodemailer';
 
 // Google Cloud Storage
 const storage = new Storage({
@@ -71,5 +72,30 @@ function generateSlug(title) {
     });
 }
 
-const config = { uploadImage, customSanitizeHtml, generateSlug };
+// email sender
+async function sendPasswordResetEmail(userEmail, token) {
+    let transporter = nodemailer.createTransport({
+        service: process.env.EMAIL_SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+
+    let mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: 'Reinicialização de senha',
+        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
+        http://localhost:3000/user/reset-password/${token}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    };
+
+    let info = await transporter.sendMail(mailOptions)
+
+    console.log("Message sent: %s", info.messageId);
+}
+
+const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail };
 export default config;

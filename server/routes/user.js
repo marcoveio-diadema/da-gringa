@@ -7,13 +7,14 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import sanitizeHtml from 'sanitize-html';
+import crypto from 'crypto';
 
 // import db
 import db from '../config/db.js';
 
 // import functions
 import config from '../helpers/functions.js';
-const { uploadImage, customSanitizeHtml, generateSlug } = config;
+const { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail } = config;
 
 // set number of salts
 const saltRounds = 10;
@@ -179,23 +180,6 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
         console.log(error);
     }
 });
-
-// GET - login
-router.get('/login', async (req, res) => {
-    try {
-        const locals = {
-            title: "Login",
-            description: "Login to admin"
-        }        
-        res.render("user/login.ejs", { 
-            locals,
-            user: req.user,
-        });
-    } catch (error) {
-        console.log(error);
-    }
-});
-
 // GET - signup
 router.get('/signup', async (req, res) => {
     try {
@@ -215,14 +199,14 @@ router.get('/signup', async (req, res) => {
 // POST - signup
 router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     // get data from form
-    const profilePicture = await uploadImage(req.file, 'profile/');
+    const profilePicture = req.file ? await uploadImage(req.file, 'profile/') : null;
     const firstName = sanitizeHtml(req.body.firstName);
     const lastName = sanitizeHtml(req.body.lastName);
     const email = sanitizeHtml(req.body.email);
     const username = sanitizeHtml(req.body.username);
     const password = sanitizeHtml(req.body.password);
     const confirmPassword = sanitizeHtml(req.body.confirmPassword);
-    const userBio = sanitizeHtml(req.body.userBio);
+    const userBio = req.body.userBio ? sanitizeHtml(req.body.userBio) : null;
 
 
     // Check if passwords match
@@ -264,18 +248,41 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     }
   });
 
+// GET - login
+router.get('/login', async (req, res) => {
+    try {
+        const locals = {
+            title: "Login",
+            description: "Login to admin"
+        }        
+        res.render("user/login.ejs", { 
+            locals,
+            user: req.user,
+            messages: {
+                error: req.flash('error'),
+                success: req.flash('success')
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 // POST - login
 router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
         if (err) { 
-            return next(err); 
+            req.flash('error', 'Um erro aconteceu, tente novamente.');
+            return res.redirect('/user/login');
         }
         if (!user) { 
+            req.flash('error', 'Email ou senha incorretos, tente novamente.');
             return res.redirect('/user/login'); 
         }
         req.logIn(user, (err) => {
             if (err) { 
-                return next(err); 
+                req.flash('error', 'Um erro aconteceu, tente novamente.');
+                return res.redirect('/user/login');; 
             }
             // Redirect user based on their ID
             if (user.id === 1) {
@@ -317,13 +324,13 @@ passport.use(new LocalStrategy({
             if (result) {
             return cb(null, user);
             } else {
-            return cb(null, false);
+            return cb(null, false, { message: 'Email ou senha incorretos, tente novamente.' });
             }
         }
         });
 
         } else {
-        return cb("user not found");}
+        return cb(null, false, { message: 'Email ou senha incorretos, tente novamente.' });}
     } catch (err) {
         return cb(err);
     }
@@ -338,6 +345,91 @@ passport.deserializeUser((user, cb) => {
     cb(null, user);
 });
 
+// GET - forgot password
+router.get("/forgot-password", (req, res) => {
+    const locals = {
+        title: "Esqueci a senha",
+        description: "Reinicio de senha"
+    }   
+    res.render("user/forgot-password.ejs", {
+        locals,
+        user: req.user,    });
+});
+
+// POST - forgot password
+
+router.post("/forgot-password", async (req, res) => {
+    const email = req.body.email;
+    // Check if user exists
+    const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (result.rows.length > 0) {
+        // User exists, send password reset email
+        // Generate a password reset token
+        const token = crypto.randomBytes(20).toString('hex');
+        // Store the token and the expiration time in the database
+        await db.query("UPDATE users SET reset_token = $1 WHERE email = $2", [token, email]);
+        // send email
+        await sendPasswordResetEmail(email, token);
+        // message to user
+        req.flash('success', 'Email enviado com sucesso!');
+    } else {
+        // User does not exist
+        req.flash('error', 'Email não encontrado, tente novamente.');
+    }
+    res.redirect('/user/forgot-password');
+});
+
+// GET - reset password
+router.get('/reset-password/:token', async (req, res) => {
+    // Find a user with the reset token
+    const result = await db.query("SELECT * FROM users WHERE reset_token = $1", [req.params.token]);
+
+    const locals = {
+        title: "Reiniciar a senha",
+        description: "Reinicio de senha",
+        error: req.session.error
+    }
+    delete req.session.error;   
+    if (result.rows.length > 0) {
+        // If the token is found, render the password reset form
+        res.render('user/reset-password', { 
+            token: req.params.token,
+            locals,});
+    } else {
+        // If the token is not found, redirect to the forgot password page with an error message
+        req.flash('error', 'Código de recuperação inválido ou expirado, digite seu email novamente para recever um novo código.');
+        res.redirect('/user/forgot-password');
+    }
+});
+
+// POST - reset password
+router.post('/reset-password/:token', async (req, res) => {
+    const password = req.body.resetPassword;
+    const confirmPassword = req.body.resetPasswordConfirm;
+
+    console.log('Session: ', req.session);
+    console.log('Token: ', req.params.token);
+
+    // Check if password and confirmPassword are the same
+    if (password !== confirmPassword) {
+        req.session.error = ('As senhas não coincidem, digite novamente.');
+        return res.redirect('/user/reset-password/' + req.params.token);
+    }
+
+    // Find a user with the reset token
+    const result = await db.query("SELECT * FROM users WHERE reset_token = $1", [req.params.token]);
+    if (result.rows.length > 0) {
+        // If the token is found, hash the new password and update it in the database
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.query("UPDATE users SET password = $1 WHERE reset_token = $2", [hashedPassword, req.params.token]);
+        req.flash('success', 'Sua senha foi reiniciada com sucesso, faça o login.');
+        res.redirect('/user/login');
+    } else {
+        // If the token is not found, redirect to the forgot password page with an error message
+        req.flash('error', 'Código de recuperação inválido ou expirado, digite seu email novamente para recever um novo código.');
+        res.redirect('/user/forgot-password');
+    }
+});
 
 
 export default router;

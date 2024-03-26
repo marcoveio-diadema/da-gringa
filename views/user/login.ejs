@@ -3,17 +3,32 @@
     <!-- login form -->
     <div class="landing-page">
         <h1 class="index-text">Bem-vindo(a) de volta!</h1>
+        <!-- message if success -->
+        <% if (messages.success  && messages.success.length > 0) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Sucesso!</strong> <%= messages.success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        <!-- message if error -->
+        <% if (messages.error  && messages.error.length > 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Erro!</strong> <%= messages.error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
+        <!-- login form -->
         <h3 class="index-text">Faça login para continuar</h3>
         <form action="/user/login" method="POST">
             <!--email -->
             <div class="form-floating mb-3">
                 <input type="email" name="email" class="form-control" id="emailInput" placeholder="name@example.com">
-                <label for="emailInput">Email address</label>
+                <label for="emailInput">Email</label>
             </div>
             <!-- password -->
             <div class="form-floating position-relative mb-3">
                 <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password">
-                <label for="passwordInput">Password</label>
+                <label for="passwordInput">Senha</label>
                 <i class="fa-regular fa-eye password-toggle"></i>
             </div>
             <!-- submit button -->
@@ -23,6 +38,10 @@
             <!-- link to signup -->
             <div class="text-center mb-3">
                 <a href="/user/signup" class="text-white">Não tem uma conta? Inscreva-se <span style="color: red;">aqui</span>.</a>
+            </div>
+            <!-- reset password -->
+            <div class="text-center mb-3">
+                <a href="/user/forgot-password" class="text-white" target="_blank">Esqueceu a senha? Clique <span style="color: red;">aqui</span> para reinicia-la.</a>
             </div>
         </form>
     </div>
