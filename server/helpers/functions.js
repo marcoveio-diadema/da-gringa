@@ -97,5 +97,31 @@ async function sendPasswordResetEmail(userEmail, token) {
     console.log("Message sent: %s", info.messageId);
 }
 
-const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail };
+// contact form email sender
+async function sendContactEmail(name, email, phone, message) {
+    let transporter = nodemailer.createTransport({
+        service: process.env.EMAIL_SERVICE,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+
+    let mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: 'Nova mensagem recebida',
+        text: `Você recebeu um novo formulario de contato:\n\n
+        Nome: ${name}\n
+        Email: ${email}\n
+        Telefone: ${phone}\n
+        Mensagem: ${message}\n`
+    };
+
+    let info = await transporter.sendMail(mailOptions)
+
+    console.log("Message sent: %s", info.messageId);
+}
+
+const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail, sendContactEmail };
 export default config;

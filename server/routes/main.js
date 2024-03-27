@@ -1,8 +1,19 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import sanitizeHtml from 'sanitize-html';
 const router = express.Router();
+
+// Body parser
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(express.static("public"));
 
 // import db
 import db from '../config/db.js';
+
+// import functions
+import config from '../helpers/functions.js';
+import sanitize from 'sanitize-html';
+const { sendContactEmail } = config;
 
 // GET - home page
 router.get('/', async (req, res) => {
@@ -50,7 +61,48 @@ router.get('/contact', (req, res) => {
     res.render('main/contact.ejs', { 
         locals,
         user: req.user,
+        formData: req.flash('formData')[0] 
      });
+});
+
+// POST - contact form submission
+router.post('/contact', async (req, res) => {
+    try {
+        const name = sanitizeHtml(req.body.name);
+        const email = sanitizeHtml(req.body.email);
+        const phone = req.body.phone ? sanitizeHtml(req.body.phone) : null;
+        const message = sanitizeHtml(req.body.message);
+
+         // Validate form inputs
+        if (!name || !email || !message){
+            req.flash('error', 'Todos os campos marcados com * são obrigatórios.');
+            req.flash('formData', { name, email, phone, message });
+            return res.redirect('/contact');
+        }
+
+        // Send an email to the admin
+        await sendContactEmail(name, email, phone, message);
+
+        // message to display
+        const locals = {
+            title: 'Contato',
+            description: "Tudo sobre como se virar na gringa!"
+        }
+
+        // Redirect to the contact page with a success message
+        req.flash('success', 'Mensagem enviada com sucesso!');
+        res.redirect('/contact');
+    } catch (error) {
+        // message to display
+        const locals = {
+            title: 'Contato',
+            description: "Tudo sobre como se virar na gringa!"
+        }
+        console.error('Error submitting contact form:', error);
+        // Render the contact page with an error message
+        req.flash('error', 'Ocorreu um erro ao enviar o formulário de contato, Tente novamente');
+        res.redirect('/contact');
+    };
 });
 
 // GET - about page

@@ -292,6 +292,14 @@ transform: scaleX(1);
     color: var(--mid-blue);
 }
 
+/* CONTACT */
+#contactCounter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: var(--gray);
+}
+
 /* FOOTER */
 footer .nav-item a {
     color: var(--black);

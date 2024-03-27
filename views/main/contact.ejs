@@ -7,3 +7,57 @@
         <i class="fa-solid fa-circle-down fa-xl" id="landing-icon"></i>
     </div>
 </section>
+
+<!-- SECTION CONTACT -->
+<section class="section-contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-md-1 py-3 my-3">
+                 <!-- message if error -->
+                <% if (messages.error) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Erro!</strong> <%= messages.error %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Feito!</strong> <%= messages.success %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+                <form action="/contact" method="POST">
+                    <!-- name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="name" class="form-control" id="nameInput" placeholder="Nome">
+                        <label for="nameInput">Nome *</label>
+                    </div>
+                    <!-- email -->
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
+                        <label for="emailInput">Email *</label>
+                    </div>
+                    <!-- telefone -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="phone" class="form-control" id="phoneInput" placeholder="Telefone" >
+                        <label for="phoneInput">Telefone</label>
+                    </div>
+                    <!-- message -->
+                    <div class="form-floating mb-3 position-relative">
+                        <textarea name="message" class="form-control" id="messageInput" placeholder="Fale um pouco sobre você" style="height: 200px"></textarea>
+                        <label for="messageInput">Deixe a sua mensagem aqui e responderemos o mais rápido possível. *</label>
+                        <div id="contactCounter">0/1000</div>
+                    </div>
+                    <!-- submit button -->
+                    <div class="submit-button text-center mb-3">
+                        <button type="submit" class="btn btn-custom">Enviar</button>
+                    </div>
+                    <!-- ps -->
+                    <div class="text-center">
+                        <p>Os campos com * são obrigatorios.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

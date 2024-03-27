@@ -61,3 +61,14 @@ $('#userBioInput').on('input', function() {
         e.preventDefault();
     }
 });
+
+// contact form character count
+$('#messageInput').on('input', function() {
+    var length = $(this).val().length;
+    var color = length >= 1000 ? 'red' : '#7E7E7E';
+    $('#contactCounter').text(length + '/1000').css('color', color);
+}).on('keypress', function(e) {
+    if ($(this).val().length >= 150) {
+        e.preventDefault();
+    }
+});
