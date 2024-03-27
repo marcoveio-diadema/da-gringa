@@ -271,6 +271,27 @@ transform: scaleX(1);
     padding: 2rem 0;
 }
 
+/* SIGN UP */
+#counter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: var(--gray);
+}
+
+/* POST */
+.share-icons-container i {
+    margin: 0 1.3rem;;
+}
+
+.share-icons{
+    transition: .3s;
+}
+
+.share-icons:hover {
+    color: var(--mid-blue);
+}
+
 /* FOOTER */
 footer .nav-item a {
     color: var(--black);

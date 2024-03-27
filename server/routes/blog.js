@@ -37,6 +37,7 @@ router.get('/post/:slug', async (req, res) => {
                 locals,
                 post,
                 categories,
+                req: req
             });
         } else {
             // No post was found, render a 404 page

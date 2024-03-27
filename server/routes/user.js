@@ -174,8 +174,12 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
         // Delete the user's account
         await db.query(`DELETE FROM users WHERE id = $1`, [req.user.id]);
 
+        // Log the user out
+        req.logout();
+        
         // Redirect to the login page
-        res.redirect('/user/login');
+        req.flash('error', 'Uma pena te ver partir.');
+        res.redirect('/');
     } catch (error) {
         console.log(error);
     }
@@ -190,6 +194,7 @@ router.get('/signup', async (req, res) => {
         res.render("user/signup.ejs", { 
             locals,
             user: req.user,
+            formData: req.flash('formData')[0] 
         });
     } catch (error) {
         console.log(error);
@@ -208,10 +213,17 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     const confirmPassword = sanitizeHtml(req.body.confirmPassword);
     const userBio = req.body.userBio ? sanitizeHtml(req.body.userBio) : null;
 
+    // Validate form inputs
+    if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {
+        req.flash('error', 'Todos os campos marcados com * são obrigatórios.');
+        req.flash('formData', { firstName, lastName, email, username, userBio });
+        return res.redirect('/user/signup');
+    }
 
     // Check if passwords match
     if (password !== confirmPassword) {
-        return res.status(400).send("Passwords do not match");
+        req.flash('error', 'Senhas não coincidem.');
+        return res.redirect('/user/signup');
     }
 
     try {
@@ -220,7 +232,8 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
       );
         // if user already exists
       if (checkResult.rows.length > 0) {
-        res.send("User already exists, try logging in.");
+        req.flash('error', 'Email já cadastrado, utilize outro email ou faça o login.');
+        return res.redirect('/user/signup');
       } else {
         // password hashing
         bcrypt.hash(password, saltRounds, async (err, hash) => {
@@ -237,6 +250,7 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
               if (err) {
                 console.log("Error logging in", err);
               } else {
+                req.flash('success', 'Bem vindo a nossa comunidade!');
                 res.redirect("/");
               }
             });

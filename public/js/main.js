@@ -50,3 +50,14 @@ $('.password-toggle').click(function() {
 $('#searchButton').click(function() {
     $('#searchNav').slideToggle();
   });
+
+// character count
+$('#userBioInput').on('input', function() {
+    var length = $(this).val().length;
+    var color = length >= 150 ? 'red' : '#7E7E7E';
+    $('#counter').text(length + '/150').css('color', color);
+}).on('keypress', function(e) {
+    if ($(this).val().length >= 150) {
+        e.preventDefault();
+    }
+});

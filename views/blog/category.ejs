@@ -75,7 +75,7 @@
                 <!-- categories -->
                 <h2 class="section-title text-center">Outras categorias:</h2>
                 <div class="categories my-3 py-3">
-                    <ul class="list-group">
+                    <ul class="list-group shadow">
                         <% otherCategories.forEach(category => { %>
                             <a href="/blog/category/<%= category.id %>">
                                 <li class="list-group-item"><%= category.category %></li>
@@ -83,10 +83,11 @@
                         <% }) %>
                     </ul>
                 </div>
+                <hr class="w-80">
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">
-                    <form action="/blog/search" method="GET">
+                    <form action="/blog/search" class="shadow" method="GET">
                         <div class="input-group">
                             <input type="text" class="form-control" name="q" placeholder="Busca rápida">
                             <button class="btn btn-light go-button" type="submit">
@@ -95,10 +96,11 @@
                         </div>
                     </form>
                 </div>
+                <hr class="w-80">
                 <!-- subscribe -->
                 <h2 class="section-title text-center">Subscribe:</h2>
                 <div class="subscribe my-3 py-3">
-                    <form action="/blog/search" method="GET">
+                    <form action="#" class="shadow" method="GET">
                         <div class="input-group">
                             <input type="email" class="form-control" placeholder="Your email...">
                             <button type="submit" class="btn btn-light go-button">
@@ -107,10 +109,11 @@
                         </div>
                     </form>
                 </div>
+                <hr class="w-80">
                 <!-- about -->
                 <h2 class="section-title text-center">Sobre:</h2>
                 <div class="about my-3 py-3">
-                    <img src="/img/marcus_1.jpg" class="img-fluid rounded mb-3" alt="">
+                    <img src="/img/marcus_1.jpg" class="img-fluid rounded shadow mb-3" alt="">
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
                 </div>
             </div>

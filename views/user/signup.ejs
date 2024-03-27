@@ -1,5 +1,5 @@
 <!-- SECTION HEADER -->
-<section class="section-small-heading" style="background-image: url(../img/qt.jpg);">
+<section class="section-small-heading" style="background-image: url(../img/poonhill.jpeg);">
     <!-- text on landing page -->
     <div class="landing-page">
         <h1 class="index-text">Partiu mundão?</h1>
@@ -11,26 +11,33 @@
     <div class="container">
         <div class="row">
             <div class="col-md-10 offset-md-1 py-3 my-3">
+                 <!-- message if error -->
+                <% if (messages.error) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Erro!</strong> <%= messages.error %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
                 <form action="/user/signup" method="POST" enctype="multipart/form-data">
                     <!-- first name -->
                     <div class="form-floating mb-3">
-                        <input type="text" name="firstName" class="form-control" id="firstNameInput" placeholder="Nome">
+                        <input type="text" name="firstName" class="form-control" id="firstNameInput" placeholder="Nome" value="<%= formData ? formData.firstName : '' %>">
                         <label for="firstNameInput">Nome *</label>
                     </div>
                     <!-- last name -->
                     <div class="form-floating mb-3">
-                        <input type="text" name="lastName" class="form-control" id="lastNameInput" placeholder="Sobrenome">
+                        <input type="text" name="lastName" class="form-control" id="lastNameInput" placeholder="Sobrenome" value="<%= formData ? formData.lastName : '' %>">
                         <label for="lastNameInput">Sobrenome *</label>
                     </div>
                     <!-- email -->
                     <div class="form-floating mb-3">
-                        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
+                        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email" value="<%= formData ? formData.email : '' %>">
                         <label for="emailInput">Email *</label>
                     </div>
                     <!-- username -->
                     <div class="form-floating mb-3">
-                        <input type="text" name="username" class="form-control" id="usernameInput" placeholder="Email">
-                        <label for="usernameInput">Username *</label>
+                        <input type="text" name="username" class="form-control" id="usernameInput" placeholder="Email" value="<%= formData ? formData.username : '' %>">
+                        <label for="usernameInput">Usuário *</label>
                     </div>
                     <!-- password -->
                     <div class="form-floating mb-3 position-relative">
@@ -48,12 +55,13 @@
                     <!-- profile picture -->
                     <div class="form-floating mb-3">
                         <input type="file" name="profilePicture" class="form-control" id="profilePictureInput" placeholder="URL da foto de perfil">
-                        <label for="profilePictureInput">URL da foto de perfil</label>
+                        <label for="profilePictureInput">Foto de perfil (não obrigatório).</label>
                     </div>
                     <!-- user bio -->
-                    <div class="form-floating mb-3">
-                        <textarea name="userBio" class="form-control" id="userBioInput" placeholder="Fale um pouco sobre você" style="height: 100px"></textarea>
-                        <label for="userBioInput">Fale um pouco sobre você</label>
+                    <div class="form-floating mb-3 position-relative">
+                        <textarea name="userBio" class="form-control" id="userBioInput" placeholder="Fale um pouco sobre você" style="height: 100px" value="<%= formData ? formData.userBio : '' %>"></textarea>
+                        <label for="userBioInput">Fale um pouco sobre você (Não obrigatório).</label>
+                        <div id="counter">0/150</div>
                     </div>
                     <!-- submit button -->
                     <div class="submit-button text-center mb-3">
