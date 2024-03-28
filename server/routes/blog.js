@@ -86,6 +86,7 @@ router.get('/category/:categoryId', async (req, res) => {
             posts,
             category,
             otherCategories,
+            req: req
          });
     } catch (error) {
         console.error('Error fetching posts:', error);
@@ -128,6 +129,7 @@ router.get('/search', async (req, res) => {
             posts,
             categories,
             searchTerm,
+            req: req
         });
     } catch (error) {
         console.error('Error fetching posts:', error);

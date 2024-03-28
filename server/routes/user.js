@@ -14,7 +14,7 @@ import db from '../config/db.js';
 
 // import functions
 import config from '../helpers/functions.js';
-const { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail } = config;
+const { uploadImage, sendPasswordResetEmail } = config;
 
 // set number of salts
 const saltRounds = 10;
@@ -212,6 +212,9 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     const password = sanitizeHtml(req.body.password);
     const confirmPassword = sanitizeHtml(req.body.confirmPassword);
     const userBio = req.body.userBio ? sanitizeHtml(req.body.userBio) : null;
+    const newsletter = req.body.newsletter;
+
+    console.log('Newsletter:', req.body.newsletter);
 
     // Validate form inputs
     if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {
@@ -235,6 +238,18 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
         req.flash('error', 'Email já cadastrado, utilize outro email ou faça o login.');
         return res.redirect('/user/signup');
       } else {
+        // if user wants to subscribe to the newsletter
+        if (newsletter) {
+            const checkSubscriber = await db.query("SELECT * FROM subscribers WHERE email = $1", [email]);
+            if (checkSubscriber.rows.length > 0) {
+                req.flash('error', 'Email já cadastrado na newsletter.');
+                console.log('Email já cadastrado na newsletter.');
+                return res.redirect('/user/signup');
+            } else {
+                await db.query("INSERT INTO subscribers (email) VALUES ($1)", [email]);
+                console.log('Email cadastrado na newsletter.');
+            }
+        }
         // password hashing
         bcrypt.hash(password, saltRounds, async (err, hash) => {
           // error handling
@@ -246,6 +261,8 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
             [firstName, lastName, email, username, hash, profilePicture, userBio]
           );
             const user = result.rows[0];
+
+            // Log the user in
             req.login(user, (err) => {
               if (err) {
                 console.log("Error logging in", err);
@@ -354,7 +371,6 @@ passport.use(new LocalStrategy({
 passport.serializeUser((user, cb) => {
     cb(null, user);
 });
-
 passport.deserializeUser((user, cb) => {
     cb(null, user);
 });
@@ -371,7 +387,6 @@ router.get("/forgot-password", (req, res) => {
 });
 
 // POST - forgot password
-
 router.post("/forgot-password", async (req, res) => {
     const email = req.body.email;
     // Check if user exists
@@ -442,6 +457,29 @@ router.post('/reset-password/:token', async (req, res) => {
         // If the token is not found, redirect to the forgot password page with an error message
         req.flash('error', 'Código de recuperação inválido ou expirado, digite seu email novamente para recever um novo código.');
         res.redirect('/user/forgot-password');
+    }
+});
+// POST - newsletter subscribe
+router.post('/subscribe', async (req, res) => {
+    // fetch data from form
+    const email = sanitizeHtml(req.body.email);
+    try {
+        // check if user already exists
+        const checkResult = await db.query("SELECT * FROM subscribers WHERE email = $1", [email]);
+
+        if (checkResult.rows.length > 0) {
+            // Send JSON response
+            res.status(400).json({ error: 'Email já cadastrado, utilize outro email.' });
+        } else {
+            // add to database
+            const result = await db.query("INSERT INTO subscribers (email) VALUES ($1) RETURNING *", [email]);
+            // Send JSON response
+            res.json({ success: 'Inscrição realizada com sucesso!' });
+        }
+    } catch (error) {
+        console.log(error);
+        // Send JSON response
+        res.status(500).json({ error: 'Um erro ocorreu, tente novamente.' });
     }
 });
 

@@ -72,3 +72,28 @@ $('#messageInput').on('input', function() {
         e.preventDefault();
     }
 });
+
+// Subscribe form
+$('#subscribeForm').on('submit', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: $(this).serialize(),
+        success: function(response) {
+            // Show success message
+            $('#success-message').text(response.success);
+            $('#success-alert').show();
+            // Clear the form
+            $('#subscribeForm')[0].reset();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            // Clear the form
+            $('#subscribeForm')[0].reset();
+            // Show error message
+            $('#error-message').text(jqXHR.responseJSON.error);
+            $('#error-alert').show();
+        }
+    });
+});

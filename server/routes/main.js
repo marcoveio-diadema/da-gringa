@@ -44,11 +44,12 @@ router.get('/', async (req, res) => {
             user: req.user,
             posts,
             categories,
+            req: req
         });
     } catch (error) {
         console.error('Error fetching posts:', error);
         // Render an error page
-        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts' });
+        res.status(500).render('500.ejs', { message: 'Um erro ocorreu ao tentarmos carregar os posts.' });
     }
 });
 
@@ -104,6 +105,7 @@ router.post('/contact', async (req, res) => {
         res.redirect('/contact');
     };
 });
+
 
 // GET - about page
 router.get('/about', (req, res) => {
