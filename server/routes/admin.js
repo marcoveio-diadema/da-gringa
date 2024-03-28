@@ -3,9 +3,6 @@ import express from 'express';
 const router = express.Router();
 import bodyParser from 'body-parser';
 import multer from 'multer';
-import bcrypt from "bcrypt";
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
 import sanitizeHtml from 'sanitize-html';
 
 // import db

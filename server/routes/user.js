@@ -102,9 +102,12 @@ router.post('/edit-profile', ensureAuthenticated, async (req, res) => {
         req.session.passport.user = updatedUser;
 
         // Redirect to the profile page
+        req.flash('success', 'Perfil atualizado com sucesso.');
         res.redirect('/user/profile');
     } catch (error) {
         console.log(error);
+        req.flash('error', 'Um erro ocorreu, tente novamente.');
+        res.redirect('/user/profile');
     }
 });
 
@@ -167,23 +170,37 @@ router.post('/change-password', ensureAuthenticated, async (req, res) => {
         console.log(error);
     }
 });
-
-// POST - delete account
+// POST - delete profile
 router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
     try {
-        // Delete the user's account
-        await db.query(`DELETE FROM users WHERE id = $1`, [req.user.id]);
+        const userId = req.user.id;
+        const userEmail = req.user.email;
 
         // Log the user out
-        req.logout();
-        
-        // Redirect to the login page
-        req.flash('error', 'Uma pena te ver partir.');
-        res.redirect('/');
+        req.logout(() => {
+            // Delete the user's account
+            db.query(`DELETE FROM users WHERE id = $1`, [userId])
+                .then(() => {
+                    // Delete the user's email from the subscribers table
+                    db.query(`DELETE FROM subscribers WHERE email = $1`, [userEmail])
+                        .then(() => {
+                            // Redirect to the login page
+                            req.flash('error', 'Uma pena te ver partir.');
+                            res.redirect('/');
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
     } catch (error) {
         console.log(error);
     }
 });
+
 // GET - signup
 router.get('/signup', async (req, res) => {
     try {
@@ -214,8 +231,6 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     const userBio = req.body.userBio ? sanitizeHtml(req.body.userBio) : null;
     const newsletter = req.body.newsletter;
 
-    console.log('Newsletter:', req.body.newsletter);
-
     // Validate form inputs
     if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {
         req.flash('error', 'Todos os campos marcados com * são obrigatórios.');
@@ -243,11 +258,9 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
             const checkSubscriber = await db.query("SELECT * FROM subscribers WHERE email = $1", [email]);
             if (checkSubscriber.rows.length > 0) {
                 req.flash('error', 'Email já cadastrado na newsletter.');
-                console.log('Email já cadastrado na newsletter.');
                 return res.redirect('/user/signup');
             } else {
                 await db.query("INSERT INTO subscribers (email) VALUES ($1)", [email]);
-                console.log('Email cadastrado na newsletter.');
             }
         }
         // password hashing

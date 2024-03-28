@@ -186,6 +186,11 @@ transform-origin: left;
 transform: scaleX(1);
 }
 
+#user-header{
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
 
 /* INDEX PAGE */
 
