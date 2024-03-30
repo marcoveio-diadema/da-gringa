@@ -1,5 +1,14 @@
+import 'dotenv/config';
 import express from 'express';
+import sanitizeHtml from 'sanitize-html';
+import bodyParser from 'body-parser';
+
 const router = express.Router();
+
+// Body parser
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(express.static("public"));
+
 
 // import db
 import db from '../config/db.js';
@@ -27,9 +36,31 @@ router.get('/post/:slug', async (req, res) => {
             // Get the post
             const post = result.rows[0];
 
+            // Fetch the comments for the post
+            const commentsResult = await db.query(`
+                SELECT comments.*, users.username AS author 
+                FROM comments
+                INNER JOIN users ON comments.author_id = users.id 
+                WHERE comments.post_id = $1
+                ORDER BY comments.created_at DESC
+            `, [post.id]);
+            const comments = commentsResult.rows;
+
+            // fetch replies for each comment
+            for (let comment of comments) {
+                const replyResults = await db.query(`
+                    SELECT replies.*, users.username AS author
+                    FROM replies
+                    INNER JOIN users ON replies.author_id = users.id
+                    WHERE replies.comment_id = $1
+                    ORDER BY replies.created_at DESC
+                `, [comment.id]);
+                comment.replies = replyResults.rows;
+            }
+
             // locals and render the post page
             const locals = {
-                title: 'Blog',
+                title: post.title,
                 description: "Tudo sobre como se virar na gringa!"
             }
 
@@ -37,7 +68,9 @@ router.get('/post/:slug', async (req, res) => {
                 locals,
                 post,
                 categories,
-                req: req
+                comments,
+                req: req,
+                user: req.user,
             });
         } else {
             // No post was found, render a 404 page
@@ -135,6 +168,88 @@ router.get('/search', async (req, res) => {
         console.error('Error fetching posts:', error);
         // Render an error page
         res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts' });
+    }
+});
+
+// POST - Comment
+router.post('/comment', async (req, res) => {
+    const comment_text = sanitizeHtml(req.body.comment);
+    const post_id = req.body.postId;
+    const author_id = req.user.id;
+
+    try {
+        // Insert the new comment into the database
+        await db.query('INSERT INTO comments (comment, author_id, post_id) VALUES ($1, $2, $3)', [comment_text, author_id, post_id]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Comment added successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to add the comment. Please try again.' });
+    }
+});
+
+// DELETE - Comment
+router.delete('/comment/:id', async (req, res) => {
+    const commentId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        // Check if the comment exists and belongs to the current user
+        const comment = await db.query('SELECT * FROM comments WHERE id = $1 AND author_id = $2', [commentId, userId]);
+        if (comment.rowCount === 0) {
+            return res.json({ success: false, message: 'Comment not found or you do not have permission to delete this comment.' });
+        }
+
+        // Delete the comment
+        await db.query('DELETE FROM comments WHERE id = $1', [commentId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Comment deleted successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to delete the comment. Please try again.' });
+    }
+});
+
+// POST - replies
+router.post('/reply', async (req, res) => {
+    const reply_text = sanitizeHtml(req.body.reply);
+    const comment_id = req.body.commentId;
+    const author_id = req.user.id;
+
+    try {
+        // Insert the new reply into the database
+        await db.query('INSERT INTO replies (reply, author_id, comment_id) VALUES ($1, $2, $3)', [reply_text, author_id, comment_id]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Reply added successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to add the reply. Please try again.' });
+    }
+});
+
+// DELETE - Reply
+router.delete('/reply/:id', async (req, res) => {
+    const replyId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        // Check if the comment exists and belongs to the current user
+        const reply = await db.query('SELECT * FROM replies WHERE id = $1 AND author_id = $2', [replyId, userId]);
+        if (reply.rowCount === 0) {
+            return res.json({ success: false, message: 'Comment not found or you do not have permission to delete this comment.' });
+        }
+
+        // Delete the comment
+        await db.query('DELETE FROM replies WHERE id = $1', [replyId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Reply deleted successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to delete the comment. Please try again.' });
     }
 });
 

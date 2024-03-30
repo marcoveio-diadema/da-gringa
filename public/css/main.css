@@ -276,6 +276,10 @@ transform: scaleX(1);
     padding: 2rem 0;
 }
 
+.about img {
+    margin: 0 auto;
+}
+
 /* SIGN UP */
 #counter {
     position: absolute;
@@ -296,6 +300,29 @@ transform: scaleX(1);
 .share-icons:hover {
     color: var(--mid-blue);
 }
+
+.reply-textarea {
+    padding-right: 100px !important;
+}
+.comment-button{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.author {
+    font-weight: 500;
+    color: var(--black);
+}
+
+.like-icon {
+    color: var(--mid-blue);
+}
+
+.dislike-icon {
+    color: var(--orange);
+}
+
 
 /* CONTACT */
 #contactCounter {

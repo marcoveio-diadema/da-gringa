@@ -97,3 +97,101 @@ $('#subscribeForm').on('submit', function(e) {
         }
     });
 });
+
+// time since
+$('.comment-time').each(function() {
+    var commentTime = $(this).text();
+    $(this).text(moment(commentTime).fromNow());
+});
+
+// ajax for new comments
+$('#commentForm').on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: '/blog/comment',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response){
+            // reload the page
+            location.reload();
+            
+            // erase the form
+            $('#commentForm')[0].reset();
+            console.log(response);
+        },
+        error: function(xhr, status, error){
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
+
+// ajax for deleting comments
+$('.delete-comment').on('click', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: `/blog/comment/${$(this).data('comment-id')}`,
+        method: 'DELETE',
+        success: function(response) {
+            if (response.success) {
+                // Reload the comments
+                location.reload();
+            } else {
+                // Handle error here
+                console.log(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
+
+// ajax for new replies
+$('#replyForm').on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: '/blog/reply',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response){
+            // reload the page
+            location.reload();
+            
+            // erase the form
+            $('#replyForm')[0].reset();
+            console.log(response);
+        },
+        error: function(xhr, status, error){
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
+
+// ajax for deleting replies
+$('.delete-reply').on('click', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: `/blog/reply/${$(this).data('reply-id')}`,
+        method: 'DELETE',
+        success: function(response) {
+            if (response.success) {
+                // Reload the comments
+                location.reload();
+            } else {
+                // Handle error here
+                console.log(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
