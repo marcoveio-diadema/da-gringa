@@ -24,11 +24,11 @@ router.get('/post/:slug', async (req, res) => {
 
         // Fetch the post from the database
         const result = await db.query(`
-            SELECT post.*, categories.category AS category_name, users.username AS author_username 
-            FROM post
-            INNER JOIN categories ON post.category = categories.id 
-            INNER JOIN users ON post.author = users.id 
-            WHERE post.slug = $1
+            SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+            FROM posts
+            INNER JOIN categories ON posts.category_id = categories.id 
+            INNER JOIN users ON posts.author_id = users.id 
+            WHERE posts.slug = $1
         `, [slug]);
 
         // Check if a post was found
@@ -38,7 +38,7 @@ router.get('/post/:slug', async (req, res) => {
 
             // Fetch the comments for the post
             const commentsResult = await db.query(`
-                SELECT comments.*, users.username AS author 
+                SELECT comments.*, users.username AS author, users.profile_img AS author_img 
                 FROM comments
                 INNER JOIN users ON comments.author_id = users.id 
                 WHERE comments.post_id = $1
@@ -49,7 +49,7 @@ router.get('/post/:slug', async (req, res) => {
             // fetch replies for each comment
             for (let comment of comments) {
                 const replyResults = await db.query(`
-                    SELECT replies.*, users.username AS author
+                    SELECT replies.*, users.username AS author, users.profile_img AS author_img
                     FROM replies
                     INNER JOIN users ON replies.author_id = users.id
                     WHERE replies.comment_id = $1
@@ -91,12 +91,12 @@ router.get('/category/:categoryId', async (req, res) => {
 
         // fetch posts from the database
         const result = await db.query(`
-        SELECT post.*, categories.category AS category_name, users.username AS author_username
-        FROM post
-        INNER JOIN categories ON post.category = categories.id
-        INNER JOIN users ON post.author = users.id
-        WHERE post.category = $1
-        ORDER BY post.created_at DESC
+        SELECT posts.*, categories.category AS category_name, users.username AS author_username
+        FROM posts
+        INNER JOIN categories ON posts.category_id = categories.id
+        INNER JOIN users ON posts.author_id = users.id
+        WHERE posts.category = $1
+        ORDER BY posts.created_at DESC
         `, [categoryId]);
 
         const posts = result.rows;
@@ -137,12 +137,12 @@ router.get('/search', async (req, res) => {
 
         // Fetch posts from the database
         const result = await db.query(`
-            SELECT post.*, categories.category AS category_name, users.username AS author_username 
-            FROM post
-            INNER JOIN categories ON post.category = categories.id 
-            INNER JOIN users ON post.author = users.id 
+            SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+            FROM posts
+            INNER JOIN categories ON posts.category_id = categories.id 
+            INNER JOIN users ON posts.author_id = users.id 
             WHERE post.content ILIKE $1 OR post.title ILIKE $1 OR post.intro ILIKE $1
-            ORDER BY post.created_at DESC
+            ORDER BY posts.created_at DESC
         `, [`%${searchTerm}%`]);
 
         const posts = result.rows;

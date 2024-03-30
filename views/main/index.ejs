@@ -29,6 +29,7 @@
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3">
                 <h2 class="section-title">Últimos Posts:</h2>
+                <% if(posts && posts.length > 0) { %>
                 <div class="blog-posts my-3">
                     <% posts.forEach(post => { %>
                         <a href="/blog/post/<%= post.slug %>">
@@ -74,6 +75,7 @@
                         </a> 
                     <% }) %>                   
                 </div>
+                <% } %>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">

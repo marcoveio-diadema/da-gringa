@@ -170,6 +170,7 @@ router.post('/change-password', ensureAuthenticated, async (req, res) => {
         console.log(error);
     }
 });
+
 // POST - delete profile
 router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
     try {
@@ -177,25 +178,25 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
         const userEmail = req.user.email;
 
         // Log the user out
-        req.logout(() => {
-            // Delete the user's account
-            db.query(`DELETE FROM users WHERE id = $1`, [userId])
-                .then(() => {
-                    // Delete the user's email from the subscribers table
-                    db.query(`DELETE FROM subscribers WHERE email = $1`, [userEmail])
-                        .then(() => {
-                            // Redirect to the login page
-                            req.flash('error', 'Uma pena te ver partir.');
-                            res.redirect('/');
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+        await new Promise((resolve, reject) => {
+            req.logout((err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
         });
+
+        // Delete the user's account
+        await db.query(`DELETE FROM users WHERE id = $1`, [userId]);
+
+        // Delete the user's email from the subscribers table
+        await db.query(`DELETE FROM subscribers WHERE email = $1`, [userEmail]);
+
+        // Redirect to the login page
+        req.flash('error', 'Uma pena te ver partir.');
+        res.redirect('/');
     } catch (error) {
         console.log(error);
     }
@@ -205,8 +206,8 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
 router.get('/signup', async (req, res) => {
     try {
         const locals = {
-            title: "Signup",
-            description: "Signup to admin"
+            title: "Registre-se",
+            description: "Signup to Manual da Gringa"
         }        
         res.render("user/signup.ejs", { 
             locals,
@@ -221,7 +222,7 @@ router.get('/signup', async (req, res) => {
 // POST - signup
 router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     // get data from form
-    const profilePicture = req.file ? await uploadImage(req.file, 'profile/') : null;
+    let profilePicture = req.file ? await uploadImage(req.file, 'profile/') : null;
     const firstName = sanitizeHtml(req.body.firstName);
     const lastName = sanitizeHtml(req.body.lastName);
     const email = sanitizeHtml(req.body.email);
@@ -230,6 +231,13 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
     const confirmPassword = sanitizeHtml(req.body.confirmPassword);
     const userBio = req.body.userBio ? sanitizeHtml(req.body.userBio) : null;
     const newsletter = req.body.newsletter;
+
+    // Generate a Gravatar URL if no profile picture was uploaded
+    if (!profilePicture) {
+        const hash = crypto.createHash('md5').update(email).digest('hex');
+        const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=wavatar`;
+        profilePicture = gravatarUrl;
+    }
 
     // Validate form inputs
     if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {

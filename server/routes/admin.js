@@ -76,11 +76,11 @@ router.get('/', isAdmin, ensureAuthenticated, async (req, res) => {
         const users = usersResult.rows;
 
         const allPostsResult = await db.query(`
-        SELECT post.*, categories.category AS category_name, users.username AS author_username 
-        FROM post
-        INNER JOIN categories ON post.category = categories.id 
-        INNER JOIN users ON post.author = users.id 
-        ORDER BY post.created_at DESC
+        SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+        FROM posts
+        INNER JOIN categories ON posts.category_id = categories.id 
+        INNER JOIN users ON posts.author_id = users.id 
+        ORDER BY posts.created_at DESC
     `);
         const allPosts = allPostsResult.rows;
 
@@ -135,7 +135,7 @@ router.post('/create-post', isAdmin, ensureAuthenticated, upload.single('img_bac
 
     try {
         // Insert the post into the database
-        const result = await db.query('INSERT INTO post (title, slug, intro, content, img_background, category, author) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [title, slug, intro, content, imageUrl, categoryId, authorId ]);
+        const result = await db.query('INSERT INTO posts (title, slug, intro, content, img_background, category_id, author_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [title, slug, intro, content, imageUrl, categoryId, authorId ]);
         const newPost = result.rows[0];
     
         // Redirect to the post page
@@ -164,7 +164,7 @@ router.post('/create-post', isAdmin, ensureAuthenticated, upload.single('img_bac
 router.get('/edit-post/:slug', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         // Fetch the post data from the database
-        const result = await db.query('SELECT * FROM post WHERE slug = $1', [req.params.slug]);
+        const result = await db.query('SELECT * FROM posts WHERE slug = $1', [req.params.slug]);
         const post = result.rows[0];
 
         // Fetch all categories from the database
@@ -209,7 +209,7 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
 
     try {
         // Fetch the current post data from the database
-        const currentPostResult = await db.query('SELECT * FROM post WHERE id = $1', [postId]);
+        const currentPostResult = await db.query('SELECT * FROM posts WHERE id = $1', [postId]);
         const currentPost = currentPostResult.rows[0];
 
         // Check if a new image file has been uploaded
@@ -222,7 +222,7 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
         }
         
         // Update the post in the database
-        const result = await db.query('UPDATE post SET title = $1, slug = $2, intro = $3, content = $4, img_background = $5, category = $6 WHERE id = $7 RETURNING *', [title, slug, intro, content, imageUrl, categoryId, postId]);
+        const result = await db.query('UPDATE post SET title = $1, slug = $2, intro = $3, content = $4, img_background = $5, category_id = $6 WHERE id = $7 RETURNING *', [title, slug, intro, content, imageUrl, categoryId, postId]);
         const updatedPost = result.rows[0];
     
         // Redirect to the post page
@@ -246,7 +246,7 @@ router.post('/delete-post', isAdmin, ensureAuthenticated, async (req, res) => {
         // fetch post data
         const postId = req.body.postId;
         // Delete the post from the database
-        const result = await db.query('DELETE FROM post WHERE id = $1', [postId]);
+        const result = await db.query('DELETE FROM posts WHERE id = $1', [postId]);
     
         // Redirect to the admin page
         res.redirect('/');

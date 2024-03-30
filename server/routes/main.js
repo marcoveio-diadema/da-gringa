@@ -24,11 +24,11 @@ router.get('/', async (req, res) => {
         
         // Fetch posts from the database
         const result = await db.query(`
-            SELECT post.*, categories.category AS category_name, users.username AS author_username 
-            FROM post
-            INNER JOIN categories ON post.category = categories.id 
-            INNER JOIN users ON post.author = users.id 
-            ORDER BY post.created_at DESC
+            SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+            FROM posts
+            INNER JOIN categories ON posts.category_id = categories.id 
+            INNER JOIN users ON posts.author_id = users.id 
+            ORDER BY posts.created_at DESC
         `);
 
         const posts = result.rows;
