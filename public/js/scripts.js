@@ -104,6 +104,12 @@ $('.comment-time').each(function() {
     $(this).text(moment(commentTime, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').fromNow());
 });
 
+// time since for posts
+$('.post-time').each(function() {
+    var postTime = $(this).text();
+    $(this).text(moment(postTime, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').fromNow());
+});
+
 // ajax for new comments
 $('#commentForm').on('submit', function(e){
     e.preventDefault();

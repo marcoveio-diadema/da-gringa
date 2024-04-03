@@ -4,6 +4,7 @@ const router = express.Router();
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import sanitizeHtml from 'sanitize-html';
+import moment from 'moment';
 
 // import db
 import db from '../config/db.js';
@@ -229,6 +230,7 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
     const title = req.body["title"];
     const intro = req.body["intro"];
     const content = customSanitizeHtml(req.body["content"]);
+    const content2 = customSanitizeHtml(req.body["content2"]);
     const categoryId = req.body["category"];
     const postId = req.body["postId"];
     const slug = generateSlug(title);
@@ -246,9 +248,12 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
             // Use the existing image URL from the database
             imageUrl = currentPost.img_background;
         }
+
+        // Get the current date and time as a string in a specific format
+        const updatedAt = moment().format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
         
         // Update the post in the database
-        const result = await db.query('UPDATE post SET title = $1, slug = $2, intro = $3, content = $4, img_background = $5, category_id = $6 WHERE id = $7 RETURNING *', [title, slug, intro, content, imageUrl, categoryId, postId]);
+        const result = await db.query('UPDATE posts SET title = $1, slug = $2, intro = $3, content = $4, content2 = $5, img_background = $6, category_id = $7, updated_at = $8 WHERE id = $9 RETURNING *', [title, slug, intro, content, content2, imageUrl, categoryId, updatedAt, postId]);
         const updatedPost = result.rows[0];
     
         // Redirect to the post page

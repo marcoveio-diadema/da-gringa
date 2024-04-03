@@ -41,21 +41,30 @@
                                                    
                                                    <!-- post date, author and read more -->
                                                    <div class="row">
-                                                       <div class="col-4">
-                                                           <p class="card-text"><small class="text-body-secondary">Por: <strong>Marquinhos</strong></small></p>
-                                                       </div>
-                                                       <div class="col-4">
-                                                           <% if (post.updated_at) { %>
-                                                               <p class="card-text"><small class=""><%= post.updated_at.toLocaleDateString('pt-BR') %> </small></p>
-                                                           <% } else { %>
-                                                               <p class="card-text"><small class=""><%= post.created_at.toLocaleDateString('pt-BR') %></small></p>
-                                                           <% } %>
-                                                       </div>
-                                                       <div class="col-4">
-                                                           <button class="btn btn-custom btn-sm">
-                                                               <i class="fa-solid fa-arrow-right-long"></i>
-                                                           </button>
-                                                       </div>
+                                                        <div class="col-4">
+                                                            <p class="card-text"><small class="text-body-secondary">
+                                                                <i class="fa-solid fa-pen-to-square fa-xl"></i> <strong>Marquinhos</strong></small>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <% if (post.updated_at) { %>
+                                                                <p class="card-text post-time">
+                                                                    <small class="text-body-secondary">
+                                                                        <i class="fa-solid fa-calendar-check fa-xl"></i>
+                                                                        <span class="post-time"><%= post.updated_at %></span>
+                                                                    </small>
+                                                                </p>
+                                                            <% } else { %>
+                                                                <p class="card-text"><small class="text-body-secondary">
+                                                                    <i class="fa-solid fa-calendar-check fa-xl"></i>  <%= post.created_at.toLocaleDateString('pt-BR') %></small>
+                                                                </p>
+                                                            <% } %>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <button class="btn btn-custom btn-sm">
+                                                                <i class="fa-solid fa-arrow-right-long"></i>
+                                                            </button>
+                                                        </div>
                                                    </div>
                                                </div>
                                            </div>

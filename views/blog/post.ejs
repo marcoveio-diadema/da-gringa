@@ -13,7 +13,7 @@
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3">
                 <!-- post intro -->
-                <h4 class=""><%= post.intro %></h4>
+                <h4 class="text-secondary"><%= post.intro %></h4>
                 <!-- post details -->
                 <div class="container">
                     <div class="row text-center mt-4">
@@ -21,9 +21,9 @@
                             <p class=""><small class=""><i class="fa-solid fa-pen-to-square fa-xl"></i> <strong><%= post.author_username %></strong></small></p>
                         </div>
                         <div class="col-4">
-                            <p class="small"> <i class="fa-solid fa-calendar-check fa-xl"></i>  <%= post.created_at.toLocaleDateString('pt-BR'); %> <br>
+                            <p class="small"> <i class="fa-solid fa-calendar-check fa-xl"></i>  <%= post.created_at.toLocaleDateString('pt-BR'); %> <br><br>
                                <% if (post.updated_at) { %>
-                                <span>Atualizado: <%= post.updated_at.toLocaleDateString('pt-BR') %> </span>
+                                <span>Atualizado: <span class="post-time"><%= post.updated_at %></span></span>
                                <% } %>
                             </p>
                         </div>
@@ -55,8 +55,21 @@
 
                 <hr>
                 <!-- post content -->
-                <div class="post-content my-3 px-3">
+                <div class="post-content my-2 px-2 py-2">
                     <p><%- post.content %></p>                
+                </div>
+                <!-- related posts -->
+                <div class="related-posts my-4 mx-3 px-3 py-2 border rounded shadow">
+                    <h6 style="color: var(--orange);">Leia também:</h6>
+                    <blockquote class="blockquote">
+                        <a href="#">
+                            <p style="color: var(--mid-blue);">A well-known quote, contained in a blockquote element.</p>
+                        </a>
+                      </blockquote>
+                </div>
+                <!-- post content 2 -->
+                <div class="post-content2 my-2 px-2 py-2">
+                    <p><%- post.content2 %></p>
                 </div>
                 <hr>
                 <% if (!user) { %>

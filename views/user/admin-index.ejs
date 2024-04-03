@@ -65,7 +65,7 @@
                                         <td> <%= post.category_name %></td>
                                         <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
                                         <% if (post.updated_at) { %>
-                                            <td><%= post.updated_at.toLocaleDateString('pt-BR'); %></td>
+                                            <td class="post-time"><%= post.updated_at %></td>
                                         <% } else { %>
                                             <td class="text-center"> - </td>
                                         <% } %>
