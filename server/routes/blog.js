@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import sanitizeHtml from 'sanitize-html';
 import bodyParser from 'body-parser';
+import moment from 'moment';
 
 const router = express.Router();
 
@@ -36,6 +37,18 @@ router.get('/post/:slug', async (req, res) => {
             // Get the post
             const post = result.rows[0];
 
+             // Fetch the other posts from the same category
+            const otherPostsResult = await db.query(`
+                SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+                FROM posts
+                INNER JOIN categories ON posts.category_id = categories.id 
+                INNER JOIN users ON posts.author_id = users.id 
+                WHERE posts.category_id = $1 AND posts.id != $2
+                ORDER BY posts.created_at DESC
+                LIMIT 3
+            `, [post.category_id, post.id]);
+            const otherPosts = otherPostsResult.rows;
+
             // Fetch the comments for the post
             const commentsResult = await db.query(`
                 SELECT comments.*, users.username AS author, users.profile_img AS author_img 
@@ -67,6 +80,7 @@ router.get('/post/:slug', async (req, res) => {
             res.render('blog/post.ejs', { 
                 locals,
                 post,
+                otherPosts,
                 categories,
                 comments,
                 req: req,
@@ -96,7 +110,7 @@ router.get('/category/:categoryId', async (req, res) => {
         INNER JOIN categories ON posts.category_id = categories.id
         INNER JOIN users ON posts.author_id = users.id
         WHERE posts.category_id = $1
-        ORDER BY posts.created_at DESC
+        ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
         `, [categoryId]);
 
         const posts = result.rows;
@@ -142,7 +156,7 @@ router.get('/search', async (req, res) => {
             INNER JOIN categories ON posts.category_id = categories.id 
             INNER JOIN users ON posts.author_id = users.id 
             WHERE posts.content ILIKE $1 OR posts.title ILIKE $1 OR posts.intro ILIKE $1
-            ORDER BY posts.created_at DESC
+            ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
         `, [`%${searchTerm}%`]);
 
         const posts = result.rows;

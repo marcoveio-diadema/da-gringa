@@ -18,8 +18,34 @@
         <script src="https://cdn.tiny.cloud/1/11xuy3s6yi5sa80fxtitgcuaoignyqi3oafwv3mg3vaxnck1/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     </head>
     <body>
+
         <!-- header partial -->
         <%- include('../partials/header.ejs') %>
+
+        <!-- Modal -->
+      <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="searchModalLabel">Busca no site</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- search form -->
+              <div class="search-nav-modal" id="searchNav">
+                <form action="/blog/search" method="GET" class="px-4 py-3">
+                  <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Busca rápida">
+                    <button class="btn btn-light search-button" type="submit">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <!-- content for the current page -->
         <main class="main">

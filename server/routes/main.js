@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import sanitizeHtml from 'sanitize-html';
+import moment from 'moment';
 const router = express.Router();
 
 // Body parser
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
             FROM posts
             INNER JOIN categories ON posts.category_id = categories.id 
             INNER JOIN users ON posts.author_id = users.id 
-            ORDER BY posts.created_at DESC
+            ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
         `);
 
         const posts = result.rows;

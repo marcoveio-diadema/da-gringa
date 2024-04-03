@@ -241,7 +241,7 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
         const imageUrl = await handleImageUpload(currentPost.img_background, req.file, 'posts/');
 
         // Get the current date and time as a string in a specific format
-        const updatedAt = moment().format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+        const updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
         
         // Update the post in the database
         const result = await db.query('UPDATE posts SET title = $1, slug = $2, intro = $3, content = $4, content2 = $5, img_background = $6, category_id = $7, updated_at = $8 WHERE id = $9 RETURNING *', [title, slug, intro, content, content2, imageUrl, categoryId, updatedAt, postId]);

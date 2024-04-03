@@ -5,6 +5,7 @@ import expressLayout from 'express-ejs-layouts';
 import passport from 'passport';
 import session from 'express-session';
 import flash from 'express-flash';
+import moment from 'moment';
 
 // import routes
 import mainRoutes from './server/routes/main.js';
@@ -21,6 +22,12 @@ app.use(express.static('public'));
 
 // flash messages
 app.use(flash());
+
+// moment.js middleware
+app.use((req, res, next) => {
+    res.locals.moment = moment;
+    next();
+  });
 
 // middleware for templating
 app.use(expressLayout);

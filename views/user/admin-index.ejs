@@ -5,11 +5,11 @@
             <div class="col-md-3">
                 <div class="admin-menu">
                     <h4 >Painel de Controle</h4>
-                    <ul class="list-group">
-                        <li class="list-group">
-                            <a href="/admin/create-post" target="_blank" class="list-group-item list-group-item-action">Novo Post</a>
-                        </li>
-                        <hr>
+                    <div class="container">
+                        <a href="/admin/create-post" class="btn btn-custom text-center" target="_blank">Novo Post</a>
+                    </div>
+                    <hr>
+                    <ul class="list-group">                        
                         <li class="list-group mb-2" id="posts">
                             <a href="#" class="list-group-item list-group-item-action">Todos os posts</a>
                         </li>
@@ -59,7 +59,7 @@
                                 <% allPosts.forEach(post => { %>
                                     <tr>
                                         <th scope="row"><%= post.id %></th>
-                                        <td>
+                                        <td class="name-table">
                                             <a href="/blog/post/<%= post.slug %>" target="_blank"><%= post.title %></a>
                                         </td>
                                         <td> <%= post.category_name %></td>
@@ -187,7 +187,7 @@
                                 <% comments.forEach(comment => { %>
                                 <tr>
                                     <th scope="row"><%= comment.id %></th>
-                                    <td><%= comment.comment %></td>
+                                    <td class="name-table"><%= comment.comment %></td>
                                     <td><%= comment.post_title %></td>
                                     <td><%= comment.author_username %></td>
                                     <td><%= comment.created_at.toLocaleDateString('pt-BR'); %></td>
@@ -226,7 +226,7 @@
                                 <% replies.forEach(reply => { %>
                                     <tr>
                                         <th scope="row"><%= reply.id %></th>
-                                        <td><%= reply.comment %></td>
+                                        <td class="name-table"><%= reply.comment %></td>
                                         <td><%= reply.reply %></td>
                                         <td><%= reply.author_username %></td>
                                         <td><%= reply.created_at.toLocaleDateString('pt-BR'); %></td>

@@ -27,7 +27,6 @@ h1, h2, h3, h4, h5, h6 {
 
 /* INDEX PAGE */
 
-
 /* heading section */
 .section-big-heading {
     position: relative;
@@ -51,6 +50,10 @@ h1, h2, h3, h4, h5, h6 {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Black color with 50% opacity */
 }
+
+.section-admin {
+    margin-top: 150px !important;
+}
 .admin-menu {
     padding: 1.5rem 1rem;
 }
@@ -65,4 +68,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .table-responsive {
     overflow-x: auto;
+}
+
+@media screen and (max-width: 992px) {
+    .section-big-heading {
+        height: 500px;
+    }
+
+    .name-table{
+        min-width: 200px !important;
+    }
+    
 }
