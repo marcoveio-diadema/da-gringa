@@ -59,15 +59,10 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
-
 // GET - Admin page
 router.get('/', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
-        const locals = {
-            title: "Admin",
-            description: "Simple blog created with NodeJs"
-        }   
-        
+       
         // fetch data from db
         const categoriesResult = await db.query("SELECT * FROM categories ORDER BY id DESC");
         const categories = categoriesResult.rows;
@@ -84,11 +79,41 @@ router.get('/', isAdmin, ensureAuthenticated, async (req, res) => {
     `);
         const allPosts = allPostsResult.rows;
 
+        const subscribersResult = await db.query("SELECT * FROM subscribers ORDER BY id DESC");
+        const subscribers = subscribersResult.rows;
+
+        const commentsResult = await db.query(`
+        SELECT comments.*, posts.title AS post_title, users.username AS author_username
+        FROM comments
+        INNER JOIN posts ON comments.post_id = posts.id
+        INNER JOIN users ON comments.author_id = users.id
+        ORDER BY id DESC
+    `);
+        const comments = commentsResult.rows;
+
+        const replyResult = await db.query(`
+        SELECT replies.*, comments.comment AS comment, users.username AS author_username
+        FROM replies
+        INNER JOIN comments ON replies.comment_id = comments.id
+        INNER JOIN users ON replies.author_id = users.id
+        ORDER BY id DESC
+    `);
+        const replies = replyResult.rows;
+
+        // locals
+        const locals = {
+            title: "Área do administrador",
+            description: "Simple blog created with NodeJs"
+        }   
+
         res.render("user/admin-index.ejs", { 
             locals,
             user: req.user,
             categories,
             users,
+            subscribers,
+            replies,
+            comments,
             allPosts,
         });
     } catch (error) {
@@ -125,6 +150,7 @@ router.post('/create-post', isAdmin, ensureAuthenticated, upload.single('img_bac
     const title = req.body["title"];
     const intro = req.body["intro"];
     const content = customSanitizeHtml(req.body["content"]);
+    const content2 = customSanitizeHtml(req.body["content2"]);
     const categoryId = req.body["category"];
 
     // Generate the slug from the title
@@ -135,7 +161,7 @@ router.post('/create-post', isAdmin, ensureAuthenticated, upload.single('img_bac
 
     try {
         // Insert the post into the database
-        const result = await db.query('INSERT INTO posts (title, slug, intro, content, img_background, category_id, author_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [title, slug, intro, content, imageUrl, categoryId, authorId ]);
+        const result = await db.query('INSERT INTO posts (title, slug, intro, content, content2, img_background, category_id, author_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [title, slug, intro, content, content2, imageUrl, categoryId, authorId ]);
         const newPost = result.rows[0];
     
         // Redirect to the post page
@@ -249,7 +275,7 @@ router.post('/delete-post', isAdmin, ensureAuthenticated, async (req, res) => {
         const result = await db.query('DELETE FROM posts WHERE id = $1', [postId]);
     
         // Redirect to the admin page
-        res.redirect('/');
+        res.redirect('/admin/');
     } catch (error) {
         console.error('Error deleting post:', error);
         // Set the error message
@@ -279,7 +305,51 @@ router.post('/delete-category', isAdmin, ensureAuthenticated, async (req, res) =
     try {
         const categoryId = req.body.categoryId;
         const result = await db.query("DELETE FROM categories WHERE id = $1", [categoryId]);
-        res.redirect('/');
+        res.redirect('/admin/');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST - Delete user
+router.post('/delete-user', isAdmin, ensureAuthenticated, async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const result = await db.query("DELETE FROM users WHERE id = $1", [userId]);
+        res.redirect('/admin/');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST - Delete subscriber
+router.post('/delete-subscriber', isAdmin, ensureAuthenticated, async (req, res) => {
+    try {
+        const subscriberId = req.body.subscriberId;
+        const result = await db.query("DELETE FROM subscribers WHERE id = $1", [subscriberId]);
+        res.redirect('/admin/');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST - Delete comment
+router.post('/delete-comment', isAdmin, ensureAuthenticated, async (req, res) => {
+    try {
+        const commentId = req.body.commentId;
+        const result = await db.query("DELETE FROM comments WHERE id = $1", [commentId]);
+        res.redirect('/admin/');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST - Delete reply
+router.post('/delete-reply', isAdmin, ensureAuthenticated, async (req, res) => {
+    try {
+        const replyId = req.body.replyId;
+        const result = await db.query("DELETE FROM replies WHERE id = $1", [replyId]);
+        res.redirect('/admin/');
     } catch (error) {
         console.log(error);
     }

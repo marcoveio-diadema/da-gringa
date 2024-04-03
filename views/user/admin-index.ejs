@@ -4,188 +4,281 @@
             <!-- menu bar -->
             <div class="col-md-3">
                 <div class="admin-menu">
-                    <h4>Painel de Controle</h4>
+                    <h4 >Painel de Controle</h4>
                     <ul class="list-group">
                         <li class="list-group">
                             <a href="/admin/create-post" target="_blank" class="list-group-item list-group-item-action">Novo Post</a>
                         </li>
                         <hr>
-                        <li class="list-group">
+                        <li class="list-group mb-2" id="posts">
                             <a href="#" class="list-group-item list-group-item-action">Todos os posts</a>
                         </li>
-                        <li class="list-group">
+                        <li class="list-group mb-2" id="categories">
                             <a href="#" class="list-group-item list-group-item-action">Categorias</a>
                         </li>
-                        <li class="list-group">
+                        <li class="list-group mb-2" id="newsletter">
                             <a href="#" class="list-group-item list-group-item-action">Newsletter</a>
                         </li>
-                        <li class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action">Comentários</a>
+                        <li class="list-group mb-2" id="comments">
+                            <a href="#" class="list-group-item list-group-item-action">Comentarios</a>
                         </li>
-                        <li class="list-group">
+                        <li class="list-group mb-2" id="replies">
+                            <a href="#" class="list-group-item list-group-item-action">Respostas</a>
+                        </li>
+                        <li class="list-group mb-2" id="users">
                             <a href="#" class="list-group-item list-group-item-action">Usuários</a>
                         </li>
                         <hr>
                         <li class="list-group">
-                            <a href="/user/logout" class="list-group-item btn btn-primary">Logout</a>
+                            <a href="/user/logout" class="list-group-item btn btn-outline-danger">Logout</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <!-- main content -->
-            <div class="col-md-9">
+            <div class="col-md-9 admin-stuff">
                 <!-- all posts -->
-                <h4>Todos os posts</h4>
                 <div class="container-posts">
-                    <table class="table mx-auto">
-                        <thead>
-                          <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Category</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Updated</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <% allPosts.forEach(post => { %>
-                                <tr>
-                                    <th scope="row"><%= post.id %></th>
-                                    <td>
-                                        <a href="/blog/post/<%= post.slug %>" target="_blank"><%= post.title %></a>
-                                    </td>
-                                    <td> <%= post.category_name %></td>
-                                    <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
-                                    <% if (post.updated_at) { %>
-                                        <td><%= post.updated_at.toLocaleDateString('pt-BR'); %></td>
-                                    <% } else { %>
-                                        <td class="text-center"> - </td>
-                                    <% } %>
-                                    <td>
-                                        <!-- edit post -->
-                                        <a href="/admin/edit-post/<%= post.slug %>" target="_blank">Edit</a> / 
-                                        <!-- delete post -->
-                                        <form action="/admin/delete-post" method="POST">
-                                        <input type="hidden" name="postId" value="<%= post.id %>">
-                                        <button type="submit" class="btn">Delete</button>
-                                    </form></td>
-                                  </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
+                    <h4 class="text-center mb-3">Todos os posts</h4>
+                    <% if (allPosts.length === 0) { %>
+                        <p class="text-center">Nenhum post encontrado</p>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table mx-auto">
+                            <thead>
+                              <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <% allPosts.forEach(post => { %>
+                                    <tr>
+                                        <th scope="row"><%= post.id %></th>
+                                        <td>
+                                            <a href="/blog/post/<%= post.slug %>" target="_blank"><%= post.title %></a>
+                                        </td>
+                                        <td> <%= post.category_name %></td>
+                                        <td> <%= post.created_at.toLocaleDateString('pt-BR'); %></td>
+                                        <% if (post.updated_at) { %>
+                                            <td><%= post.updated_at.toLocaleDateString('pt-BR'); %></td>
+                                        <% } else { %>
+                                            <td class="text-center"> - </td>
+                                        <% } %>
+                                        <td>
+                                            <!-- edit post -->
+                                            <a href="/admin/edit-post/<%= post.slug %>" target="_blank">Edit</a> / 
+                                            <!-- delete post -->
+                                            <form action="/admin/delete-post" method="POST">
+                                            <input type="hidden" name="postId" value="<%= post.id %>">
+                                            <button type="submit" class="btn btn-delete">Delete</button>
+                                        </form></td>
+                                      </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
                 </div>
-                <!-- categories -->                
-                <h4>Categorias</h4>
-                <div class="new-category col-md-6 mx-auto">
-                    <h6>Nova Categoria</h6>
-                    <form action="/admin/new-category" method="POST">
-                        <div class="form-floating mb-3">
-                            <input type="text" name="categoryName" class="form-control" id="categoryNameInput" placeholder="Nome da categoria">
-                            <label for="categoryNameInput">Nome da categoria</label>
-                        </div>
-                        <div class="submit-button text-center mb-3">
-                            <button type="submit" class="btn btn-primary">Criar categoria</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- categories list -->
-                <div class="container-categories">
-                    <table class="table mx-auto">
-                        <thead>
-                            <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Category name</th>
-                            <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% categories.forEach(category => { %>
-                                <tr>
-                                    <th scope="row"><%= category.id %></th>
-                                    <td><%= category.category %></td>
-                                    <td>
-                                        <form action="/admin/delete-category" method="POST">
-                                            <input type="hidden" name="categoryId" value="<%= category.id %>">
-                                            <button type="submit" class="btn">Delete</button>
-                                        </form>
-                                    </td>
+                <!-- categories -->  
+                <div class="container-categories">                                  
+                    <h4 class="text-center mb-3">Categorias</h4>
+                    <div class="new-category col-md-6 mx-auto">
+                        <h6>Nova Categoria</h6>
+                        <form action="/admin/new-category" method="POST">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="categoryName" class="form-control" id="categoryNameInput" placeholder="Nome da categoria">
+                                <label for="categoryNameInput">Nome da categoria</label>
+                            </div>
+                            <div class="submit-button text-center mb-3">
+                                <button type="submit" class="btn btn-custom">Criar categoria</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- categories list -->
+                    <div class="container-categories-list">
+                        <% if (categories.length === 0) { %>
+                            <p class="text-center">Nenhuma categoria encontrada</p>
+                        <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table mx-auto">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Category name</th>
+                                    <th scope="col">Action</th>
                                     </tr>
-                            <% }) %>                            
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    <% categories.forEach(category => { %>
+                                        <tr>
+                                            <th scope="row"><%= category.id %></th>
+                                            <td><%= category.category %></td>
+                                            <td>
+                                                <form action="/admin/delete-category" method="POST">
+                                                    <input type="hidden" name="categoryId" value="<%= category.id %>">
+                                                    <button type="submit" class="btn btn-delete">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }) %>                            
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+                    </div>
                 </div>
                 <!-- newsletter -->
-                <h4>Newsletter</h4>
                 <div class="container-newsletter">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Signup date</th>
-                            <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <th scope="row">1</th>
-                            <td>mark@mail.com</td>
-                            <td>02/02/2002</td>
-                            <td><a href="">Delete</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <h4 class="text-center mb-3">Newsletter</h4>
+                    <% if (subscribers.length === 0) { %>
+                        <p class="text-center">Nenhum email cadastrado</p>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table mx-auto">
+                            <thead>
+                                <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% subscribers.forEach(subscriber => { %>        
+                                    <tr>
+                                        <th scope="row"><%= subscriber.id %></th>
+                                        <td><%= subscriber.email %></td>
+                                        <td>
+                                            <form action="/admin/delete-subscriber" method="POST">
+                                                <input type="hidden" name="subscriberId" value="<%= subscriber.id %>">
+                                                <button type="submit" class="btn btn-delete">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
                 </div>
                 <!-- comments -->
-                <h4>Comentários</h4>
-                <div class="container-newsletter">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Comment</th>
-                            <th scope="col">Post</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <th scope="row">1</th>
-                            <td>Lorem ipsum dolor sit amet consectetur adipisicing.</td>
-                            <td>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae, iusto.</td>
-                            <td>02/02/2002</td>
-                            <td><a href="">Delete</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="container-comments">
+                    <h4 class="text-center mb-3">Comentários</h4>
+                    <% if (comments.length === 0) { %>
+                        <p class="text-center">Nenhum comentário encontrado</p>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table mx-auto">
+                            <thead>
+                                <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Comment</th>
+                                <th scope="col">Post</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% comments.forEach(comment => { %>
+                                <tr>
+                                    <th scope="row"><%= comment.id %></th>
+                                    <td><%= comment.comment %></td>
+                                    <td><%= comment.post_title %></td>
+                                    <td><%= comment.author_username %></td>
+                                    <td><%= comment.created_at.toLocaleDateString('pt-BR'); %></td>
+                                    <td>
+                                        <form action="/admin/delete-comment" method="POST">
+                                            <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                            <button type="submit" class="btn btn-delete">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
+                </div>
+                <!-- replies -->
+                <div class="container-replies">
+                    <h4 class="text-center mb-3">Respostas</h4>
+                    <% if (replies.length === 0) { %>
+                        <p class="text-center">Nenhuma resposta encontrada</p>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table mx-auto">
+                            <thead>
+                                <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Comment</th>
+                                <th scope="col">Reply</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% replies.forEach(reply => { %>
+                                    <tr>
+                                        <th scope="row"><%= reply.id %></th>
+                                        <td><%= reply.comment %></td>
+                                        <td><%= reply.reply %></td>
+                                        <td><%= reply.author_username %></td>
+                                        <td><%= reply.created_at.toLocaleDateString('pt-BR'); %></td>
+                                        <td>
+                                            <form action="/admin/delete-reply" method="POST">
+                                                <input type="hidden" name="replyId" value="<%= reply.id %>">
+                                                <button type="submit" class="btn btn-delete">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }) %>                            
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
                 </div>
                 <!-- users -->
-                <h4>Usuários</h4>
-                <div class="container-newsletter">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Usuário</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Nome</th>
-                            <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% users.forEach(user => { %>
+                <div class="container-users">
+                    <h4 class="text-center mb-3">Usuários</h4>
+                    <% if (users.length === 0) { %>
+                        <p class="text-center">Nenhum usuário encontrado</p>
+                    <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table mx-auto">
+                            <thead>
                                 <tr>
-                                    <th scope="row"><%= user.id %></th>
-                                    <td><%= user.username %></td>
-                                    <td><%= user.email %></td>
-                                    <td><%= user.first_name %> <%= user.last_name %></td>
-                                    <td><a href="">Delete</a></td>
+                                <th scope="col">Id</th>
+                                <th scope="col">Usuário</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% users.forEach(user => { %>
+                                    <tr>
+                                        <th scope="row"><%= user.id %></th>
+                                        <td><%= user.username %></td>
+                                        <td><%= user.email %></td>
+                                        <td><%= user.first_name %> <%= user.last_name %></td>
+                                        <td>
+                                            <form action="/admin/delete-user" method="POST">
+                                                <input type="hidden" name="userId" value="<%= user.id %>">
+                                                <button type="submit" class="btn btn-delete">Delete</button>
+                                            </form>
+                                        </td>
                                     </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>

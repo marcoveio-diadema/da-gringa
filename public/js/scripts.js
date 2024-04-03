@@ -101,7 +101,7 @@ $('#subscribeForm').on('submit', function(e) {
 // time since
 $('.comment-time').each(function() {
     var commentTime = $(this).text();
-    $(this).text(moment(commentTime).fromNow());
+    $(this).text(moment(commentTime, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').fromNow());
 });
 
 // ajax for new comments

@@ -95,7 +95,7 @@ router.get('/category/:categoryId', async (req, res) => {
         FROM posts
         INNER JOIN categories ON posts.category_id = categories.id
         INNER JOIN users ON posts.author_id = users.id
-        WHERE posts.category = $1
+        WHERE posts.category_id = $1
         ORDER BY posts.created_at DESC
         `, [categoryId]);
 
@@ -110,7 +110,7 @@ router.get('/category/:categoryId', async (req, res) => {
         const otherCategories = categoriesResult.rows.filter(category => category.id != categoryId);
     
         const locals = {
-        title: 'Categoria',
+        title: 'Categoria: ' + category.category,
         description: "Tudo sobre como se virar na gringa!"
         }
         res.render('blog/category.ejs', { 
@@ -141,7 +141,7 @@ router.get('/search', async (req, res) => {
             FROM posts
             INNER JOIN categories ON posts.category_id = categories.id 
             INNER JOIN users ON posts.author_id = users.id 
-            WHERE post.content ILIKE $1 OR post.title ILIKE $1 OR post.intro ILIKE $1
+            WHERE posts.content ILIKE $1 OR posts.title ILIKE $1 OR posts.intro ILIKE $1
             ORDER BY posts.created_at DESC
         `, [`%${searchTerm}%`]);
 
@@ -152,7 +152,7 @@ router.get('/search', async (req, res) => {
         const categories = categoriesResult.rows;
 
         const locals = {
-            title: 'Search',
+            title: 'Busca no blog',
             description: "Search results"
         }
 
