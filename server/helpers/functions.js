@@ -52,6 +52,28 @@ async function uploadImage(file, folderName = '') {
     }
 }
 
+// delete old image and upload new image
+async function handleImageUpload(oldImageUrl, newImageFile, directory) {
+  let imageUrl;
+
+  // Check if a new image file has been uploaded
+  if (newImageFile) {
+      // Delete the old image from Google Cloud Storage
+      if (oldImageUrl) {
+          const oldImageName = oldImageUrl.split('?')[0].split('/').pop();
+          await storage.bucket('manual_posts_images').file(directory + oldImageName).delete();
+      }
+
+      // Upload the new image to Google Cloud Storage
+      imageUrl = await uploadImage(newImageFile, directory);
+  } else {
+      // Use the existing image URL
+      imageUrl = oldImageUrl;
+  }
+
+  return imageUrl;
+}
+
 // sanitize-html.js
 const customSanitizeHtml = (html) => {
     return sanitizeHtml(html, {
@@ -123,5 +145,5 @@ async function sendContactEmail(name, email, phone, message) {
     console.log("Message sent: %s", info.messageId);
 }
 
-const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail, sendContactEmail };
+const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail, sendContactEmail, handleImageUpload, storage };
 export default config;

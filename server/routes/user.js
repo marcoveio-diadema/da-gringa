@@ -14,7 +14,7 @@ import db from '../config/db.js';
 
 // import functions
 import config from '../helpers/functions.js';
-const { uploadImage, sendPasswordResetEmail } = config;
+const { uploadImage, sendPasswordResetEmail, handleImageUpload, storage } = config;
 
 // set number of salts
 const saltRounds = 10;
@@ -114,7 +114,10 @@ router.post('/edit-profile', ensureAuthenticated, async (req, res) => {
 // POST - edit picture
 router.post('/update-picture', ensureAuthenticated, upload.single('profilePicture'), async (req, res) => {
     try {
-        const profilePicture = await uploadImage(req.file, 'profile/');
+        // Handle the image upload and deletion
+        const profilePicture = await handleImageUpload(req.user.profile_img, req.file, 'profile/');
+        
+        // Update the user's profile picture
         await db.query(
             `UPDATE users SET profile_img = $1 WHERE id = $2`,
             [profilePicture, req.user.id]
@@ -176,6 +179,7 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
     try {
         const userId = req.user.id;
         const userEmail = req.user.email;
+        const profileImage = req.user.profile_img;
 
         // Log the user out
         await new Promise((resolve, reject) => {
@@ -187,6 +191,12 @@ router.post('/delete-profile', ensureAuthenticated, async (req, res) => {
                 }
             });
         });
+
+         // Delete the user's profile image from Google Cloud Storage
+         if (profileImage) {
+            const imageName = profileImage.split('?')[0].split('/').pop();
+            await storage.bucket('manual_posts_images').file('profile/' + imageName).delete();
+        }
 
         // Delete the user's account
         await db.query(`DELETE FROM users WHERE id = $1`, [userId]);

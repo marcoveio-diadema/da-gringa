@@ -11,7 +11,7 @@ import db from '../config/db.js';
 
 // import functions
 import config from '../helpers/functions.js';
-const { uploadImage, customSanitizeHtml, generateSlug } = config;
+const { uploadImage, customSanitizeHtml, generateSlug, handleImageUpload, storage } = config;
 
 // set number of salts
 const saltRounds = 10;
@@ -223,9 +223,6 @@ router.get('/edit-post/:slug', isAdmin, ensureAuthenticated, async (req, res) =>
 
 // POST - Edit post
 router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_background'), async (req, res) => {
-    // image url
-    let imageUrl;
-
     // other data from form
     const title = req.body["title"];
     const intro = req.body["intro"];
@@ -240,14 +237,8 @@ router.post('/edit-post', isAdmin, ensureAuthenticated, upload.single('img_backg
         const currentPostResult = await db.query('SELECT * FROM posts WHERE id = $1', [postId]);
         const currentPost = currentPostResult.rows[0];
 
-        // Check if a new image file has been uploaded
-        if (req.file) {
-            // Upload the new image to Google Cloud Storage
-            imageUrl = await uploadImage(req.file, 'posts/');
-        } else {
-            // Use the existing image URL from the database
-            imageUrl = currentPost.img_background;
-        }
+        // Handle the image upload and deletion
+        const imageUrl = await handleImageUpload(currentPost.img_background, req.file, 'posts/');
 
         // Get the current date and time as a string in a specific format
         const updatedAt = moment().format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
@@ -276,6 +267,13 @@ router.post('/delete-post', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         // fetch post data
         const postId = req.body.postId;
+
+        // Fetch the post data from the database
+        const postResult = await db.query('SELECT * FROM posts WHERE id = $1', [postId]);
+        const image = postResult.rows[0].img_background;
+        // delete image from google cloud storage
+        await storage.bucket('manual_posts_images').file('posts/' + image.split('?')[0].split('/').pop()).delete();
+
         // Delete the post from the database
         const result = await db.query('DELETE FROM posts WHERE id = $1', [postId]);
     
@@ -320,7 +318,20 @@ router.post('/delete-category', isAdmin, ensureAuthenticated, async (req, res) =
 router.post('/delete-user', isAdmin, ensureAuthenticated, async (req, res) => {
     try {
         const userId = req.body.userId;
+
+        // Fetch the user's data from the database
+        const userResult = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+        const user = userResult.rows[0];
+
+        // Delete the user's profile image from Google Cloud Storage
+        if (user.profile_img) {
+            const imageName = user.profile_img.split('?')[0].split('/').pop();
+            await storage.bucket('manual_posts_images').file('profile/' + imageName).delete();
+        }
+
+        // Delete the user from the database
         const result = await db.query("DELETE FROM users WHERE id = $1", [userId]);
+
         res.redirect('/admin/');
     } catch (error) {
         console.log(error);
