@@ -53,8 +53,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// flash messages
-app.use(flash());
 
 // middleware to set loggedIn variable
 app.use((req, res, next) => {
@@ -62,6 +60,9 @@ app.use((req, res, next) => {
     res.locals.user = req.user ? req.user : null;
     next();
 });
+
+// flash messages
+app.use(flash());
 
 // routes
 app.use('/', mainRoutes);
