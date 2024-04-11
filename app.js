@@ -6,7 +6,7 @@ import passport from 'passport';
 import session from 'express-session';
 import flash from 'express-flash';
 import moment from 'moment';
-import pgSession from 'connect-pg-simple';
+import connectPgSimple from 'connect-pg-simple';
 import db from './server/config/db.js';
 
 // import routes
@@ -34,6 +34,8 @@ app.use(expressLayout);
 app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 
+// PG session
+const pgSession = connectPgSimple(session);
 
 // Passport.js and session middleware
 app.use(session({
