@@ -228,3 +228,31 @@ $('.delete-reply').on('click', function(e) {
         }
     });
 });
+
+// liking/undo liking comments
+$('.like-icon').click(function() {
+    var checkbox = $('#likeCheck');
+    checkbox.prop('checked', !checkbox.prop('checked'));
+
+    if(checkbox.prop('checked')) {
+        // If the checkbox is checked, change the icon to the solid heart.
+        $(this).removeClass('fa-regular fa-heart').addClass('fa-solid fa-heart');
+    } else {
+        // If the checkbox is not checked, change the icon to the regular heart.
+        $(this).removeClass('fa-solid fa-heart').addClass('fa-regular fa-heart');
+    }
+});
+
+// disliking/undo disliking comments
+$('.dislike-icon').click(function() {
+    var checkbox = $('#dislikeCheck');
+    checkbox.prop('checked', !checkbox.prop('checked'));
+
+    if(checkbox.prop('checked')) {
+        // If the checkbox is checked, change the icon to the solid heart.
+        $(this).removeClass('fa-regular fa-thumbs-down').addClass('fa-solid fa-thumbs-down');
+    } else {
+        // If the checkbox is not checked, change the icon to the regular heart.
+        $(this).removeClass('fa-solid fa-thumbs-down').addClass('fa-regular fa-thumbs-down');
+    }
+});

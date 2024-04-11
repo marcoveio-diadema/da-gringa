@@ -80,7 +80,7 @@
                     <div class="row">
                         <div class="col-md-8 offset-md-2">                            
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <strong>Atenção!</strong> Você precisa estar logado para comentar/responder. <a href="/user/login"><strong>Clique aqui</strong></a> para fazer login ou <a href="/user/signup"><strong>Clique aqui</strong></a> para se cadastrar.
+                                <strong>Atenção!</strong> Você precisa estar logado para comentar/responder. <a href="/user/login?redirect=<%= currentUrl %>"><strong>Clique aqui</strong></a> para fazer login ou <a href="/user/signup"><strong>Clique aqui</strong></a> para se cadastrar.
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>                           
                         </div>
@@ -162,22 +162,52 @@
                                                         <p class="small my-2">
                                                         <%= comment.comment %>
                                                         </p>
-                                                        <!-- like and dislike buttons
+                                                        <!-- like and dislike buttons -->
                                                         <div class="d-flex justify-content-start align-items-center mt-2">
-                                                           
+                                                            <!-- like -->
                                                             <div class="like p-2 cursor">
-                                                                <button type="button" class="btn btn-link like-comment-button" data-comment-id="<%= comment.id %>" data-post-id="<%= post.id %>">
-                                                                    <i class="fa fa-thumbs-up like-icon"></i>
-                                                                </button>                                                                
-                                                                <span class="ml-1 total-comment-likes"></span>
+                                                                <!-- likes -->
+                                                                <form data-comment-id="<%= comment.id %>">
+                                                                    <!-- hidden input for the comment and post ID -->
+                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                                                    <input type="hidden" name="postId" value="<%= post.id %>">
+                                                                    <!-- hidden input for the user ID -->
+                                                                    <input type="hidden" name="userId" value="<%= user.id %>">
+                                                                    <!-- The checkbox is hidden, and the Font Awesome icon is displayed instead. -->
+                                                                    <input class="form-check-input" type="checkbox" value="" id="likeCheck" style="display: none;">
+                                                                    <i class="fa-regular fa-heart like-icon"></i>
+                                                                    <!-- total likes -->                                                                                                                              
+                                                                    <span class="ml-1 small total-comment-likes"></span>
+                                                                </form>
+                                                                <!-- remove like -->
+                                                                <!--<form class="likeForm" data-comment-id="<%= comment.id %>">
+                                                                    hidden input for the comment and post ID
+                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                                                    <input type="hidden" name="postId" value="<%= post.id %>">
+                                                                    hidden input for the user ID                                                                    <input type="hidden" name="userId" value="<%= user.id %>">
+                                                                     like button                                                                    
+                                                                     <button type="submit" class="btn btn-link like-dislike notLikedYet">
+                                                                        <i class="fa-regular fa-heart like-icon"></i>
+                                                                    </button>   
+                                                                    <span class="ml-1 small total-comment-likes">(0)</span>                                                                          
+                                                                </form>-->                                                                                                                                                                                         
                                                             </div>
+                                                            <!-- dislike -->
                                                             <div class="like p-2 cursor">
-                                                                <button type="button" class="btn btn-link dislike-comment-button" data-comment-id="<%= comment.id %>" data-post-id="<%= post.id %>">
-                                                                    <i class="fa fa-thumbs-down dislike-icon"></i>
-                                                                </button>                                                                
-                                                                <span class="ml-1 total-comment-dislikes"></span>
+                                                                <form class="dislikeForm" data-comment-id="<%= comment.id %>">
+                                                                    <!-- hidden input for the comment and post ID -->
+                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                                                    <input type="hidden" name="postId" value="<%= post.id %>">
+                                                                    <!-- hidden input for the user ID -->
+                                                                    <input type="hidden" name="userId" value="<%= user.id %>">
+                                                                    <!-- The checkbox is hidden, and the Font Awesome icon is displayed instead. -->
+                                                                    <input class="form-check-input" type="checkbox" value="" id="dislikeCheck" style="display: none;">
+                                                                    <i class="fa-regular fa-thumbs-down dislike-icon"></i>
+                                                                    <!-- total likes -->                                                                                                                              
+                                                                    <span class="ml-1 small total-comment-likes">(0)</span>
+                                                                </form>
                                                             </div>
-                                                        </div>-->
+                                                        </div>
                                                     </div>
                                                     <!-- Replies -->                                                    
                                                     <% comment.replies.forEach(reply => { %>
@@ -269,7 +299,7 @@
                 </div>
                 <hr class="w-80">
                 <!-- subscribe -->
-                <h2 class="section-title text-center">Subscribe:</h2>
+                <h2 class="section-title text-center">Newsletter:</h2>
                 <div class="subscribe my-3 py-3">
                     <!-- success message -->
                     <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
@@ -296,7 +326,7 @@
                 <hr class="w-80">
                 <!-- about -->
                 <h2 class="section-title text-center">Sobre:</h2>
-                <div class="about my-3 py-3">
+                <div class="about my-3 py-3 text-center">
                     <img src="/img/marcus_1.jpg" class="img-fluid rounded shadow mb-3" alt="">
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
                 </div>

@@ -49,7 +49,6 @@ router.get('/post/:slug', async (req, res) => {
             `, [post.category_id, post.id]);
             const otherPosts = otherPostsResult.rows;
 
-            // Fetch the comments for the post
             const commentsResult = await db.query(`
                 SELECT comments.*, users.username AS author, users.profile_img AS author_img 
                 FROM comments
@@ -69,6 +68,7 @@ router.get('/post/:slug', async (req, res) => {
                     ORDER BY replies.created_at DESC
                 `, [comment.id]);
                 comment.replies = replyResults.rows;
+
             }
 
             // locals and render the post page
@@ -77,7 +77,8 @@ router.get('/post/:slug', async (req, res) => {
                 description: "Tudo sobre como se virar na gringa!"
             }
 
-            res.render('blog/post.ejs', { 
+            res.render('blog/post.ejs', {
+                currentUrl: encodeURIComponent(req.originalUrl), 
                 locals,
                 post,
                 otherPosts,

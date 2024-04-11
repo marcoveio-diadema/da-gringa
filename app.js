@@ -6,6 +6,8 @@ import passport from 'passport';
 import session from 'express-session';
 import flash from 'express-flash';
 import moment from 'moment';
+import pgSession from 'connect-pg-simple';
+import db from './server/config/db.js';
 
 // import routes
 import mainRoutes from './server/routes/main.js';
@@ -34,8 +36,15 @@ app.use(expressLayout);
 app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 
+// session store
+const store = new (pgSession(session))({
+    pool: db, 
+    tableName: 'session'
+});
+
 // Passport.js and session middleware
-app.use(session({ 
+app.use(session({
+    store: store, 
     secret: process.env.SESSION_SECRET, 
     resave: false, 
     saveUninitialized: true,

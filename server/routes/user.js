@@ -51,13 +51,20 @@ function isAdmin(req, res, next) {
 // Middleware to check if user is authenticated
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-      return next();
+        return next();
     } else {
-      // Redirect to login page if not authenticated
-      res.redirect('/user/login');
+        // Store the URL the user is being redirected from in the session
+        req.session.redirectTo = req.originalUrl;
+        // Save the session before redirecting
+        req.session.save((err) => {
+            if (err) {
+                return next(err);
+            }
+            // Redirect to login page if not authenticated
+            res.redirect('/user/login');
+        });
     }
   }
-
 
 // GET - profile
 router.get('/profile', ensureAuthenticated, async (req, res) => {
@@ -314,17 +321,26 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
 // GET - login
 router.get('/login', async (req, res) => {
     try {
-        const locals = {
-            title: "Login",
-            description: "Login to admin"
-        }        
-        res.render("user/login.ejs", { 
-            locals,
-            user: req.user,
-            messages: {
-                error: req.flash('error'),
-                success: req.flash('success')
+        console.log('Redirect to: ', req.query.redirect);
+        // Store the redirect URL in the session
+        req.session.redirectTo = req.query.redirect || '/';
+        // Save the session before rendering the login page
+        req.session.save((err) => {
+            if (err) {
+                return next(err);
             }
+            const locals = {
+                title: "Entrar",
+                description: "Fazer login no Manual da Gringa"
+            }        
+            res.render("user/login.ejs", { 
+                locals,
+                user: req.user,
+                messages: {
+                    error: req.flash('error'),
+                    success: req.flash('success')
+                }
+            });
         });
     } catch (error) {
         console.log(error);
@@ -347,12 +363,20 @@ router.post("/login", (req, res, next) => {
                 req.flash('error', 'Um erro aconteceu, tente novamente.');
                 return res.redirect('/user/login');; 
             }
-            // Redirect user based on their ID
-            if (user.id === 1) {
-                return res.redirect('/admin/');
-            } else {
-                return res.redirect('/');
-            }
+            // Save the session before redirecting
+            req.session.save((err) => {
+                if (err) {
+                    return next(err);
+                }
+                // Redirect user based on their ID
+                if (user.id === 1) {
+                    return res.redirect('/admin/');
+                } else {
+                    // Redirect to the stored URL, or to the home page if no URL is stored
+                    console.log('Redirect to: ', req.session.redirectTo);
+                    return res.redirect(req.session.redirectTo || '/');
+                }
+            });
         });
     })(req, res, next);
 });

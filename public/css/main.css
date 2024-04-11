@@ -365,10 +365,22 @@ transform: scaleX(1);
 
 .like-icon {
     color: var(--mid-blue);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.like-icon:hover {
+    transform: scale(1.1);
 }
 
 .dislike-icon {
     color: var(--orange);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.dislike-icon:hover {
+    transform: scale(1.1);
 }
 
 .post-content2 img {
