@@ -80,7 +80,7 @@
                     <div class="row">
                         <div class="col-md-8 offset-md-2">                            
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <strong>Atenção!</strong> Você precisa estar logado para comentar/responder. <a href="/user/login?redirect=<%= currentUrl %>"><strong>Clique aqui</strong></a> para fazer login ou <a href="/user/signup"><strong>Clique aqui</strong></a> para se cadastrar.
+                                <strong>Atenção!</strong> Você precisa estar logado para comentar/responder. <a href="/user/login/"><strong>Clique aqui</strong></a> para fazer login ou <a href="/user/signup"><strong>Clique aqui</strong></a> para se cadastrar.
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>                           
                         </div>
@@ -162,50 +162,40 @@
                                                         <p class="small my-2">
                                                         <%= comment.comment %>
                                                         </p>
-                                                        <!-- like and dislike buttons -->
-                                                        <div class="d-flex justify-content-start align-items-center mt-2">
-                                                            <!-- like -->
-                                                            <div class="like p-2 cursor">
-                                                                <form class="like-comment-form">
-                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
-                                                                    <button type="submit" class="button-as-icon">
-                                                                        <% if (comment.liked) { %>
-                                                                            <i class="fa-solid fa-heart like-icon"></i>
-                                                                        <% } else { %>
-                                                                            <i class="fa-regular fa-heart like-icon"></i>
-                                                                        <% } %>
-                                                                    </button>
-                                                                    <span class="ml-1 small total-comment-likes">(<%= comment.likes_count %>)</span>
-                                                                </form>
-                                                                <!-- remove like -->
-                                                                <!--<form class="likeForm" data-comment-id="<%= comment.id %>">
-                                                                    hidden input for the comment and post ID
-                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
-                                                                    <input type="hidden" name="postId" value="<%= post.id %>">
-                                                                    hidden input for the user ID                                                                    <input type="hidden" name="userId" value="<%= user.id %>">
-                                                                     like button                                                                    
-                                                                     <button type="submit" class="btn btn-link like-dislike notLikedYet">
-                                                                        <i class="fa-regular fa-heart like-icon"></i>
-                                                                    </button>   
-                                                                    <span class="ml-1 small total-comment-likes">(0)</span>                                                                          
-                                                                </form>-->                                                                                                                                                                                         
+                                                        <!-- check if user is logged in to see like/dislike -->
+                                                        <% if (user) { %>
+                                                            <!-- like and dislike buttons -->
+                                                            <div class="d-flex justify-content-start align-items-center mt-2">
+                                                                <!-- like/undo like -->
+                                                                <div class="like p-2 cursor">
+                                                                    <form class="like-comment-form">
+                                                                        <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                                                        <button type="submit" class="button-as-icon">
+                                                                            <% if (comment.liked) { %>
+                                                                                <i class="fa-solid fa-heart like-icon"></i>
+                                                                            <% } else { %>
+                                                                                <i class="fa-regular fa-heart like-icon"></i>
+                                                                            <% } %>
+                                                                        </button>
+                                                                        <span class="ml-1 small total-comment-likes">(<%= comment.likes_count %>)</span>
+                                                                    </form>                                                                                                                                                                                       
+                                                                </div>
+                                                                <!-- dislike -->
+                                                                <div class="dislike p-2 cursor">
+                                                                    <form class="dislike-comment-form">
+                                                                        <input type="hidden" name="commentId" value="<%= comment.id %>">
+                                                                        <button type="submit" class="button-as-icon">
+                                                                            <% if (comment.disliked) { %>
+                                                                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                                                            <% } else { %>
+                                                                                <i class="fa-regular fa-thumbs-down dislike-icon"></i>
+                                                                            <% } %>
+                                                                        </button>
+                                                                        <span class="ml-1 small total-comment-dislikes">(<%= comment.dislikes_count %>)</span>
+                                                                    </form>                                                                                                                                                                                       
+                                                                </div>
                                                             </div>
-                                                            <!-- dislike -->
-                                                            <div class="like p-2 cursor">
-                                                                <form class="dislikeForm" data-comment-id="<%= comment.id %>">
-                                                                    <!-- hidden input for the comment and post ID -->
-                                                                    <input type="hidden" name="commentId" value="<%= comment.id %>">
-                                                                    <input type="hidden" name="postId" value="<%= post.id %>">
-                                                                    <!-- hidden input for the user ID -->
-                                                                    <input type="hidden" name="userId" value="<%= user.id %>">
-                                                                    <!-- The checkbox is hidden, and the Font Awesome icon is displayed instead. -->
-                                                                    <input class="form-check-input" type="checkbox" value="" id="dislikeCheck" style="display: none;">
-                                                                    <i class="fa-regular fa-thumbs-down dislike-icon"></i>
-                                                                    <!-- total likes -->                                                                                                                              
-                                                                    <span class="ml-1 small total-comment-likes">(0)</span>
-                                                                </form>
-                                                            </div>
-                                                        </div>
+                                                        <% } %>
                                                     </div>
                                                     <!-- Replies -->                                                    
                                                     <% comment.replies.forEach(reply => { %>
@@ -239,6 +229,40 @@
                                                                         <%= reply.reply %>
                                                                     </p>
                                                                     <!-- like and dislike buttons -->
+                                                                    <!-- check if user is logged in to see like/dislike -->
+                                                                    <% if (user) { %>
+                                                                        <!-- like and dislike buttons -->
+                                                                        <div class="d-flex justify-content-start align-items-center mt-2">
+                                                                            <!-- like/undo like -->
+                                                                            <div class="like-reply p-2 cursor">
+                                                                                <form class="like-reply-form">
+                                                                                    <input type="hidden" name="replyId" value="<%= reply.id %>">
+                                                                                    <button type="submit" class="button-as-icon">
+                                                                                        <% if (reply.liked) { %>
+                                                                                            <i class="fa-solid fa-heart like-icon"></i>
+                                                                                        <% } else { %>
+                                                                                            <i class="fa-regular fa-heart like-icon"></i>
+                                                                                        <% } %>
+                                                                                    </button>
+                                                                                    <span class="ml-1 small total-reply-likes">(<%= reply.likes_count %>)</span>
+                                                                                </form>                                                                                                                                                                                       
+                                                                            </div>
+                                                                            <!-- dislike -->
+                                                                            <div class="dislike-reply p-2 cursor">
+                                                                                <form class="dislike-reply-form">
+                                                                                    <input type="hidden" name="replyId" value="<%= reply.id %>">
+                                                                                    <button type="submit" class="button-as-icon">
+                                                                                        <% if (reply.disliked) { %>
+                                                                                            <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                                                                        <% } else { %>
+                                                                                            <i class="fa-regular fa-thumbs-down dislike-icon"></i>
+                                                                                        <% } %>
+                                                                                    </button>
+                                                                                    <span class="ml-1 small total-reply-dislikes">(<%= reply.dislikes_count %>)</span>
+                                                                                </form>                                                                                                                                                                                       
+                                                                            </div>
+                                                                        </div>
+                                                                    <% } %>
                                                                 </div>
                                                             </div>
                                                         </div>

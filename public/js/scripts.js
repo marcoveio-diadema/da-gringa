@@ -232,8 +232,6 @@ $('.delete-reply').on('click', function(e) {
 // ajax for liking comments
 $(".like-comment-form").on('submit', function(e){
     e.preventDefault();
-    // get the button
-    var button = $(this).find('.like-icon');
 
     $.ajax({
       url: '/blog/like-comment',
@@ -253,18 +251,71 @@ $(".like-comment-form").on('submit', function(e){
     });
 });
 
+// ajax for disliking comments
+$(".dislike-comment-form").on('submit', function(e){
+    e.preventDefault();
 
+    $.ajax({
+      url: '/blog/dislike-comment',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
 
-// disliking/undo disliking comments
-$('.dislike-icon').click(function() {
-    var checkbox = $('#dislikeCheck');
-    checkbox.prop('checked', !checkbox.prop('checked'));
-
-    if(checkbox.prop('checked')) {
-        // If the checkbox is checked, change the icon to the solid heart.
-        $(this).removeClass('fa-regular fa-thumbs-down').addClass('fa-solid fa-thumbs-down');
-    } else {
-        // If the checkbox is not checked, change the icon to the regular heart.
-        $(this).removeClass('fa-solid fa-thumbs-down').addClass('fa-regular fa-thumbs-down');
-    }
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
 });
+
+// ajax for liking replies
+$(".like-reply-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/blog/like-reply',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
+// ajax for disliking replies
+$(".dislike-reply-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/blog/dislike-reply',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
+
+

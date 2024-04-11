@@ -8,7 +8,6 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import sanitizeHtml from 'sanitize-html';
 import crypto from 'crypto';
-import moment from 'moment';
 
 // import db
 import db from '../config/db.js';
@@ -53,8 +52,6 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     } else {
-        // Store the URL the user is being redirected from in the session
-        req.session.redirectTo = req.originalUrl;
         // Save the session before redirecting
         req.session.save((err) => {
             if (err) {
@@ -321,9 +318,6 @@ router.post("/signup", upload.single('profilePicture'), async (req, res) => {
 // GET - login
 router.get('/login', async (req, res) => {
     try {
-        console.log('Redirect to: ', req.query.redirect);
-        // Store the redirect URL in the session
-        req.session.redirectTo = req.query.redirect || '/';
         // Save the session before rendering the login page
         req.session.save((err) => {
             if (err) {
@@ -372,9 +366,7 @@ router.post("/login", (req, res, next) => {
                 if (user.id === 1) {
                     return res.redirect('/admin/');
                 } else {
-                    // Redirect to the stored URL, or to the home page if no URL is stored
-                    console.log('Redirect to: ', req.session.redirectTo);
-                    return res.redirect(req.session.redirectTo || '/');
+                    return res.redirect('/');
                 }
             });
         });
