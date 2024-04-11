@@ -50,12 +50,15 @@ router.get('/post/:slug', async (req, res) => {
             const otherPosts = otherPostsResult.rows;
 
             const commentsResult = await db.query(`
-                SELECT comments.*, users.username AS author, users.profile_img AS author_img 
+                SELECT comments.*, users.username AS author, users.profile_img AS author_img, users.id AS author_id, COUNT(comment_likes.user_id) AS likes_count,
+                CASE WHEN comment_likes.user_id = $2 THEN true ELSE false END AS liked
                 FROM comments
-                INNER JOIN users ON comments.author_id = users.id 
+                INNER JOIN users ON comments.author_id = users.id
+                LEFT JOIN comment_likes ON comments.id = comment_likes.comment_id
                 WHERE comments.post_id = $1
+                GROUP BY comments.id, users.username, users.profile_img, users.id, comment_likes.user_id
                 ORDER BY comments.created_at DESC
-            `, [post.id]);
+            `, [post.id, req.user ? req.user.id : null]);
             const comments = commentsResult.rows;
 
             // fetch replies for each comment
@@ -265,6 +268,30 @@ router.delete('/reply/:id', async (req, res) => {
     } catch (error) {
         // If an error occurred, send an error response
         res.json({ success: false, message: 'An error occurred while trying to delete the comment. Please try again.' });
+    }
+});
+
+// POST - like comment
+router.post('/like-comment', async (req, res) => {
+    const commentId = req.body.commentId;
+    const userId = req.user.id;
+
+    try {
+        // Check if the user has already liked the comment
+        const like = await db.query('SELECT * FROM comment_likes WHERE comment_id = $1 AND user_id = $2', [commentId, userId]);
+        if (like.rowCount > 0) {
+            await db.query('DELETE FROM comment_likes WHERE comment_id = $1 AND user_id = $2', [commentId, userId]);
+            return res.json({ success: false, message: 'You have already liked this comment.', liked: false });
+        }
+
+        // Like the comment
+        await db.query('INSERT INTO comment_likes (comment_id, user_id) VALUES ($1, $2)', [commentId, userId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Comment liked successfully.', liked: true });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to like the comment. Please try again.' });
     }
 });
 

@@ -229,19 +229,31 @@ $('.delete-reply').on('click', function(e) {
     });
 });
 
-// liking/undo liking comments
-$('.like-icon').click(function() {
-    var checkbox = $('#likeCheck');
-    checkbox.prop('checked', !checkbox.prop('checked'));
+// ajax for liking comments
+$(".like-comment-form").on('submit', function(e){
+    e.preventDefault();
+    // get the button
+    var button = $(this).find('.like-icon');
 
-    if(checkbox.prop('checked')) {
-        // If the checkbox is checked, change the icon to the solid heart.
-        $(this).removeClass('fa-regular fa-heart').addClass('fa-solid fa-heart');
-    } else {
-        // If the checkbox is not checked, change the icon to the regular heart.
-        $(this).removeClass('fa-solid fa-heart').addClass('fa-regular fa-heart');
-    }
+    $.ajax({
+      url: '/blog/like-comment',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
 });
+
+
 
 // disliking/undo disliking comments
 $('.dislike-icon').click(function() {

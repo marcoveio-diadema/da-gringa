@@ -383,6 +383,12 @@ transform: scaleX(1);
     transform: scale(1.1);
 }
 
+.button-as-icon {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
 .post-content2 img {
     display: block;
     max-width: 85%;
