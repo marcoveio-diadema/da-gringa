@@ -17,7 +17,7 @@ import adminRoutes from './server/routes/admin.js';
 
 // express
 const app = express();
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT;
 
 // static
 app.use(express.static('public'));
