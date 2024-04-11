@@ -22,8 +22,6 @@ const PORT = process.env.PORT;
 // static
 app.use(express.static('public'));
 
-// flash messages
-app.use(flash());
 
 // moment.js middleware
 app.use((req, res, next) => {
@@ -36,15 +34,9 @@ app.use(expressLayout);
 app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 
-// session store
-const store = new (pgSession(session))({
-    pool: db, 
-    tableName: 'session'
-});
 
 // Passport.js and session middleware
 app.use(session({
-    store: store, 
     secret: process.env.SESSION_SECRET, 
     resave: false, 
     saveUninitialized: true,
@@ -55,6 +47,9 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// flash messages
+app.use(flash());
 
 // middleware to set loggedIn variable
 app.use((req, res, next) => {
