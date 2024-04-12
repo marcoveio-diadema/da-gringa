@@ -105,7 +105,7 @@ app.get('/sitemap.xml', async (req, res) => {
         }
   
       // cache the response
-      streamToPromise(pipeline).then(sm => sitemap = sm);
+      await streamToPromise(pipeline).then(sm => sitemap = sm);
   
       // end sitemap stream
       smStream.end();
