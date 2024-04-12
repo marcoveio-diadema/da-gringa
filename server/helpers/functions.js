@@ -39,11 +39,8 @@ async function uploadImage(file, folderName = '') {
       throw new Error('Error uploading file');
     }
   
-      // Generate a signed URL for the uploaded file
-      const [url] = await uploadedFile.getSignedUrl({
-        action: 'read',
-        expires: Date.now() + 1000 * 60 * 60 * 3, // 3 hours
-      });
+      // Generate the public URL for the uploaded file
+      const url = `https://storage.googleapis.com/${bucketName}/${folderName}${path.basename(filename)}`;
   
       return url;
     } catch (error) {
