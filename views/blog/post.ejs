@@ -12,67 +12,68 @@
         <div class="row">
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3">
-                <!-- post intro -->
-                <h4 class="text-secondary"><%= post.intro %></h4>
-                <!-- post details -->
-                <div class="container">
-                    <div class="row text-center mt-4">
-                        <div class="col-4">
-                            <p class=""><small class=""><i class="fa-solid fa-pen-to-square fa-xl"></i> <strong><%= post.author_username %></strong></small></p>
-                        </div>
-                        <div class="col-4">
-                            <p class="small"> <i class="fa-solid fa-calendar-check fa-xl"></i>  <%= post.created_at.toLocaleDateString('pt-BR'); %> <br><br>
-                               <% if (post.updated_at) { %>
-                                <span>Atualizado: <span class="post-time"><%= post.updated_at %></span></span>
-                               <% } %>
-                            </p>
-                        </div>
-                        <div class="col-4 share-icons-container">
-                            <!-- WhatsApp -->
-                            <a class="share-icons" href="https://api.whatsapp.com/send?text=<%= encodeURIComponent('Olha esse artigo: ' + req.protocol + '://' + req.get('host') + req.originalUrl) %>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fas fa-circle fa-stack-2x"></i>
-                                    <i class="fab fa-whatsapp fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                            <!-- Twitter -->
-                            <a class="share-icons" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl) %>&text=<%= encodeURIComponent('Olha esse artigo:') %>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fas fa-circle fa-stack-2x"></i>
-                                    <i class="fab fa-x-twitter fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                            <!-- Facebook -->
-                            <a class="share-icons" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl) %>" target="_blank">
-                                <span class="fa-stack">
-                                    <i class="fas fa-circle fa-stack-2x"></i>
-                                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
+                <article>
+                     <!-- post intro -->
+                    <h4 class="text-secondary"><%= post.intro %></h4>
+                    <!-- post details -->
+                    <div class="container">
+                        <div class="row text-center mt-4">
+                            <div class="col-4">
+                                <p class=""><small class=""><i class="fa-solid fa-pen-to-square fa-xl"></i> <strong><%= post.author_username %></strong></small></p>
+                            </div>
+                            <div class="col-4">
+                                <p class="small"> <i class="fa-solid fa-calendar-check fa-xl"></i>  <%= post.created_at.toLocaleDateString('pt-BR'); %> <br><br>
+                                <% if (post.updated_at) { %>
+                                    <span>Atualizado: <span class="post-time"><%= post.updated_at %></span></span>
+                                <% } %>
+                                </p>
+                            </div>
+                            <div class="col-4 share-icons-container">
+                                <!-- WhatsApp -->
+                                <a class="share-icons" href="https://api.whatsapp.com/send?text=<%= encodeURIComponent('Olha esse artigo: ' + req.protocol + '://' + req.get('host') + req.originalUrl) %>" target="_blank">
+                                    <span class="fa-stack">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-whatsapp fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                                <!-- Twitter -->
+                                <a class="share-icons" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl) %>&text=<%= encodeURIComponent('Olha esse artigo:') %>" target="_blank">
+                                    <span class="fa-stack">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-x-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                                <!-- Facebook -->
+                                <a class="share-icons" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(req.protocol + '://' + req.get('host') + req.originalUrl) %>" target="_blank">
+                                    <span class="fa-stack">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <hr>
-                <!-- post content -->
-                <div class="post-content my-2 p-2">
-                    <p><%- post.content %></p>                
-                </div>
-                <!-- related posts -->
-                <div class="related-posts px-4 py-2 border rounded shadow">
-                    <h6 style="color: var(--orange);">Leia também:</h6>
-                    <blockquote class="blockquote">
-                        <% otherPosts.forEach(otherPost => { %>
-                            <a href="/blog/post/<%= otherPost.slug %>">
-                                <p class="small" style="color: var(--mid-blue);">- <%= otherPost.title %></p>
-                            </a>
-                        <% }) %>
-                      </blockquote>
-                </div>
-                <!-- post content 2 -->
-                <div class="post-content2 my-2 p-2">
-                    <p><%- post.content2 %></p>
-                </div>
+                    <hr>
+                    <!-- post content -->
+                    <div class="post-content my-2 p-2">
+                        <p><%- post.content %></p>                
+                    </div>
+                    <!-- related posts -->
+                    <div class="related-posts px-4 py-2 border rounded shadow">
+                        <h6 style="color: var(--orange);">Leia também:</h6>
+                        <blockquote class="blockquote">
+                            <% otherPosts.forEach(otherPost => { %>
+                                <a href="/blog/post/<%= otherPost.slug %>">
+                                    <p class="small" style="color: var(--mid-blue);">- <%= otherPost.title %></p>
+                                </a>
+                            <% }) %>
+                        </blockquote>
+                    </div>
+                    <!-- post content 2 -->
+                    <div class="post-content2 my-2 p-2">
+                        <p><%- post.content2 %></p>
+                    </div>
+                </article>
                 <hr>
                 <% if (!user) { %>
                 <!-- login or sign up to comment -->

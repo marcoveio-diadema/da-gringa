@@ -16,6 +16,7 @@ import mainRoutes from './server/routes/main.js';
 import userRoutes from './server/routes/user.js';
 import blogRoutes from './server/routes/blog.js';
 import adminRoutes from './server/routes/admin.js';
+import forumRoutes from './server/routes/forum.js';
 
 // express
 const app = express();
@@ -71,6 +72,7 @@ app.use('/', mainRoutes);
 app.use('/user', userRoutes);
 app.use('/blog', blogRoutes);
 app.use('/admin', adminRoutes);
+app.use('/forum', forumRoutes);
 
 // robots.txt
 app.get('/robots.txt', function (req, res) {

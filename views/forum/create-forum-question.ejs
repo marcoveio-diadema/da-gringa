@@ -1,0 +1,236 @@
+<!-- SECTION HEADER -->
+<section class="section-small-heading" style="background-image: url(../img/cambodia_floattingvillage.jpeg);">
+    <!-- text on landing page -->
+    <div class="landing-page">
+        <h1 class="index-text">Começar uma nova discussão no Fórum</h1>
+        <p class="index-text">Já buscou as respostas para as suas dúvidas em outros posts do fórum?</p>
+        <!-- search form -->
+        <div class="search-nav">
+            <form action="#" method="GET" class="d-flex px-4 py-3">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Pesquise aqui antes de iniciar outra discussão">
+                    <button class="btn btn-light search-button" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION FORUM -->
+<section class="section-new-discussion">
+    <div class="container">
+        <div class="row">
+            <!-- LEFT SIDE (posts)-->
+            <div class="col-md-9 mt-3 py-3 form-container">
+                <h2 class="section-title text-center">Não achou as respostas que buscava?</h2>
+                <h5 class="section-title text-center mb-3">Vamos criar uma nova discussão...</h5>
+                <!-- progress bar -->
+                <div class="progress-bar">
+                    <div class="step">
+                        <p>Título</p>
+                        <div class="bullet">
+                            <span>1</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>País</p>
+                        <div class="bullet">
+                            <span>2</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>Conteúdo</p>
+                        <div class="bullet">
+                            <span>3</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                    <div class="step">
+                        <p>Tags</p>
+                        <div class="bullet">
+                            <span>4</span>
+                        </div>
+                        <div class="check fas fa-check"></div>
+                    </div>
+                </div>
+                <div class="form-outer">
+                    <!-- form -->
+                    <form action="/forum/create" method="POST" class="p-4">
+                        <!-- form -->
+                        <div class="page mb-3 slidepage">
+                            <!-- title -->
+                            <div class="basic-info">
+                                <div class="container mb-3">
+                                    <label for="title" class="form-label">Título:</label>
+                                    <input type="text" name="title" class="form-control" id="title">
+                                </div>
+                                <div class="container mb-3">
+                                    <p class="my-3 text-secondary">Seja o mais preciso e breve possível, lembre-se que apenas o título vai ser visualizado
+                                        por outros usuários nas pesquisas no forum, portanto você deve ser o mais objetivo possível para
+                                        chamar a atenção deles para a sua discussão.
+                                    </p>
+                                </div>                                
+                                <div class="mb-3 text-center nextBtn">
+                                    <button type="button" class="btn btn-custom w-50">Próximo <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>                            
+                        </div>
+                        <!-- country -->
+                        <div class="page mb-3">
+                            <div class="basic-info">
+                                <div class="container mb-3">
+                                    <label for="country" class="form-label">País:</label>
+                                    <input class="form-control" id="country" name="country">
+                                </div>                               
+                                <div class="container mb-3">
+                                    <p class="my-3 text-secondary">Escolha o país principal da sua discussão, que será mostrado nos resultados de pesquisa de outros usuários, 
+                                        isso vai ajudá-los a encontrarem a sua discussão mais facilmente.
+                                    </p>
+                                </div> 
+                                <div class="mb-3 text-center d-flex justify-content-between buttons">
+                                    <button type="button" class="btn btn-custom mx-3 prev-1 prev"><i class="fa-solid fa-arrow-left me-2"></i> Voltar</button>
+                                    <button type="button" class="btn btn-custom mx-3 next-1 next">Próximo <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>                            
+                        </div>
+                        <!-- content -->
+                        <div class="page mb-3">
+                            <div class="basic-info">
+                                <div class="container mb-3 position-relative">
+                                    <label for="content" class="form-label">Conteúdo:</label>
+                                    <textarea name="content" class="form-control" id="content" rows="5"></textarea>
+                                    <div id="forumCounter">0/1000</div>
+                                </div>
+                                <div class="container mb-3">
+                                    <p class="my-3 text-secondary">Tente explicar o máximo possível sobre a sua dúvida ou problema,
+                                        quanto mais informações você fornecer, mais fácil será para outros usuários te ajudarem. Divida em paragrafos ou tópicos se preciso for.
+                                    </p>
+                                </div>
+                                <div class="mb-3 text-center d-flex justify-content-between buttons">
+                                    <button type="button" class="btn btn-custom mx-3 prev-2 prev"><i class="fa-solid fa-arrow-left me-2"></i> Voltar</button>
+                                    <button type="button" class="btn btn-custom mx-3 next-2 next">Próximo <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- other tags -->
+                        <div class="page mb-3">
+                            <div class="basic-info">
+                                <div class="container mb-3">
+                                    <label for="tags" class="form-label"><i class="fa-solid fa-tags mx-3"></i>Tags:</label>
+                                    <input type="text" class="form-control tags-input" name="tags" id="tags">
+                                    <ul class="p-3 rounded discussion-tags">
+                                    </ul>
+                                </div>
+                                <div class="container mb-3">
+                                    <p class="my-3 text-secondary">Adicione palavras/tópicos relacionados a sua discussão separados por vírgulas, isso vai ajudar outros usuários a
+                                        encontrarem a sua discussão mais facilmente.
+                                    </p>
+                                </div>
+                                <div class="details d-flex align-items-center justify-content-between p-3">
+                                    <p class="text-secondary ms-4">Você pode escolher até 5 tags. <span>5</span> restantes.</p>
+                                    <button type="button" class="btn btn-custom btn-sm remove-all me-4">Remover todas</button>
+                                </div>
+                                <div class="mb-3 text-center d-flex justify-content-between buttons">
+                                    <button type="button" class="btn btn-custom mx-3 prev-3 prev"><i class="fa-solid fa-arrow-left me-2"></i> Voltar</button>
+                                    <button type="submit" class="btn btn-custom mx-3 submit w-50">Criar discussão <i class="fa-solid fa-share ms-2"></i></button>
+                                </div>
+                            </div>                            
+                        </div>
+                    </form>
+                </div>
+                <!-- tags tests -->
+                <!--<div class="wrapper shadow p-3">
+                    <div class="title d-flex align-items-center">
+                        <i class="fa-solid fa-tags fa-xl mx-3"></i>
+                        <h2>Tags</h2>
+                    </div>
+                    <div class="content mx-3">
+                        <p>Digite a tag e pressione ENTER ou adicione VÍRGULA para confirmar</p>
+                        <div class="tag-box">
+                            <ul class="p-3 rounded discussion-tags">
+                            </ul>
+                            <input type="text" class="form-control tags-input" name="" id="">
+                        </div>
+                    </div>
+                    <div class="details d-flex align-items-center justify-content-between p-3">
+                        <p>Você pode escolher até 5 tags. <span>10</span> restantes.</p>
+                        <button class="btn btn-custom btn-sm remove-all">Remover todas</button>
+                    </div>
+                </div>-->
+            </div>
+            <!-- RIGHT SIDE (categories, subscribe, search and about)-->
+            <div class="col-md-3 mt-3 py-3">
+                <!-- search -->
+                <h2 class="section-title text-center">Busca rápida:</h2>
+                <div class="search my-3 py-3">
+                    <form action="/blog/search" class="shadow rounded" method="GET">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" placeholder="Busca rápida">
+                            <button class="btn btn-light go-button" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <hr class="w-80">
+                <!-- tags -->
+                <h2 class="section-title text-center">Tópicos quentes:</h2>
+                <ul class="p-3 rounded hot-discussion-tags">
+                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Visto estudante</a></li>
+                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Alugueis</a></li>
+                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Renovação de visto</a></li>
+                </ul>
+                <hr class="w-80">
+                <!-- top trending -->
+                <h2 class="section-title text-center">Discussões em Alta:</h2>
+                <div class="top-trendings my-3 py-3">                    
+                    <a href="#">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
+                    </a>
+                    <a href="#">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
+                    </a>
+                    <a href="#">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
+                    </a>
+                    <a href="#">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
+                    </a>
+                    <a href="#">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
+                    </a>                                  
+                </div>
+                <hr class="w-80">
+                <!-- subscribe -->
+                <h2 class="section-title text-center">Newsletter:</h2>
+                <div class="subscribe my-3 py-3">
+                    <!-- success message -->
+                    <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+                        <span id="success-message"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <!-- error message -->
+                    <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                        <span id="error-message"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <!-- form -->
+                    <form id="subscribeForm" action="/user/subscribe" method="POST" class="shadow rounded">
+                        <div class="input-group">                            
+                            <input type="email" name="email" class="form-control" placeholder="Se inscreva aqui">
+                            <button type="submit" class="btn btn-light go-button">
+                                <i class="fa-regular fa-envelope"></i>
+                            </button>
+                        </div>
+                        <!-- hidden input for the URL -->
+                        <input type="hidden" name="redirect" value="<%= req.originalUrl %>">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

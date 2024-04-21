@@ -95,7 +95,7 @@ $('#messageInput').on('input', function() {
     var color = length >= 1000 ? 'red' : '#7E7E7E';
     $('#contactCounter').text(length + '/1000').css('color', color);
 }).on('keypress', function(e) {
-    if ($(this).val().length >= 150) {
+    if ($(this).val().length >= 1000) {
         e.preventDefault();
     }
 });
@@ -315,6 +315,182 @@ $(".dislike-reply-form").on('submit', function(e){
         console.log(error);
       }
     });
+});
+
+// NEW FORUM DISCUSSION FORM
+const slidePage = $('.slidepage');
+const firstNextBtn = $('.nextBtn');
+const prevBtnSec = $('.prev-1');
+const nextBtnSec = $('.next-1');
+const prevBtnThird = $('.prev-2');
+const nextBtnThird = $('.next-2');
+const prevBtnFourth = $('.prev-3');
+const submitBtn = $('.submit');
+const progressText = $('.step p');
+const progressCheck = $('.step .check');
+const bullet = $('.step .bullet');
+
+let max = 4;
+let current = 1;
+
+// move forward
+firstNextBtn.click(function(){
+    slidePage.css('margin-left', '-25%');
+    bullet.eq(current - 1).addClass('active');
+    progressText.eq(current - 1).addClass('active');
+    progressCheck.eq(current - 1).addClass('active');
+    current += 1;
+});
+
+nextBtnSec.click(function(){
+    slidePage.css('margin-left', '-50%');
+    bullet.eq(current - 1).addClass('active');
+    progressText.eq(current - 1).addClass('active');
+    progressCheck.eq(current - 1).addClass('active');
+    current += 1;
+});
+
+nextBtnThird.click(function(){
+    slidePage.css('margin-left', '-75%');
+    bullet.eq(current - 1).addClass('active');
+    progressText.eq(current - 1).addClass('active');
+    progressCheck.eq(current - 1).addClass('active');
+    current += 1;
+});
+
+submitBtn.click(function(){
+    bullet.eq(current - 1).addClass('active');
+    progressText.eq(current - 1).addClass('active');
+    progressCheck.eq(current - 1).addClass('active');
+    current += 1;
+    setTimeout(function(){
+        alert('Your Form Successfully Submitted');
+        location.reload();
+    }, 800);
+});
+
+// move backward
+prevBtnSec.click(function(){
+    slidePage.css('margin-left', '-0%');
+    bullet.eq(current - 2).removeClass('active');
+    progressText.eq(current - 2).removeClass('active');
+    progressCheck.eq(current - 2).removeClass('active');
+    current -= 1;
+});
+
+prevBtnThird.click(function(){
+    slidePage.css('margin-left', '-25%');
+    bullet.eq(current - 2).removeClass('active');
+    progressText.eq(current - 2).removeClass('active');
+    progressCheck.eq(current - 2).removeClass('active');
+    current -= 1;
+});
+
+prevBtnFourth.click(function(){
+    slidePage.css('margin-left', '-50%');
+    bullet.eq(current - 2).removeClass('active');
+    progressText.eq(current - 2).removeClass('active');
+    progressCheck.eq(current - 2).removeClass('active');
+    current -= 1;
+});
+
+// new discussion form character count
+$('#contentInput').on('input', function() {
+    var length = $(this).val().length;
+    var color = length >= 1000 ? 'red' : '#7E7E7E';
+    $('#forumCounter').text(length + '/1000').css('color', color);
+}).on('keypress', function(e) {
+    if ($(this).val().length >= 1000) {
+        e.preventDefault();
+    }
+});
+
+// countries list
+const countries = [
+    "Afeganistão", "África do Sul", "Albânia", "Alemanha", "Andorra", "Angola", "Antígua e Barbuda", "Arábia Saudita", "Argélia", "Argentina", "Armênia", "Austrália", "Áustria", "Azerbaijão",
+    "Bahamas", "Bangladesh", "Barbados", "Bélgica", "Belize", "Benin", "Bielorrússia", "Bolívia", "Bósnia e Herzegovina", "Botsuana", "Brasil", "Brunei", "Bulgária", "Burkina Faso", "Burundi",
+    "Butão", "Cabo Verde", "Camarões", "Camboja", "Canadá", "Catar", "Cazaquistão", "Chade", "Chile", "China", "Chipre", "Colômbia", "Comores", "Congo-Brazzaville", "Coreia do Norte", "Coreia do Sul", "Costa do Marfim", "Costa Rica", "Croácia", "Cuba",
+    "Dinamarca", "Djibuti", "Dominica", "Egito", "El Salvador", "Emirados Árabes Unidos", "Equador", "Eritreia", "Eslováquia", "Eslovênia", "Espanha", "Estados Unidos", "Estônia", "Etiópia",
+    "Fiji", "Filipinas", "Finlândia", "França",
+    "Gabão", "Gâmbia", "Gana", "Geórgia", "Granada", "Grécia", "Guatemala", "Guiana", "Guiné", "Guiné Equatorial", "Guiné-Bissau", "Haiti", "Holanda", "Honduras", "Hungria",
+    "Iêmen", "Ilhas Marshall", "Índia", "Indonésia", "Inglaterra", "Irã", "Iraque", "Irlanda", "Islândia", "Israel", "Itália",
+    "Jamaica", "Japão", "Jordânia",
+    "Kiribati", "Kuwait", "Laos", "Lesoto", "Letônia", "Líbano", "Libéria", "Líbia", "Liechtenstein", "Lituânia", "Luxemburgo",
+    "Macedônia", "Madagascar", "Malásia", "Malawi", "Maldivas", "Mali", "Malta", "Marrocos", "Maurício", "Mauritânia", "México", "Mianmar", "Micronésia", "Moçambique", "Moldávia", "Mônaco", "Mongólia", "Montenegro",
+    "Namíbia", "Nauru", "Nepal", "Nicarágua", "Níger", "Nigéria", "Noruega", "Nova Zelândia",
+    "Omã",
+    "Palau", "Panamá", "Papua-Nova Guiné", "Paquistão", "Paraguai", "Peru", "Polônia", "Portugal",
+    "Quênia", "Quirguistão",
+    "Reino Unido", "República Centro-Africana", "República Checa", "República Democrática do Congo", "República Dominicana", "Romênia", "Ruanda", "Rússia",
+    "Samoa", "San Marino", "Santa Lúcia", "São Cristóvão e Nevis", "São Tomé e Príncipe", "São Vicente e Granadinas", "Seicheles", "Senegal", "Serra Leoa", "Sérvia", "Singapura", "Síria", "Somália", "Sri Lanka", "Suazilândia", "Sudão", "Sudão do Sul", "Suécia", "Suíça", "Suriname",
+    "Tailândia", "Taiwan", "Tajiquistão", "Tanzânia", "Timor-Leste", "Togo", "Tonga", "Trinidad e Tobago", "Tunísia", "Turcomenistão", "Turquia", "Tuvalu",
+    "Ucrânia", "Uganda", "Uruguai", "Uzbequistão",
+    "Vanuatu", "Vaticano", "Venezuela", "Vietnã",
+    "Zâmbia", "Zimbábue"
+];
+
+$('#country').autocomplete({
+    source: countries
+});
+
+// tests for forum discussion form
+const ul = $('.discussion-tags');
+const input = $('.tags-input');
+const countNumbers = $('.details span');
+
+let maxTags = 5;
+let tags = [];
+
+function countTag(){
+    input.focus();
+    countNumbers.text(maxTags - tags.length);
+}
+
+function createTag (){
+    // remove all li tags before so there's no duplicated
+    ul.find('li').remove();
+    tags.slice().reverse().forEach(tag => {
+        let liTag = `<li class="list-group-item bg-light d-flex align-items-center m-2 p-2 rounded border">${tag} <i class="fa-solid fa-xmark mx-2"  onclick="remove(this, '${tag}')"></i> </li>`;
+        ul.prepend(liTag);
+    });
+    // update the count
+    countTag();
+}
+
+function remove(element, tag){
+    let index = tags.indexOf(tag); // get the index of the tag
+    tags = [...tags.slice(0, index), ...tags.slice(index + 1)]; // remove the tag from the array
+    element.parentElement.remove(); // remove the tag from the list
+    // update the count
+    countTag();
+}
+
+function addTag(e){
+    if(e.key === ',' || e.key === 'Enter'){
+        e.preventDefault();
+        let tag = e.target.value.trim().replace(/\s+/g, ' ');
+        if(tag.length > 1 && !tags.includes(tag)){
+            if(tags.length < maxTags){
+                tag.split(',').forEach(tag => {
+                    tag = tag.trim();
+                    if (tag !== '') {
+                        tags.push(tag);
+                        createTag()
+                    }
+                });
+            }
+        }
+        e.target.value = '';
+    }
+}
+
+input.on('keydown', addTag);
+
+const removeAll = $('.remove-all');
+removeAll.on('click', () => {
+    tags = [];
+    ul.find('li').remove();
+    countTag();
 });
 
 

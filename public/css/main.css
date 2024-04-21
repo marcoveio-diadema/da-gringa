@@ -429,3 +429,212 @@ footer img {
     max-width: 70%;
 }
 
+/* FORUM */
+
+.forum-questions{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.forum-author-image {
+    flex: .25;
+}
+
+.forum-category {
+    flex: .25;
+    text-align: center;
+}
+
+.forum-reactions {
+    flex: .75;
+    text-align: center;
+}
+.forum-question {
+    flex: 2.75;
+}
+
+.forum-author-image img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.forum-category, .forum-reactions, .forum-question {
+    border-left: solid 1px #DEE2E6;
+    height: 100%;
+}
+
+/* NEW DISCUSSION */
+
+.basic-info {
+    width: 95%;
+}
+
+.form-outer {
+    overflow: hidden !important;
+}
+
+.form-outer form {
+    display: flex;
+    width: 400%;
+}
+
+.form-outer form .page {
+    width: 25%;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.form-container .progress-bar {
+    display: flex !important;
+    flex-direction: row;
+    margin: 20px 0;
+}
+
+.bullet {
+    background-color: white;
+}
+.progress-bar .step {
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+.progress-bar .step p {
+    margin-bottom: 10px;
+    transition: .2s;
+}
+
+.progress-bar .step p.active {
+    color: var(--gray);
+}
+
+.progress-bar .step:last-child .bullet:before,
+.progress-bar .step:last-child .bullet:after {
+    display: none;
+}
+
+.progress-bar .step .bullet:before,
+.progress-bar .step .bullet:after {
+    position: absolute;
+    content: '';
+    bottom: 11px;
+    right: -19vw;
+    width: 19vw;
+    height: 2px;
+    background: var(--black);
+    z-index: -100;
+}
+
+@media screen and (min-width:768px) {
+    .progress-bar .step .bullet:before,
+    .progress-bar .step .bullet:after {
+        right: -14vw;
+        width: 14vw;
+    }
+}
+
+@media screen and (min-width:1024px) {
+    .progress-bar .step .bullet:before,
+    .progress-bar .step .bullet:after {
+        right: -15vw;
+        width: 15vw;
+    }
+}
+
+@media screen and (min-width:1500px) {
+    .progress-bar .step .bullet:before,
+    .progress-bar .step .bullet:after {
+        right: -12vw;
+        width: 13vw;
+    }
+}
+
+.progress-bar .step .bullet.active:after {
+    background: var(--gray);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: animate 0.3s linear forwards;
+}
+
+@keyframes animate {
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+.progress-bar .step .bullet {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--black);
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 10px;
+    transition: .2s;
+}
+
+.progress-bar .step .bullet.active {
+    border: 2px solid var(--gray);
+    background: var(--gray);
+}
+
+.progress-bar .step .bullet span {
+    color: var(--black);
+    line-height: 25px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.progress-bar .step .bullet.active span {
+    display: none;
+}
+
+.progress-bar .step .check {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    font-size: 20px;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.progress-bar .step .check.active {
+    display: block;
+    color: #fff;
+}
+
+.prev, .next {
+    width: 50%;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#forumCounter {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.basic-info ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.hot-discussion-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.basic-info ul li i {
+    cursor: pointer;
+}

@@ -83,7 +83,7 @@ router.get('/post/:slug', async (req, res) => {
             // locals and render the post page
             const locals = {
                 title: post.title,
-                description: "Tudo sobre como se virar na gringa!"
+                description: post.intro
             }
 
             res.render('blog/post.ejs', {
