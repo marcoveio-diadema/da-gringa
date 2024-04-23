@@ -2,7 +2,7 @@
 <section class="section-heading" style="background-image: url(../img/oceania-cover.jpg);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text">Buscando informações sobre algo específico?</h1>
+        <h1 class="index-text">O que você está procurando?</h1>
         <!-- search form -->
         <div class="search-nav">
             <form action="#" method="GET" class="d-flex px-4 py-3">
@@ -26,60 +26,47 @@
                 <h2 class="section-title text-center">Bombando no Fórum</h2>
                 <!-- list with questions and info -->
                 <ul class="list-group mb-3">
-                    <li class="list-group-item forum-questions d-flex">
-                        <div class="forum-author-image p-2">
-                            <img src="img/profile_pic.png" alt="">
-                        </div>
-                        <div class="forum-question p-2">
-                            <h6>Como faço para tirar o visto de estudante?</h6>
-                            <p class="small text-secondary">Por <strong>Lucas</strong> em <strong>01/01/2022</strong></p>
-                        </div>
-                        <div class="forum-category p-2">
-                           <p class="text-secondary">Visto</p>
-                        </div>
-                        <div class="forum-reactions p-2">
-                            <div class="forum-reaction text-body-secondary">
-                                <i class="fa-regular fa-thumbs-up like-icon"></i>
-                                <span class="mx-1">(100)</span>
-                                <i class="fa-regular fa-thumbs-down dislike-icon"></i>
-                                <span class="mx-1">(10)</span>
-                                <br>
-                                <i class="fa-regular fa-comment-dots"></i>
-                                <span class="mx-1">(10)</span>
-                                <i class="fa-regular fa-eye"></i>
-                                <span class="mx-1">(723)</span>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item forum-questions d-flex">
-                        <div class="forum-author-image p-2">
-                            <img src="img/marcus_1.jpg" alt="">
-                        </div>
-                        <div class="forum-question p-2">
-                            <h6>Como faço para tirar o visto de estudante?</h6>
-                            <p class="small text-secondary">Por <strong>Lucas</strong> em <strong>01/01/2022</strong></p>
-                        </div>
-                        <div class="forum-category p-2">
-                           <p class="text-secondary">WHV Australia</p>
-                        </div>
-                        <div class="forum-reactions p-2">
-                            <div class="forum-reaction text-body-secondary">
-                                <i class="fa-regular fa-thumbs-up like-icon"></i>
-                                <span class="mx-1">(100)</span>
-                                <i class="fa-regular fa-thumbs-down dislike-icon"></i>
-                                <span class="mx-1">(10)</span>
-                                <br>
-                                <i class="fa-regular fa-comment-dots"></i>
-                                <span class="mx-1">(10)</span>
-                                <i class="fa-regular fa-eye"></i>
-                                <span class="mx-1">(723)</span>
-                            </div>
-                        </div>
-                    </li>
+                    <!-- check if there are discutions -->
+                    <% if (discussions && discussions.length > 0) { %>
+                        <% discussions.forEach(discussion => { %>
+                            <li class="list-group-item forum-questions d-flex">
+                                <div class="forum-author-image p-2">
+                                    <img src="<%= discussion.author_img %>" alt="">
+                                </div>
+                                <div class="forum-question p-2">
+                                    <!-- link to the discussion details -->
+                                    <a href="/forum/discussion/<%= discussion.slug %>">
+                                        <h6><%= discussion.title %></h6>
+                                    </a>
+                                    <p class="small text-secondary">Por <strong><%= discussion.author_username %></strong>, <strong class="comment-time"><%= discussion.created_at %></strong>
+                                    </p>
+                                </div>
+                                <div class="forum-category p-2">
+                                   <p class="text-secondary"><%= discussion.country %></p>
+                                </div>
+                                <div class="forum-reactions p-2">
+                                    <div class="forum-reaction text-body-secondary">
+                                        <i class="fa-regular fa-thumbs-up like-icon"></i>
+                                        <span class="mx-1">(100)</span>
+                                        <i class="fa-regular fa-thumbs-down dislike-icon"></i>
+                                        <span class="mx-1">(10)</span>
+                                        <br>
+                                        <i class="fa-regular fa-comment-dots"></i>
+                                        <span class="mx-1">(10)</span>
+                                        <i class="fa-regular fa-eye"></i>
+                                        <span class="mx-1">(723)</span>
+                                    </div>
+                                </div>
+                            </li>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="p-3">Nenhuma discussão aberta no fórum</p>
+                    <% } %>
                 </ul>
             </div>
-            <!-- RIGHT SIDE (categories, subscribe, search and about)-->
+            <!-- RIGHT SIDE (new discussion, hot topics, hot places, subscribe, search)-->
             <div class="col-md-3 mt-3 py-3">
+                <!-- new discussion -->
                 <h2 class="section-title text-center">Tem alguma dúvida?</h2>
                 <div class="post-question my-3 py-3">
                     <a href="/forum/new-question" class="btn btn-custom w-100">Postar uma pergunta <i class="fa-solid fa-plus ms-3"></i></a>

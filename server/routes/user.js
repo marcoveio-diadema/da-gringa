@@ -52,16 +52,13 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     } else {
-        // Save the session before redirecting
-        req.session.save((err) => {
-            if (err) {
-                return next(err);
-            }
-            // Redirect to login page if not authenticated
-            res.redirect('/user/login');
-        });
+        // Store the original URL before redirecting to login
+        console.log('Original URL:', req.originalUrl);
+        res.cookie('redirectTo', req.originalUrl, { httpOnly: true });
+        // Redirect to login page if not authenticated
+        res.redirect('/user/login');
     }
-  }
+}
 
 // GET - profile
 router.get('/profile', ensureAuthenticated, async (req, res) => {
@@ -366,7 +363,11 @@ router.post("/login", (req, res, next) => {
                 if (user.id === 1) {
                     return res.redirect('/admin/');
                 } else {
-                    return res.redirect('/');
+                    // Redirect to the original URL if it exists in the cookie
+                    const redirectTo = req.cookies.redirectTo ? req.cookies.redirectTo : '/';
+                    res.clearCookie('redirectTo');
+                    console.log('Redirecting to:', redirectTo)
+                    return res.redirect(redirectTo);
                 }
             });
         });

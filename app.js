@@ -10,6 +10,7 @@ import connectPgSimple from 'connect-pg-simple';
 import db from './server/config/db.js';
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { createGzip } from 'zlib';
+import cookieParser from 'cookie-parser';
 
 // import routes
 import mainRoutes from './server/routes/main.js';
@@ -18,7 +19,7 @@ import blogRoutes from './server/routes/blog.js';
 import adminRoutes from './server/routes/admin.js';
 import forumRoutes from './server/routes/forum.js';
 
-// express
+// express 
 const app = express();
 const PORT = process.env.PORT;
 
@@ -66,6 +67,9 @@ app.use((req, res, next) => {
 
 // flash messages
 app.use(flash());
+
+// Use cookie-parser
+app.use(cookieParser());
 
 // routes
 app.use('/', mainRoutes);

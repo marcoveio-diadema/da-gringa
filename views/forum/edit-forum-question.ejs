@@ -2,19 +2,7 @@
 <section class="section-small-heading" style="background-image: url(../img/cambodia_floattingvillage.jpeg);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text">Começar uma nova discussão no Fórum</h1>
-        <p class="index-text">Já buscou as respostas para as suas dúvidas em outros posts do fórum?</p>
-        <!-- search form -->
-        <div class="search-nav">
-            <form action="#" method="GET" class="d-flex px-4 py-3">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Pesquise aqui antes de iniciar outra discussão">
-                    <button class="btn btn-light search-button" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
+        <h1 class="index-text">Editar discussão no fórum</h1>
     </div>
 </section>
 
@@ -24,8 +12,8 @@
         <div class="row">
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3 form-container">
-                <h2 class="section-title text-center">Não achou as respostas que buscava?</h2>
-                <h5 class="section-title text-center mb-3">Vamos criar uma nova discussão...</h5>
+                <h2 class="section-title text-center">Precisa mudar alguma coisa?</h2>
+                <h5 class="section-title text-center mb-3">Faça aqui...</h5>
                 <!-- progress bar -->
                 <div class="progress-bar">
                     <div class="step">
@@ -59,14 +47,15 @@
                 </div>
                 <div class="form-outer">
                     <!-- form -->
-                    <form action="/forum/new-question" method="POST" class="p-4">
+                    <form action="/forum/edit-discussion" method="POST" class="p-4">
                         <!-- form -->
                         <div class="page mb-3 slidepage">
                             <!-- title -->
                             <div class="basic-info">
                                 <div class="container mb-3">
+                                    <input type="hidden" name="discussionId" value="<%= discussion.id %>">
                                     <label for="discussionTitle" class="form-label">Título:</label>
-                                    <input type="text" name="discussionTitle" class="form-control" id="discussionTitle">
+                                    <input type="text" name="discussionTitle" class="form-control" id="discussionTitle"  value="<%= discussion.title %>">
                                 </div>
                                 <div class="container mb-3">
                                     <p class="my-3 text-secondary">Seja o mais preciso e breve possível, lembre-se que apenas o título vai ser visualizado
@@ -84,7 +73,7 @@
                             <div class="basic-info">
                                 <div class="container mb-3">
                                     <label for="country" class="form-label">País:</label>
-                                    <input class="form-control" id="country" name="country">
+                                    <input class="form-control" id="country" name="country" value="<%= discussion.country %>">
                                 </div>                               
                                 <div class="container mb-3">
                                     <p class="my-3 text-secondary">Escolha o país principal da sua discussão, que será mostrado nos resultados de pesquisa de outros usuários, 
@@ -102,7 +91,7 @@
                             <div class="basic-info">
                                 <div class="container mb-3 position-relative">
                                     <label for="content" class="form-label">Conteúdo:</label>
-                                    <textarea name="content" class="form-control" id="content" rows="5"></textarea>
+                                    <textarea name="content" class="form-control" id="content" rows="5"><%= discussion.content %></textarea>
                                     <div id="forumCounter">0/1000</div>
                                 </div>
                                 <div class="container mb-3">
@@ -123,6 +112,9 @@
                                     <label for="tags" class="form-label"><i class="fa-solid fa-tags mx-3"></i>Tags:</label>
                                     <input type="text" class="form-control tags-input" name="tags" id="tags">
                                     <ul class="p-3 rounded discussion-tags">
+                                        <% tags.forEach(tag => { %>
+                                            <li class="list-group-item bg-light d-flex align-items-center m-2 p-2 rounded border"> <%= tag %> <i class="fa-solid fa-xmark mx-2"  onclick="remove(this, '${tag}')"></i> </li>
+                                        <% }) %>
                                     </ul>
                                 </div>
                                 <div class="container mb-3">
@@ -164,6 +156,12 @@
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">
+                <!-- new discussion -->
+                <h2 class="section-title text-center">Tem alguma dúvida?</h2>
+                <div class="post-question my-3 py-3">
+                    <a href="/forum/new-question" class="btn btn-custom w-100">Postar uma pergunta <i class="fa-solid fa-plus ms-3"></i></a>
+                </div>
+                <hr class="w-80">
                 <!-- search -->
                 <h2 class="section-title text-center">Busca rápida:</h2>
                 <div class="search my-3 py-3">

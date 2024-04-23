@@ -433,25 +433,36 @@ $('#country').autocomplete({
     source: countries
 });
 
-// tests for forum discussion form
+// forum discussion form tags
 const ul = $('.discussion-tags');
 const input = $('.tags-input');
 const countNumbers = $('.details span');
 
 let maxTags = 5;
-let tags = [];
+tags = [];
+
+countTag();
 
 function countTag(){
-    input.focus();
     countNumbers.text(maxTags - tags.length);
 }
 
 function createTag (){
     // remove all li tags before so there's no duplicated
     ul.find('li').remove();
+    // also remove all hidden inputs for tags
+    $('.discussion-tags input[name="tags"]').remove();
     tags.slice().reverse().forEach(tag => {
         let liTag = `<li class="list-group-item bg-light d-flex align-items-center m-2 p-2 rounded border">${tag} <i class="fa-solid fa-xmark mx-2"  onclick="remove(this, '${tag}')"></i> </li>`;
         ul.prepend(liTag);
+
+        // Create a new hidden input for the tag
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "tags";
+        input.value = tag;
+        // Append the hidden input to the form
+        $('.discussion-tags').append(input);
     });
     // update the count
     countTag();
@@ -466,17 +477,14 @@ function remove(element, tag){
 }
 
 function addTag(e){
-    if(e.key === ',' || e.key === 'Enter'){
+    if(e.key == 'Enter'){
         e.preventDefault();
         let tag = e.target.value.trim().replace(/\s+/g, ' ');
         if(tag.length > 1 && !tags.includes(tag)){
             if(tags.length < maxTags){
                 tag.split(',').forEach(tag => {
-                    tag = tag.trim();
-                    if (tag !== '') {
-                        tags.push(tag);
-                        createTag()
-                    }
+                    tags.push(tag);
+                    createTag();                
                 });
             }
         }

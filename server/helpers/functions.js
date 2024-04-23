@@ -91,7 +91,16 @@ function generateSlug(title) {
     });
 }
 
-// email sender
+// slug discussion title
+function generateDiscussionSlug(discussionTitle) {
+  return slugify(discussionTitle, {
+      lower: true,
+      strict: true,
+      replacement: '-'
+  });
+}
+
+// reset password email sender
 async function sendPasswordResetEmail(userEmail, token) {
     let transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
@@ -142,5 +151,5 @@ async function sendContactEmail(name, email, phone, message) {
     console.log("Message sent: %s", info.messageId);
 }
 
-const config = { uploadImage, customSanitizeHtml, generateSlug, sendPasswordResetEmail, sendContactEmail, handleImageUpload, storage };
+const config = { uploadImage, customSanitizeHtml, generateSlug, generateDiscussionSlug, sendPasswordResetEmail, sendContactEmail, handleImageUpload, storage };
 export default config;
