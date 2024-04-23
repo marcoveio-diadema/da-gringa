@@ -6,6 +6,9 @@ import sanitizeHtml from 'sanitize-html';
 import slugify from 'slugify';
 import nodemailer from 'nodemailer';
 
+// import db
+import db from '../config/db.js';
+
 // Google Cloud Storage
 const storage = new Storage({
   projectId: process.env.GCLOUD_PROJECT_ID,
@@ -81,7 +84,6 @@ const customSanitizeHtml = (html) => {
     });
 };
 
-
 // slug title
 function generateSlug(title) {
     return slugify(title, {
@@ -151,5 +153,19 @@ async function sendContactEmail(name, email, phone, message) {
     console.log("Message sent: %s", info.messageId);
 }
 
-const config = { uploadImage, customSanitizeHtml, generateSlug, generateDiscussionSlug, sendPasswordResetEmail, sendContactEmail, handleImageUpload, storage };
+// autocomplete for tags
+function getTags(term, callback) {
+  let query = 'SELECT tag FROM forum_tags WHERE tag LIKE $1';
+  let params = ['%' + term + '%'];
+  db.query(query, params, function(err, results) {
+      if (err) {
+          callback(err);
+      } else {
+          let tags = results.rows.map(row => row.tag);
+          callback(null, tags);
+      }
+  });
+}
+
+const config = { uploadImage, customSanitizeHtml, generateSlug, generateDiscussionSlug, sendPasswordResetEmail, sendContactEmail, handleImageUpload, getTags, storage };
 export default config;

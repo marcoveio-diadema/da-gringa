@@ -23,14 +23,19 @@
         <div class="row">
             <!-- LEFT SIDE (posts)-->
             <div class="col-md-9 mt-3 py-3">
-    
+                <!-- discussion tags -->
+                <ul class="p-3 rounded discussion-details-tags d-flex justify-content-center">
+                    <% tags.forEach(tag => { %>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border"><a href="#"> <%= tag %> </a></li>
+                    <% }) %>
+                </ul>
                 <!-- card with discussion details and answers -->
                 <div class="card">
                     <div class="card-body p-4">                    
                         <div class="row">
                             <div class="col">
                                 <!-- discussion title-->
-                                <h2 class="section-title text-center mb-3"><%= discussion.title %></h2>
+                                <h4 class="section-title text-center mb-3"><%= discussion.title %></h4>
                                 <!-- card with comments -->
                                 <div class="d-flex flex-start comments-container">
                                     <!-- author photo -->
@@ -61,7 +66,7 @@
                                             </div>
                                             <!-- content -->
                                             <p class="small my-2">
-                                                <%= discussion.content %>
+                                                <%- discussion.content %>
                                             </p>
                                             <!-- check if user is logged in to see like/dislike -->
                                                 <!-- like and dislike buttons -->
@@ -189,9 +194,9 @@
                 <!-- tags -->
                 <h2 class="section-title text-center">Tópicos quentes:</h2>
                 <ul class="p-3 rounded hot-discussion-tags">
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Visto estudante</a></li>
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Alugueis</a></li>
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Renovação de visto</a></li>
+                    <% hotTags.forEach(tag => { %>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#"> <%= tag %> </a></li>
+                    <% }) %>
                 </ul>
                 <hr class="w-80">
                 <!-- top trending -->

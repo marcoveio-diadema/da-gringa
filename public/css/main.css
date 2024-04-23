@@ -616,14 +616,6 @@ footer img {
     margin-top: 30px;
 }
 
-#forumCounter {
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-    color: var(--gray);
-    font-size: 0.8rem;
-}
-
 .basic-info ul {
     display: flex;
     flex-wrap: wrap;
@@ -634,7 +626,16 @@ footer img {
     flex-wrap: wrap;
 }
 
+.discussion-details-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 
 .basic-info ul li i {
     cursor: pointer;
+}
+
+.remove-all {
+    background-color: var(--orange) !important;
 }

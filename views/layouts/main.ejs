@@ -63,6 +63,11 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
         <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>       
         <script src="/js/scripts.js"></script>
+        <script>
+          <% if (typeof tags !== 'undefined') { %>
+            window.tags = <%- JSON.stringify(tags) %>;
+          <% } %>   
+        </script>
         <script src="/js/admin-scripts.js"></script>      
     </body>
 </html>

@@ -16,7 +16,7 @@ import db from '../config/db.js';
 
 // import functions
 import config from '../helpers/functions.js';
-const { uploadImage, customSanitizeHtml, generateDiscussionSlug, handleImageUpload, storage } = config;
+const { generateDiscussionSlug, getTags, storage } = config;
 
 // Middleware to check if user is authenticated
 function ensureAuthenticated(req, res, next) {
@@ -358,6 +358,16 @@ router.get('/discussion/:slug', async (req, res) => {
             // Get the tags
             const tags = result.rows.map(row => row.tag_name).filter(tag => tag !== null);
 
+            // Fetch the last 10 unique used tags
+            const hotTagsResult = await db.query(`
+                SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+                FROM forum_discussion_tags
+                LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+                LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+                ORDER BY tags.tag, forum_discussions.created_at DESC
+            `);
+            const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
             // locals and render the post page
             const locals = {
                 title: 'Fórum da Gringa',
@@ -370,6 +380,7 @@ router.get('/discussion/:slug', async (req, res) => {
                     req: req,
                     discussion: discussion,
                     tags: tags,
+                    hotTags: hotTags,
                 }
             );
         }
@@ -380,6 +391,19 @@ router.get('/discussion/:slug', async (req, res) => {
             message: 'Um erro ocorreu enquanto tentavamos carregar a discussão, tente novamente.'
         });
     }
+});
+
+// for auto completion tags input
+router.get('/get-tags', function(req, res) {
+    let term = req.query.term;
+    getTags(term, function(err, tags) {
+        if (err) {
+            console.error(err);
+            res.status(500).send(err);
+        } else {
+            res.json(tags);
+        }
+    });
 });
 
 

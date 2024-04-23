@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 })
 
-//  tinyMCE
+//  tinyMCE for blog posts
 tinymce.init({
     selector: 'textarea.tiny-mce',
     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
@@ -38,7 +38,14 @@ tinymce.init({
         { value: 'Email', title: 'Email' },
     ],
     ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
-    });
+});
+
+//  tinyMCE for forum discussions
+tinymce.init({
+    selector: 'textarea.tiny-mce-basic', // use a different class for the other textarea
+    plugins: 'link lists wordcount',
+    toolbar: 'undo redo | bold italic underline | align | numlist bullist',
+});
 
 // Truncate text
 function truncateText(text, limit) {
@@ -363,10 +370,6 @@ submitBtn.click(function(){
     progressText.eq(current - 1).addClass('active');
     progressCheck.eq(current - 1).addClass('active');
     current += 1;
-    setTimeout(function(){
-        alert('Your Form Successfully Submitted');
-        location.reload();
-    }, 800);
 });
 
 // move backward
@@ -395,11 +398,7 @@ prevBtnFourth.click(function(){
 });
 
 // new discussion form character count
-$('#contentInput').on('input', function() {
-    var length = $(this).val().length;
-    var color = length >= 1000 ? 'red' : '#7E7E7E';
-    $('#forumCounter').text(length + '/1000').css('color', color);
-}).on('keypress', function(e) {
+$('#contentInput').on('keypress', function(e) {
     if ($(this).val().length >= 1000) {
         e.preventDefault();
     }
@@ -429,6 +428,7 @@ const countries = [
     "Zâmbia", "Zimbábue"
 ];
 
+// countries auto complete
 $('#country').autocomplete({
     source: countries
 });
@@ -439,7 +439,6 @@ const input = $('.tags-input');
 const countNumbers = $('.details span');
 
 let maxTags = 5;
-tags = [];
 
 countTag();
 
@@ -457,12 +456,12 @@ function createTag (){
         ul.prepend(liTag);
 
         // Create a new hidden input for the tag
-        let input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "tags";
-        input.value = tag;
+        let tagInput = document.createElement("input");
+        tagInput.type = "hidden";
+        tagInput.name = "tags";
+        tagInput.value = tag;
         // Append the hidden input to the form
-        $('.discussion-tags').append(input);
+        $('.discussion-tags').append(tagInput);
     });
     // update the count
     countTag();
@@ -472,34 +471,66 @@ function remove(element, tag){
     let index = tags.indexOf(tag); // get the index of the tag
     tags = [...tags.slice(0, index), ...tags.slice(index + 1)]; // remove the tag from the array
     element.parentElement.remove(); // remove the tag from the list
+    // Remove the corresponding hidden input
+    $(`.discussion-tags input[value="${tag}"]`).remove();
     // update the count
     countTag();
 }
 
-function addTag(e){
-    if(e.key == 'Enter'){
-        e.preventDefault();
-        let tag = e.target.value.trim().replace(/\s+/g, ' ');
-        if(tag.length > 1 && !tags.includes(tag)){
-            if(tags.length < maxTags){
-                tag.split(',').forEach(tag => {
-                    tags.push(tag);
-                    createTag();                
-                });
-            }
+function addTag(tag){
+    tag = tag.trim().replace(/\s+/g, ' ');
+    if(tag.length > 1 && !tags.includes(tag)){
+        if(tags.length < maxTags){
+            tag.split(',').forEach(tag => {
+                tag = tag.trim();
+                tags.push(tag);
+                createTag();                                
+            });
         }
-        e.target.value = '';
     }
 }
 
-input.on('keydown', addTag);
+input.on('keydown', function(e) {
+    if(e.key == 'Enter'){
+        e.preventDefault();
+        addTag(e.target.value);
+        e.target.value = '';
+    }
+});
 
+// remove all tags
 const removeAll = $('.remove-all');
 removeAll.on('click', () => {
     tags = [];
     ul.find('li').remove();
+
+    // Remove all hidden inputs for tags
+    $('.discussion-tags input[name="tags"]').remove();
+    
     countTag();
 });
 
-
-
+// auto complete for tags input
+$('.tags-input').autocomplete({
+    source: function(request, response) {
+        $.ajax({
+            url: '/forum/get-tags', // replace with the URL to your server endpoint that returns the tags
+            data: {
+                term: request.term
+            },
+            success: function(data) {
+                response(data);
+            }
+        });
+    },
+    minLength: 2, // start showing suggestions after 2 characters
+    select: function(event, ui) {
+        // Add the selected item to the UL
+        addTag(ui.item.value); 
+        // Clear the input field
+        $(this).val('');
+        
+        // Prevent the default action of setting the input field to the selected value
+        return false;
+    }
+});
