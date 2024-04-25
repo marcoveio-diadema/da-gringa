@@ -73,64 +73,9 @@
                 <div class="post-question my-3 py-3">
                     <a href="/forum/new-question" class="btn btn-custom w-100">Postar uma pergunta <i class="fa-solid fa-plus ms-3"></i></a>
                 </div>
-                <hr class="w-80">
-                <!-- search -->
-                <h2 class="section-title text-center">Busca rápida:</h2>
-                <div class="search my-3 py-3">
-                    <form action="/search" class="shadow rounded" method="GET">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="q" placeholder="Busca rápida">
-                            <button class="btn btn-light go-button" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <hr class="w-80">
-                <!-- tags -->
-                <h2 class="section-title text-center">Tópicos quentes:</h2>
-                <ul class="p-3 rounded hot-discussion-tags">
-                    <% hotTags.forEach(tag => { %>
-                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border tags-list"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
-                    <% }) %>
-                </ul>
-                <hr class="w-80">
-                <!-- top trending -->
-                <h2 class="section-title text-center">Países em alta:</h2>
-                <div class="top-trendings my-3 py-3">
-                    <% countries.forEach(country => { %>                    
-                        <a href="/forum/country/<%= country %>" class="countries-link">
-                            <p class="text-center"> <%= country %> </p>
-                        </a>
-                    <% }) %>    
-                </div>
-                <hr class="w-80">
-                <!-- subscribe -->
-                <h2 class="section-title text-center">Newsletter:</h2>
-                <div class="subscribe my-3 py-3">
-                    <!-- success message -->
-                    <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
-                        <span id="success-message"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <!-- error message -->
-                    <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-                        <span id="error-message"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <!-- form -->
-                    <form id="subscribeForm" action="/user/subscribe" method="POST" class="shadow rounded">
-                        <div class="input-group">                            
-                            <input type="email" name="email" class="form-control" placeholder="Se inscreva aqui">
-                            <button type="submit" class="btn btn-light go-button">
-                                <i class="fa-regular fa-envelope"></i>
-                            </button>
-                        </div>
-                        <!-- hidden input for the URL -->
-                        <input type="hidden" name="redirect" value="<%= req.originalUrl %>">
-                    </form>
-                </div>
-               
+                <hr>
+                <!-- include side-bar -->
+                <%- include('../main/side-bar.ejs') %>
             </div>
         </div>
     </div>

@@ -36,6 +36,10 @@ router.get('/', async (req, res) => {
     let tags = [];
 
     try {
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
         // fetch all discussions from db
         const result = await db.query(`
             SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names
@@ -83,12 +87,14 @@ router.get('/', async (req, res) => {
             {
                 locals: locals,
                 req: req,
-                discussions: discussions,
+                discussions,
                 tags: tags,
-                hotTags: hotTags,
-                countries: countries
+                hotTags,
+                countries,
+                categories,
             }
         );
+
     } catch (error) {
         console.error('Error fetching forum posts:', error);
         // Render an error page
@@ -101,6 +107,10 @@ router.get('/', async (req, res) => {
 // GET - new discussion page
 router.get('/new-question', ensureAuthenticated, async (req, res) => {
     let tags = [];
+
+    // Fetch all categories from the database
+    const categoriesResult = await db.query('SELECT * FROM categories');
+    const categories = categoriesResult.rows;
 
     // Fetch the top 10 most frequently used tags
     const hotTagsResult = await db.query(`
@@ -137,8 +147,9 @@ router.get('/new-question', ensureAuthenticated, async (req, res) => {
                 locals: locals,
                 req: req,
                 tags: tags,
-                hotTags: hotTags,
-                countries: countries
+                hotTags,
+                countries,
+                categories,
             }
         );
     } catch (error) {
@@ -234,6 +245,10 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
         // Get the slug from the URL
         const slug = req.params.slug;
 
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
         // fetch discussion from db
         const result = await db.query(`
             SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
@@ -288,10 +303,11 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
                 {
                     locals: locals,
                     req: req,
-                    discussion: discussion,
+                    discussion,
                     tags: tags,
-                    hotTags: hotTags,
-                    countries: countries
+                    hotTags,
+                    countries,
+                    categories,
                 }
             );
         }
@@ -421,8 +437,12 @@ router.get('/discussion/:slug', async (req, res) => {
         // Get the slug from the URL
         const slug = req.params.slug;
 
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
         // fetch discussion from db
-        const result = await db.query(`
+        const discussionResult = await db.query(`
             SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
@@ -432,15 +452,15 @@ router.get('/discussion/:slug', async (req, res) => {
         `, [slug]);
 
         // check if a discussion was found
-        if (result.rows.length === 0) {
+        if (discussionResult.rows.length === 0) {
             // Render a 404 page
             res.status(404).render('404.ejs', { message: 'Discussão não encontrada.' });
             return;
         } else {
             // Get the discussion
-            const discussion = result.rows[0];
+            const discussion = discussionResult.rows[0];
             // Get the tags
-            const tags = result.rows.map(row => row.tag_name).filter(tag => tag !== null);
+            const tags = discussionResult.rows.map(row => row.tag_name).filter(tag => tag !== null);
 
             // Fetch the top 10 most frequently used tags
             const hotTagsResult = await db.query(`
@@ -462,7 +482,6 @@ router.get('/discussion/:slug', async (req, res) => {
                 ORDER BY count DESC
                 LIMIT 5
             `);
-
             const countries = countriesResult.rows.map(row => row.country);
 
             // locals and render the post page
@@ -475,10 +494,11 @@ router.get('/discussion/:slug', async (req, res) => {
                 {
                     locals: locals,
                     req: req,
-                    discussion: discussion,
+                    discussion,
                     tags: tags,
-                    hotTags: hotTags,
-                    countries: countries
+                    hotTags,
+                    countries,
+                    categories,
                 }
             );
         }
@@ -510,8 +530,12 @@ router.get('/tag/:tag', async (req, res) => {
         // Get the tag from the URL
         const tag = req.params.tag;
 
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
         // fetch discussions from db
-        const result = await db.query(`
+        const discussionsResult = await db.query(`
             SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
@@ -521,7 +545,7 @@ router.get('/tag/:tag', async (req, res) => {
         `, [tag]);
 
         // Get the discussions
-        const discussions = result.rows;
+        const discussions = discussionsResult.rows;
 
         // Fetch the top 10 most frequently used tags
         const hotTagsResult = await db.query(`
@@ -556,10 +580,11 @@ router.get('/tag/:tag', async (req, res) => {
             {
                 locals: locals,
                 req: req,
-                discussions: discussions,
+                discussions,
                 tag: tag,
-                hotTags: hotTags,
-                countries: countries
+                hotTags,
+                countries,
+                categories,
             }
         );
     } catch (error) {
@@ -575,8 +600,12 @@ router.get('/country/:country', async (req, res) => {
         // Get the tag from the URL
         const country = req.params.country;
 
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
         // fetch discussions from db
-        const result = await db.query(`
+        const countryResult = await db.query(`
             SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
@@ -584,7 +613,7 @@ router.get('/country/:country', async (req, res) => {
         `, [country]);
 
         // Get the discussions
-        const discussions = result.rows;
+        const discussions = countryResult.rows;
 
         // Fetch the top 10 most frequently used tags
         const hotTagsResult = await db.query(`
@@ -619,10 +648,11 @@ router.get('/country/:country', async (req, res) => {
             {
                 locals: locals,
                 req: req,
-                discussions: discussions,
-                hotTags: hotTags,
-                country: country,
-                countries: countries
+                discussions,
+                hotTags,
+                country,
+                countries,
+                categories,
             }
         );
 
@@ -632,70 +662,6 @@ router.get('/country/:country', async (req, res) => {
         res.status(500).render('500.ejs', { message: 'Um erro ocorreu enquanto tentavamos carregar as discussões, tente novamente.' });
     }
 });
-
-// GET - search page
-router.get('/search', async (req, res) => {
-    try {
-        // fetch search term
-        const searchForumTerm = req.query.q
-
-        // Fetch posts from the database
-        const result = await db.query(`
-            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img 
-            FROM forum_discussions
-            INNER JOIN users ON forum_discussions.user_id = users.id
-            WHERE forum_discussions.content ILIKE $1 OR forum_discussions.title ILIKE $1 OR forum_discussions.country ILIKE $1
-            ORDER BY forum_discussions.created_at DESC
-        `, [`%${searchForumTerm}%`]);
-
-        const discussions = result.rows;
-
-        // Fetch the top 10 most frequently used tags
-        const hotTagsResult = await db.query(`
-            SELECT tags.tag AS tag_name, COUNT(*) as count
-            FROM forum_discussion_tags
-            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
-            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
-            GROUP BY tags.tag
-            ORDER BY count DESC
-            LIMIT 10
-        `);
-        const hotTags = hotTagsResult.rows.map(row => row.tag_name);
-
-        // countries from db
-        const countriesResult = await db.query(`
-            SELECT country, COUNT(*) as count
-            FROM forum_discussions
-            GROUP BY country
-            ORDER BY count DESC
-            LIMIT 5
-        `);
-
-        const countries = countriesResult.rows.map(row => row.country);
-
-        // locals and render the post page
-        const locals = {
-            title: 'Fórum da Gringa',
-            description: 'Tuas dúvidas sobre a vida na gringa, respondidas por quem já passou por isso.'
-        }
-
-        res.render('forum/forum-search.ejs',
-            {
-                locals: locals,
-                req: req,
-                discussions,
-                searchForumTerm,
-                hotTags,
-                countries
-            }
-        );
-
-    } catch (error) {
-         // Render an error page
-         console.error(error);
-         res.status(500).render('500.ejs', { message: 'Um erro ocorreu enquanto tentavamos carregar as discussões, tente novamente.' });
-    }
-})
 
 
 export default router;

@@ -295,64 +295,8 @@
                 <% } %>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
-            <div class="col-md-3 mt-3 py-3">
-                <!-- categories -->
-                <h2 class="section-title text-center">Categorias:</h2>
-                <div class="categories my-3 py-3">
-                    <ul class="list-group shadow">
-                        <% categories.forEach(category => { %>
-                            <a href="/blog/category/<%= category.id %>">
-                                <li class="list-group-item"><%= category.category %></li>
-                            </a>
-                        <% }) %>
-                    </ul>
-                </div>
-                <hr class="w-80">
-                <!-- search -->
-                <h2 class="section-title text-center">Busca rápida:</h2>
-                <div class="search my-3 py-3">
-                    <form action="/search" class="shadow rounded" method="GET">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="q" placeholder="Busca rápida">
-                            <button class="btn btn-light go-button" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <hr class="w-80">
-                <!-- subscribe -->
-                <h2 class="section-title text-center">Newsletter:</h2>
-                <div class="subscribe my-3 py-3">
-                    <!-- success message -->
-                    <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
-                        <span id="success-message"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <!-- error message -->
-                    <div id="error-alert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-                        <span id="error-message"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <!-- form -->
-                    <form id="subscribeForm" action="/user/subscribe" method="POST" class="shadow rounded">
-                        <div class="input-group">                            
-                            <input type="email" name="email" class="form-control" placeholder="Se inscreva aqui">
-                            <button type="submit" class="btn btn-light go-button">
-                                <i class="fa-regular fa-envelope"></i>
-                            </button>
-                        </div>
-                        <!-- hidden input for the URL -->
-                        <input type="hidden" name="redirect" value="<%= req.originalUrl %>">
-                    </form>
-                </div>
-                <hr class="w-80">
-                <!-- about -->
-                <h2 class="section-title text-center">Sobre:</h2>
-                <div class="about my-3 py-3 text-center">
-                    <img src="/img/marcus_1.jpg" class="img-fluid rounded shadow mb-3" alt="">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
-                </div>
+            <div class="col-md-3 mt-3 py-3">           
+                <%- include('../main/side-bar.ejs') %> 
             </div>
         </div>
     </div>
