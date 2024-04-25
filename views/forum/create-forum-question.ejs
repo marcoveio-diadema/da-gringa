@@ -142,25 +142,6 @@
                         </div>
                     </form>
                 </div>
-                <!-- tags tests -->
-                <!--<div class="wrapper shadow p-3">
-                    <div class="title d-flex align-items-center">
-                        <i class="fa-solid fa-tags fa-xl mx-3"></i>
-                        <h2>Tags</h2>
-                    </div>
-                    <div class="content mx-3">
-                        <p>Digite a tag e pressione ENTER ou adicione VÍRGULA para confirmar</p>
-                        <div class="tag-box">
-                            <ul class="p-3 rounded discussion-tags">
-                            </ul>
-                            <input type="text" class="form-control tags-input" name="" id="">
-                        </div>
-                    </div>
-                    <div class="details d-flex align-items-center justify-content-between p-3">
-                        <p>Você pode escolher até 5 tags. <span>10</span> restantes.</p>
-                        <button class="btn btn-custom btn-sm remove-all">Remover todas</button>
-                    </div>
-                </div>-->
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">
@@ -180,29 +161,19 @@
                 <!-- tags -->
                 <h2 class="section-title text-center">Tópicos quentes:</h2>
                 <ul class="p-3 rounded hot-discussion-tags">
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Visto estudante</a></li>
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Alugueis</a></li>
-                    <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#">Renovação de visto</a></li>
+                    <% hotTags.forEach(tag => { %>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
+                    <% }) %>
                 </ul>
                 <hr class="w-80">
                 <!-- top trending -->
-                <h2 class="section-title text-center">Discussões em Alta:</h2>
+                <h2 class="section-title text-center">Países em Alta:</h2>
                 <div class="top-trendings my-3 py-3">                    
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>                                  
+                    <% countries.forEach(country => { %>                    
+                        <a href="/forum/country/<%= country %>" class="countries-link">
+                            <p class="text-center"> <%= country %> </p>
+                        </a>
+                    <% }) %>                                
                 </div>
                 <hr class="w-80">
                 <!-- subscribe -->

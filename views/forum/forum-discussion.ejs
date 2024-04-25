@@ -2,12 +2,12 @@
 <section class="section-small-heading" style="background-image: url(../img/sydney-cover.jpg);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text">Nãe era o que estava procurando?</h1>
+        <h1 class="index-text">Não era o que estava procurando?</h1>
         <!-- search form -->
         <div class="search-nav">
             <form action="#" method="GET" class="d-flex px-4 py-3">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Busca rápida no fórum">
+                    <input type="text" name="q" class="form-control" placeholder="Busca no fórum">
                     <button class="btn btn-light search-button" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -26,7 +26,7 @@
                 <!-- discussion tags -->
                 <ul class="p-3 rounded discussion-details-tags d-flex justify-content-center">
                     <% tags.forEach(tag => { %>
-                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border"><a href="#"> <%= tag %> </a></li>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
                     <% }) %>
                 </ul>
                 <!-- card with discussion details and answers -->
@@ -170,6 +170,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="container mb-3 p-3">
+                    <h3>Outras discussões sobre: <a href="/forum/country/<%= discussion.country %>">
+                        <%= discussion.country %>
+                    </a></h3>
+                </div>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">
@@ -195,28 +200,18 @@
                 <h2 class="section-title text-center">Tópicos quentes:</h2>
                 <ul class="p-3 rounded hot-discussion-tags">
                     <% hotTags.forEach(tag => { %>
-                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="#"> <%= tag %> </a></li>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
                     <% }) %>
                 </ul>
                 <hr class="w-80">
                 <!-- top trending -->
-                <h2 class="section-title text-center">Discussões em alta:</h2>
+                <h2 class="section-title text-center">Países em alta:</h2>
                 <div class="top-trendings my-3 py-3">                    
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>
-                    <a href="#">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, mollitia. Facere officia optio rerum magni!</p>
-                    </a>                                  
+                    <% countries.forEach(country => { %>                    
+                        <a href="/forum/country/<%= country %>" class="countries-link">
+                            <p class="text-center"> <%= country %> </p>
+                        </a>
+                    <% }) %>                               
                 </div>
                 <hr class="w-80">
                 <!-- subscribe -->

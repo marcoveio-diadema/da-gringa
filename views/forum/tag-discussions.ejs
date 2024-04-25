@@ -1,8 +1,8 @@
 <!-- SECTION HEADER -->
-<section class="section-heading" style="background-image: url(../img/oceania-cover.jpg);">
+<section class="section-small-heading" style="background-image: url(../img/sydney-cover.jpg);">
     <!-- text on landing page -->
     <div class="landing-page">
-        <h1 class="index-text">O que você está procurando?</h1>
+        <h1 class="index-text">Não era o que estava procurando?</h1>
         <!-- search form -->
         <div class="search-nav">
             <form action="#" method="GET" class="d-flex px-4 py-3">
@@ -66,9 +66,8 @@
                     <% } %>
                 </ul>
             </div>
-            <!-- RIGHT SIDE (new discussion, hot topics, hot places, subscribe, search)-->
+            <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">
-                <!-- new discussion -->
                 <h2 class="section-title text-center">Tem alguma dúvida?</h2>
                 <div class="post-question my-3 py-3">
                     <a href="/forum/new-question" class="btn btn-custom w-100">Postar uma pergunta <i class="fa-solid fa-plus ms-3"></i></a>
@@ -91,18 +90,18 @@
                 <h2 class="section-title text-center">Tópicos quentes:</h2>
                 <ul class="p-3 rounded hot-discussion-tags">
                     <% hotTags.forEach(tag => { %>
-                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border tags-list"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
+                        <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
                     <% }) %>
                 </ul>
                 <hr class="w-80">
                 <!-- top trending -->
                 <h2 class="section-title text-center">Países em alta:</h2>
-                <div class="top-trendings my-3 py-3">
+                <div class="top-trendings my-3 py-3">                    
                     <% countries.forEach(country => { %>                    
                         <a href="/forum/country/<%= country %>" class="countries-link">
                             <p class="text-center"> <%= country %> </p>
                         </a>
-                    <% }) %>    
+                    <% }) %>                               
                 </div>
                 <hr class="w-80">
                 <!-- subscribe -->

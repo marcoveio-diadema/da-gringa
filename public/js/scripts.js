@@ -477,12 +477,18 @@ function remove(element, tag){
     countTag();
 }
 
+// Uppercase first letter
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+// add tag to tags list
 function addTag(tag){
     tag = tag.trim().replace(/\s+/g, ' ');
     if(tag.length > 1 && !tags.includes(tag)){
         if(tags.length < maxTags){
             tag.split(',').forEach(tag => {
-                tag = tag.trim();
+                tag = capitalizeFirstLetter(tag.trim());
                 tags.push(tag);
                 createTag();                                
             });

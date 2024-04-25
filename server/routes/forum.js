@@ -49,6 +49,26 @@ router.get('/', async (req, res) => {
 
         // Get the discussions
         const discussions = result.rows;
+
+        // Fetch the last 10 unique used tags
+        const hotTagsResult = await db.query(`
+            SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+            FROM forum_discussion_tags
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+            ORDER BY tags.tag, forum_discussions.created_at DESC
+        `);
+        const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
+        // countries from db
+        const countriesResult = await db.query(`
+            SELECT DISTINCT ON (country) country, created_at
+            FROM forum_discussions
+            ORDER BY country, created_at DESC
+            LIMIT 5
+        `);
+
+        const countries = countriesResult.rows.map(row => row.country);
     
         // locals and render the post page
         const locals = {
@@ -62,6 +82,8 @@ router.get('/', async (req, res) => {
                 req: req,
                 discussions: discussions,
                 tags: tags,
+                hotTags: hotTags,
+                countries: countries
             }
         );
     } catch (error) {
@@ -74,8 +96,29 @@ router.get('/', async (req, res) => {
 });
 
 // GET - new discussion page
-router.get('/new-question', ensureAuthenticated, (req, res) => {
+router.get('/new-question', ensureAuthenticated, async (req, res) => {
     let tags = [];
+
+    // Fetch the last 10 unique used tags
+    const hotTagsResult = await db.query(`
+        SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+        FROM forum_discussion_tags
+        LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+        LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+        ORDER BY tags.tag, forum_discussions.created_at DESC
+    `);
+    const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
+    // countries from db
+    const countriesResult = await db.query(`
+        SELECT DISTINCT ON (country) country, created_at
+        FROM forum_discussions
+        ORDER BY country, created_at DESC
+        LIMIT 5
+    `);
+
+    const countries = countriesResult.rows.map(row => row.country);
+
     try {
         // locals and render the post page
         const locals = {
@@ -88,6 +131,8 @@ router.get('/new-question', ensureAuthenticated, (req, res) => {
                 locals: locals,
                 req: req,
                 tags: tags,
+                hotTags: hotTags,
+                countries: countries
             }
         );
     } catch (error) {
@@ -121,7 +166,6 @@ router.post('/new-question', ensureAuthenticated, async (req, res) => {
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *
         `, [userId, discussionTitle, country, content, slug]);
-        console.log('Inserted discussion into database');
 
         // create new discussion
         const newDiscussion = result.rows[0];
@@ -130,6 +174,11 @@ router.post('/new-question', ensureAuthenticated, async (req, res) => {
 
         // For each tag
         for (let tag of tags) {
+            // Skip if the tag is empty
+            if (tag.trim() === '') {
+                continue;
+            }
+
             // Check if the tag already exists
             let tagResult = await db.query(`
                 SELECT * FROM forum_tags WHERE tag = $1
@@ -163,7 +212,6 @@ router.post('/new-question', ensureAuthenticated, async (req, res) => {
 
         // Redirect to the post page
         res.redirect(`/forum/discussion/${newDiscussion.slug}`);
-        console.log('Redirected');
 
 
     } catch (error) {
@@ -190,6 +238,26 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
             WHERE forum_discussions.slug = $1
         `, [slug]);
 
+        // Fetch the last 10 unique used tags
+        const hotTagsResult = await db.query(`
+            SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+            FROM forum_discussion_tags
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+            ORDER BY tags.tag, forum_discussions.created_at DESC
+        `);
+        const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
+        // countries from db
+        const countriesResult = await db.query(`
+            SELECT DISTINCT ON (country) country, created_at
+            FROM forum_discussions
+            ORDER BY country, created_at DESC
+            LIMIT 5
+        `);
+
+        const countries = countriesResult.rows.map(row => row.country);
+
         // check if a discussion was found
         if (result.rows.length === 0) {
             // Render a 404 page
@@ -213,6 +281,8 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
                     req: req,
                     discussion: discussion,
                     tags: tags,
+                    hotTags: hotTags,
+                    countries: countries
                 }
             );
         }
@@ -263,6 +333,11 @@ router.post('/edit-discussion/', ensureAuthenticated, async (req, res) => {
 
         // For each new tag
         for (let tag of tags) {
+            // Skip if the tag is empty
+            if (tag.trim() === '') {
+                continue;
+            }
+
             // If the tag is not in the current list of tags, add it
             if (!currentTags.includes(tag)) {
                 // Check if the tag already exists
@@ -368,6 +443,16 @@ router.get('/discussion/:slug', async (req, res) => {
             `);
             const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
 
+            // countries from db
+            const countriesResult = await db.query(`
+                SELECT DISTINCT ON (country) country, created_at
+                FROM forum_discussions
+                ORDER BY country, created_at DESC
+                LIMIT 5
+            `);
+
+            const countries = countriesResult.rows.map(row => row.country);
+
             // locals and render the post page
             const locals = {
                 title: 'Fórum da Gringa',
@@ -381,6 +466,7 @@ router.get('/discussion/:slug', async (req, res) => {
                     discussion: discussion,
                     tags: tags,
                     hotTags: hotTags,
+                    countries: countries
                 }
             );
         }
@@ -393,7 +479,7 @@ router.get('/discussion/:slug', async (req, res) => {
     }
 });
 
-// for auto completion tags input
+// GET - for auto completion tags input
 router.get('/get-tags', function(req, res) {
     let term = req.query.term;
     getTags(term, function(err, tags) {
@@ -404,6 +490,129 @@ router.get('/get-tags', function(req, res) {
             res.json(tags);
         }
     });
+});
+
+// GET - Discussions by tag
+router.get('/tag/:tag', async (req, res) => {
+    try {
+        // Get the tag from the URL
+        const tag = req.params.tag;
+
+        // fetch discussions from db
+        const result = await db.query(`
+            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
+            FROM forum_discussions
+            INNER JOIN users ON forum_discussions.user_id = users.id
+            INNER JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
+            INNER JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            WHERE tags.tag = $1
+        `, [tag]);
+
+        // Get the discussions
+        const discussions = result.rows;
+
+        // Fetch the last 10 unique used tags
+        const hotTagsResult = await db.query(`
+            SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+            FROM forum_discussion_tags
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+            ORDER BY tags.tag, forum_discussions.created_at DESC
+        `);
+        const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
+        // countries from db
+        const countriesResult = await db.query(`
+            SELECT DISTINCT ON (country) country, created_at
+            FROM forum_discussions
+            ORDER BY country, created_at DESC
+            LIMIT 5
+        `);
+
+        const countries = countriesResult.rows.map(row => row.country);
+
+        // locals and render the post page
+        const locals = {
+            title: 'Fórum da Gringa',
+            description: 'Tuas dúvidas sobre a vida na gringa, respondidas por quem já passou por isso.'
+        }
+
+        res.render('forum/tag-discussions.ejs',
+            {
+                locals: locals,
+                req: req,
+                discussions: discussions,
+                tag: tag,
+                hotTags: hotTags,
+                countries: countries
+            }
+        );
+    } catch (error) {
+        // Render an error page
+        console.error(error);
+        res.status(500).render('500.ejs', { message: 'Um erro ocorreu enquanto tentavamos carregar as discussões, tente novamente.' });
+    }
+});
+
+// GET - Discussions per country
+router.get('/country/:country', async (req, res) => {
+    try {
+        // Get the tag from the URL
+        const country = req.params.country;
+
+        // fetch discussions from db
+        const result = await db.query(`
+            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img
+            FROM forum_discussions
+            INNER JOIN users ON forum_discussions.user_id = users.id
+            WHERE forum_discussions.country = $1
+        `, [country]);
+
+        // Get the discussions
+        const discussions = result.rows;
+
+        // Fetch the last 10 unique used tags
+        const hotTagsResult = await db.query(`
+            SELECT DISTINCT ON (tags.tag) tags.tag AS tag_name, forum_discussions.created_at
+            FROM forum_discussion_tags
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+            ORDER BY tags.tag, forum_discussions.created_at DESC
+        `);
+        const hotTags = hotTagsResult.rows.map(row => row.tag_name).slice(0, 10);
+
+        // countries from db
+        const countriesResult = await db.query(`
+            SELECT DISTINCT ON (country) country, created_at
+            FROM forum_discussions
+            ORDER BY country, created_at DESC
+            LIMIT 5
+        `);
+
+        const countries = countriesResult.rows.map(row => row.country);
+
+        // locals and render the post page
+        const locals = {
+            title: 'Fórum da Gringa',
+            description: 'Tuas dúvidas sobre a vida na gringa, respondidas por quem já passou por isso.'
+        }
+
+        res.render('forum/tag-discussions.ejs',
+            {
+                locals: locals,
+                req: req,
+                discussions: discussions,
+                hotTags: hotTags,
+                country: country,
+                countries: countries
+            }
+        );
+
+    } catch (error) {
+        // Render an error page
+        console.error(error);
+        res.status(500).render('500.ejs', { message: 'Um erro ocorreu enquanto tentavamos carregar as discussões, tente novamente.' });
+    }
 });
 
 

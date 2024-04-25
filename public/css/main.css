@@ -639,3 +639,19 @@ footer img {
 .remove-all {
     background-color: var(--orange) !important;
 }
+
+.countries-link{
+    transition: 0.3s;
+}
+
+.countries-link:hover {
+    color: var(--mid-blue);
+}
+
+.tags-list {
+    transition: .3s;
+}
+
+.tags-list:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
