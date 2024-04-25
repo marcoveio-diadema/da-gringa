@@ -152,48 +152,6 @@ router.get('/category/:categoryId', async (req, res) => {
     }
 });
 
-// GET - Search page
-router.get('/search', async (req, res) => {
-    try {
-        // Fetch the search term from the query parameters
-        const searchTerm = req.query.q;
-
-        // Fetch posts from the database
-        const result = await db.query(`
-            SELECT posts.*, categories.category AS category_name, users.username AS author_username 
-            FROM posts
-            INNER JOIN categories ON posts.category_id = categories.id 
-            INNER JOIN users ON posts.author_id = users.id 
-            WHERE posts.content ILIKE $1 OR posts.title ILIKE $1 OR posts.intro ILIKE $1
-            ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
-        `, [`%${searchTerm}%`]);
-
-        const posts = result.rows;
-
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
-        const locals = {
-            title: 'Busca no blog',
-            description: "Search results"
-        }
-
-        res.render('blog/search.ejs', { 
-            locals,
-            user: req.user,
-            posts,
-            categories,
-            searchTerm,
-            req: req
-        });
-    } catch (error) {
-        console.error('Error fetching posts:', error);
-        // Render an error page
-        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts' });
-    }
-});
-
 // POST - Comment
 router.post('/comment', async (req, res) => {
     const comment_text = sanitizeHtml(req.body.comment);

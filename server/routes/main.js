@@ -120,4 +120,84 @@ router.get('/about', (req, res) => {
      });
 });
 
+// GET - Search page
+router.get('/search', async (req, res) => {
+    try {
+        // Fetch the search term from the query parameters
+        const searchTerm = req.query.q;
+
+        // Fetch posts from the posts table
+        const postsResult = await db.query(`
+            SELECT posts.*, categories.category AS category_name, users.username AS author_username 
+            FROM posts
+            INNER JOIN categories ON posts.category_id = categories.id 
+            INNER JOIN users ON posts.author_id = users.id 
+            WHERE posts.content ILIKE $1 OR posts.title ILIKE $1 OR posts.intro ILIKE $1
+            ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
+        `, [`%${searchTerm}%`]);
+
+        const posts = postsResult.rows;
+
+        // Fetch discussions from the forum_discussions table
+        const discussionsResult = await db.query(`
+            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img 
+            FROM forum_discussions
+            INNER JOIN users ON forum_discussions.user_id = users.id
+            WHERE forum_discussions.content ILIKE $1 OR forum_discussions.title ILIKE $1 OR forum_discussions.country ILIKE $1
+            ORDER BY forum_discussions.created_at DESC
+        `, [`%${searchTerm}%`]);
+
+        const discussions = discussionsResult.rows;
+
+        // Fetch the top 10 most frequently used tags
+        const hotTagsResult = await db.query(`
+            SELECT tags.tag AS tag_name, COUNT(*) as count
+            FROM forum_discussion_tags
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN forum_discussions ON forum_discussions.id = forum_discussion_tags.discussion_id
+            GROUP BY tags.tag
+            ORDER BY count DESC
+            LIMIT 10
+        `);
+        const hotTags = hotTagsResult.rows.map(row => row.tag_name);
+
+        // countries from db
+        const countriesResult = await db.query(`
+            SELECT country, COUNT(*) as count
+            FROM forum_discussions
+            GROUP BY country
+            ORDER BY count DESC
+            LIMIT 5
+        `);
+
+        const countries = countriesResult.rows.map(row => row.country);
+
+        // Fetch all categories from the database
+        const categoriesResult = await db.query('SELECT * FROM categories');
+        const categories = categoriesResult.rows;
+
+        const locals = {
+            title: 'Busca no blog e fórum',
+            description: "Search results"
+        }
+
+        res.render('main/search.ejs', { 
+            locals,
+            user: req.user,
+            posts,
+            discussions,
+            categories,
+            searchTerm,
+            req: req,
+            hotTags,
+            countries
+        });
+    } catch (error) {
+        console.error('Error fetching posts and discussions:', error);
+        // Render an error page
+        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts and discussions' });
+    }
+});
+
+
 export default router;
