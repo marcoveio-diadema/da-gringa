@@ -224,11 +224,14 @@
                                                                             <!-- delete comment button -->
                                                                             <a href="#" class="btn btn-link text-danger delete-reply" data-reply-id="<%= reply.id %>"> Delete </a>
                                                                         <% } %>
-                                                                        </div>
+                                                                    </div>
                                                                     <!-- comment -->
-                                                                    <p class="small my-2">
-                                                                        <%= reply.reply %>
-                                                                    </p>
+                                                                    
+                                                                        <p class="small my-2">
+                                                                            <%= reply.reply %>
+                                                                        </p>
+                                                                    
+                                                                    
                                                                     <!-- like and dislike buttons -->
                                                                     <!-- check if user is logged in to see like/dislike -->
                                                                     <% if (user) { %>

@@ -324,6 +324,142 @@ $(".dislike-reply-form").on('submit', function(e){
     });
 });
 
+//    ---------   FORUM --------------- //
+// ajax for new comments
+$('#replyDiscussionForm').on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+        url: '/forum/discussion-reply',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response){
+            // reload the page
+            location.reload();
+            
+            // erase the form
+            $('#replyDiscussionForm')[0].reset();
+            console.log(response);
+        },
+        error: function(xhr, status, error){
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
+
+// ajax for deleting forum replies
+$('.delete-discussion-reply').on('click', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: `/forum/discussion-reply/${$(this).data('discussion-reply-id')}`,
+        method: 'DELETE',
+        success: function(response) {
+            if (response.success) {
+                // Reload the comments
+                location.reload();
+            } else {
+                // Handle error here
+                console.log(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error here
+            console.log(error);
+        }
+    });
+});
+
+// ajax for liking discussions
+$(".like-discussion-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/forum/like-discussion',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
+
+// ajax for disliking discussions
+$(".dislike-discussion-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/forum/dislike-discussion',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
+// ajax for liking replies
+$(".like-discussion-reply-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/forum/like-discussion-reply',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
+// ajax for disliking replies
+$(".dislike-discussion-reply-form").on('submit', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      url: '/forum/dislike-discussion-reply',
+      type: 'POST',
+      data: $(this).serialize(),
+      success: function(response) {
+        // reload page
+        location.reload();
+
+        // Handle success here
+        console.log(response);
+      },
+      error: function(error) {
+        // Handle error here
+        console.log(error);
+      }
+    });
+});
+
 // NEW FORUM DISCUSSION FORM
 const slidePage = $('.slidepage');
 const firstNextBtn = $('.nextBtn');

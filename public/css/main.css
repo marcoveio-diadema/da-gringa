@@ -312,6 +312,44 @@ transform: scaleX(1);
     transform: scale(1.5);
 }
 
+/* PARALLAX */
+
+.parallax-container {
+    position: relative;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.parallax-image {
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.7; 
+}
+
+.parallax-text {
+    z-index: 1;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif !important;
+}
+
+#parallax-text {
+    text-shadow: #30475E 0 0 4px !important;
+    color: #F5F5F5 !important;
+}
+
+#parallax-1 {
+    background-image: url('../img/IMG_8389.jpeg');
+}
+
 /* SIDE NAV */
 .about img {
     max-width: 80%;

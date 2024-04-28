@@ -16,21 +16,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
-        <h1 class="index-text">SANTOS FC</h1>
+        <h1 class="index-text">Manual da Gringa</h1>
         <h3 class="index-text">Partiu Mundão?</h3>
-        <i class="fa-solid fa-circle-down fa-xl" id="landing-icon"></i>
+        <!-- scrollspy -->
+        <a class="index-scroll" href="#scrollspyHeading1">
+            <i class="fa-solid fa-circle-down fa-xl" id="landing-icon"></i>
+        </a>        
     </div>
 </section>
 
 <!-- SECTION BLOG -->
-<section class="section-main">
+<section class="section-main" data-bs-spy="scroll" data-bs-target="#navbar-example2">
     <div class="container">
         <div class="row">
             <!-- LEFT SIDE (posts)-->
-            <div class="col-md-9 mt-3 py-3">
-                <h2 class="section-title">Últimos Posts:</h2>
+            <div class="col-md-9 mt-3 py-3" id="scrollspyHeading1">
+                <!-- blog posts -->
+                <h2 class="section-title mb-3">Últimos Posts:</h2>
                 <% if(posts && posts.length > 0) { %>
-                <div class="blog-posts my-3">
+                <div class="blog-posts mb-3">
                     <% posts.forEach(post => { %>
                         <a href="/blog/post/<%= post.slug %>">
                             <!-- card with posts -->
@@ -82,9 +86,69 @@
                                 </div>
                             </div>
                         </a> 
-                    <% }) %>                   
+                    <% }) %>
+                    <!-- link to blog home page -->
+                    <div class="container mb-3 d-flex justify-content-end">
+                        <a href="/blog" class="btn btn-custom">Todos os posts <i class="fa-solid fa-arrow-right-long ms-3"></i></a>
+                    </div>                   
                 </div>
                 <% } %>
+                <!-- parallax -->
+                <div class="parallax-container mb-3">
+                    <div class="parallax-image" id="parallax-1"></div>
+                    <div class="parallax-text">
+                        <h1 id="parallax-text">Partiu mundão !?</h1>
+                    </div>
+                </div>
+                <!-- forum discussions -->
+                <div class="container">
+                    <h2 class="section-title mb-3">Bombando no Fórum:</h2>
+                    <!-- list with questions and info -->
+                    <ul class="list-group mb-3">
+                        <!-- check if there are discutions -->
+                        <% if (discussions && discussions.length > 0) { %>
+                            <% discussions.forEach(discussion => { %>
+                                <li class="list-group-item forum-questions d-flex">
+                                    <div class="forum-author-image p-2">
+                                        <img src="<%= discussion.author_img %>" alt="">
+                                    </div>
+                                    <div class="forum-question p-2">
+                                        <!-- link to the discussion details -->
+                                        <a href="/forum/discussion/<%= discussion.slug %>">
+                                            <h6><%= discussion.title %></h6>
+                                        </a>
+                                        <p class="small text-secondary">Por <strong><%= discussion.author_username %></strong>, <strong class="comment-time"><%= discussion.created_at %></strong>
+                                        </p>
+                                    </div>
+                                    <div class="forum-category p-2">
+                                        <a href="/forum/country/<%= discussion.country %>">
+                                            <p class="text-secondary"><%= discussion.country %></p>
+                                        </a>
+                                    </div>
+                                    <div class="forum-reactions p-2">
+                                        <div class="forum-reaction text-body-secondary">
+                                            <i class="fa-regular fa-thumbs-up like-icon"></i>
+                                            <span class="mx-1">(<%= discussion.like_count %>)</span>
+                                            <i class="fa-regular fa-thumbs-down dislike-icon"></i>
+                                            <span class="mx-1">(<%= discussion.dislike_count %>)</span>
+                                            <br>
+                                            <i class="fa-regular fa-comment-dots"></i>
+                                            <span class="mx-1">(<%= discussion.reply_count %>)</span>
+                                            <i class="fa-regular fa-eye"></i>
+                                            <span class="mx-1">(<%= discussion.view_count %>)</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="p-3">Nenhuma discussão aberta no fórum</p>
+                        <% } %>
+                    </ul>
+                    <!-- link to blog home page -->
+                    <div class="container mb-3 d-flex justify-content-end">
+                        <a href="/forum" class="btn btn-custom">Todas as discussões <i class="fa-solid fa-arrow-right-long ms-3"></i></a>
+                    </div>
+                </div>
             </div>
             <!-- RIGHT SIDE (categories, subscribe, search and about)-->
             <div class="col-md-3 mt-3 py-3">

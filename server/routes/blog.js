@@ -17,9 +17,6 @@ import db from '../config/db.js';
 // GET - Blog index
 router.get('/', async (req, res) => {
     try {
-        // fetch categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
         
         // Fetch posts from the database
         const postsResult = await db.query(`
@@ -69,6 +66,26 @@ router.get('/', async (req, res) => {
 
      const countries = countriesResult.rows.map(row => row.country);
 
+     // fetch most viewed discussions
+     const hotDiscussionsResult = await db.query(`
+        SELECT title, slug, view_count
+        FROM forum_discussions
+        ORDER BY view_count DESC
+        LIMIT 5
+    `)
+
+    const hotDiscussions = hotDiscussionsResult.rows;
+
+    // fetch most viewed discussions
+    const hotPostsResult = await db.query(`
+        SELECT title, slug, view_count
+        FROM posts
+        ORDER BY view_count DESC
+        LIMIT 5
+    `)
+
+    const hotPosts = hotPostsResult.rows;
+
         // locals and render the home page
         const locals = {
             title: 'Página Inicial',
@@ -79,11 +96,12 @@ router.get('/', async (req, res) => {
             locals,
             user: req.user,
             posts,
-            categories,
             req: req,
             discussions,
             countries,
-            hotTags
+            hotTags,
+            hotDiscussions,
+            hotPosts,
         });
     } catch (error) {
         console.error('Error fetching posts:', error);
@@ -91,12 +109,10 @@ router.get('/', async (req, res) => {
         res.status(500).render('500.ejs', { message: 'Um erro ocorreu ao tentarmos carregar os posts.' });
     }
 });
+
 // GET - Post page
 router.get('/post/:slug', async (req, res) => {
     try {
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
         // Get the slug from the URL
         const slug = req.params.slug;
 
@@ -113,6 +129,9 @@ router.get('/post/:slug', async (req, res) => {
         if (result.rows.length > 0) {
             // Get the post
             const post = result.rows[0];
+
+            // Increment the view count
+            await db.query('UPDATE posts SET view_count = view_count + 1 WHERE slug = $1', [slug]);
 
              // Fetch the other posts from the same category
             const otherPostsResult = await db.query(`
@@ -191,6 +210,24 @@ router.get('/post/:slug', async (req, res) => {
             `);
             const countries = countriesResult.rows.map(row => row.country);
 
+            // fetch most viewed discussions
+            const hotDiscussionsResult = await db.query(`
+                SELECT title, slug, view_count
+                FROM forum_discussions
+                ORDER BY view_count DESC
+                LIMIT 5
+            `)
+            const hotDiscussions = hotDiscussionsResult.rows;
+
+            // fetch most viewed discussions
+            const hotPostsResult = await db.query(`
+                SELECT title, slug, view_count
+                FROM posts
+                ORDER BY view_count DESC
+                LIMIT 5
+            `)
+            const hotPosts = hotPostsResult.rows;
+
             // locals and render the post page
             const locals = {
                 title: post.title,
@@ -202,13 +239,14 @@ router.get('/post/:slug', async (req, res) => {
                 locals,
                 post,
                 otherPosts,
-                categories,
                 comments,
                 req: req,
                 user: req.user,
                 hotTags,
                 discussions,
                 countries,
+                hotDiscussions,
+                hotPosts,
             });
         } else {
             // No post was found, render a 404 page
@@ -284,7 +322,26 @@ router.get('/category/:categoryId', async (req, res) => {
             LIMIT 5
         `);
         const countries = countriesResult.rows.map(row => row.country);
-    
+
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows;
+
+        // fetch most viewed discussions
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
+        
+        // locals and rendering
         const locals = {
         title: 'Categoria: ' + category.category,
         description: "Tudo sobre como se virar na gringa!"
@@ -299,7 +356,9 @@ router.get('/category/:categoryId', async (req, res) => {
             req: req,
             hotTags,
             discussions,
-            countries
+            countries,
+            hotDiscussions,
+            hotPosts,
          });
     } catch (error) {
         console.error('Error fetching posts:', error);

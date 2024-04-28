@@ -49,14 +49,14 @@
                                 <div class="forum-reactions p-2">
                                     <div class="forum-reaction text-body-secondary">
                                         <i class="fa-regular fa-thumbs-up like-icon"></i>
-                                        <span class="mx-1">(100)</span>
+                                        <span class="mx-1">(<%= discussion.like_count %>)</span>
                                         <i class="fa-regular fa-thumbs-down dislike-icon"></i>
-                                        <span class="mx-1">(10)</span>
+                                        <span class="mx-1">(<%= discussion.dislike_count %>)</span>
                                         <br>
                                         <i class="fa-regular fa-comment-dots"></i>
-                                        <span class="mx-1">(10)</span>
+                                        <span class="mx-1">(<%= discussion.reply_count %>)</span>
                                         <i class="fa-regular fa-eye"></i>
-                                        <span class="mx-1">(723)</span>
+                                        <span class="mx-1">(<%= discussion.view_count %>)</span>
                                     </div>
                                 </div>
                             </li>

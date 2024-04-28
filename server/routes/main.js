@@ -30,19 +30,36 @@ router.get('/', async (req, res) => {
             INNER JOIN categories ON posts.category_id = categories.id 
             INNER JOIN users ON posts.author_id = users.id 
             ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
+            LIMIT 5
         `);
 
         const posts = blogResult.rows;
 
         // fetch all discussions from db
         const forumResult = await db.query(`
-            SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names
+            SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, forum_discussions.view_count, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names, COALESCE(reply_counts.reply_count, 0) AS reply_count, COALESCE(like_counts.like_count, 0) AS like_count, COALESCE(dislike_counts.dislike_count, 0) AS dislike_count
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
             LEFT JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
             LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
-            GROUP BY forum_discussions.id, users.username, users.profile_img
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS reply_count
+                FROM discussion_replies
+                GROUP BY discussion_id
+            ) AS reply_counts ON forum_discussions.id = reply_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS like_count
+                FROM discussion_likes
+                GROUP BY discussion_id
+            ) AS like_counts ON forum_discussions.id = like_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS dislike_count
+                FROM discussion_dislikes
+                GROUP BY discussion_id
+            ) AS dislike_counts ON forum_discussions.id = dislike_counts.discussion_id
+            GROUP BY forum_discussions.id, users.username, users.profile_img, reply_counts.reply_count, like_counts.like_count, dislike_counts.dislike_count
             ORDER BY forum_discussions.created_at DESC
+            LIMIT 5
         `);
 
         // Get the discussions
@@ -68,8 +85,25 @@ router.get('/', async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
+
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows;
+
+        // fetch most viewed discussions
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
 
         // locals and render the home page
         const locals = {
@@ -85,7 +119,9 @@ router.get('/', async (req, res) => {
             req: req,
             hotTags,
             discussions,
-            countries
+            countries,
+            hotDiscussions,
+            hotPosts,
         });
     } catch (error) {
         console.error('Error fetching posts:', error);

@@ -1,15 +1,3 @@
-<!-- categories -->
-<h3 class="section-title text-center">Artigos por País:</h3>
-<div class="categories my-3 py-3">
-    <ul class="list-group shadow">
-        <% categories.forEach(category => { %>
-            <a href="/blog/category/<%= category.id %>">
-                <li class="list-group-item"><%= category.category %></li>
-            </a>
-        <% }) %>
-    </ul>
-</div>
-<hr class="w-80">
 <!-- search -->
 <h3 class="section-title text-center">Busca rápida:</h3>
 <div class="search my-3 py-3">
@@ -23,16 +11,36 @@
     </form>
 </div>
 <hr>
+ <!-- most viewed blog -->
+ <h3 class="section-title text-center">Mais lidas no Blog:</h3>
+ <div class="top-trendings my-3 py-3">                    
+     <% hotPosts.forEach(hotPost => { %>                    
+         <a href="/blog/post/<%= hotPost.slug %>" class="countries-link">
+             <p class="px-2"> <%= hotPost.title %> </p>
+         </a>
+     <% }) %>                               
+ </div>
+ <hr>
  <!-- tags -->
- <h3 class="section-title text-center">Tópicos quentes:</h3>
+ <h3 class="section-title text-center">Tópicos quentes no Fórum:</h3>
  <ul class="p-3 rounded hot-discussion-tags">
      <% hotTags.forEach(tag => { %>
          <li class="list-group-item bg-light d-flex align-items-center m-1 px-3 py-2 rounded border shadow"><a href="/forum/tag/<%= tag %>"> <%= tag %> </a></li>
      <% }) %>
  </ul>
  <hr>
+ <!-- most viewed -->
+<h3 class="section-title text-center">Mais vistas no Fórum:</h3>
+<div class="top-trendings my-3 py-3">                    
+    <% hotDiscussions.forEach(hotDiscussion => { %>                    
+        <a href="/forum/discussion/<%= hotDiscussion.slug %>" class="countries-link">
+            <p class="px-2"> <%= hotDiscussion.title %> </p>
+        </a>
+    <% }) %>                               
+</div>
+<hr>
  <!-- top trending -->
-<h2 class="section-title text-center">Países em alta:</h2>
+<h3 class="section-title text-center">Países em alta:</h3>
 <div class="top-trendings my-3 py-3">                    
     <% countries.forEach(country => { %>                    
         <a href="/forum/country/<%= country %>" class="countries-link">
@@ -42,7 +50,7 @@
 </div>
 <hr>
 <!-- subscribe -->
-<h2 class="section-title text-center">Newsletter:</h2>
+<h3 class="section-title text-center">Newsletter:</h3>
 <div class="subscribe my-3 py-3">
     <!-- success message -->
     <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
@@ -67,9 +75,3 @@
     </form>
 </div>
 <hr>
-<!-- about -->
-<h2 class="section-title text-center">Sobre:</h2>
-<div class="about my-3 py-3 text-center">
-    <img src="/img/marcus_1.jpg" class="img-fluid rounded shadow mb-3" alt="">
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus suscipit optio ad voluptatem ea amet, ex architecto est fuga fugiat?</p>
-</div>

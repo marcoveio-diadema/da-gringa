@@ -36,21 +36,31 @@ router.get('/', async (req, res) => {
     let tags = [];
 
     try {
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
         // fetch all discussions from db
         const result = await db.query(`
-            SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names
+            SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, forum_discussions.view_count, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names, COALESCE(reply_counts.reply_count, 0) AS reply_count, COALESCE(like_counts.like_count, 0) AS like_count, COALESCE(dislike_counts.dislike_count, 0) AS dislike_count
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
             LEFT JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
             LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
-            GROUP BY forum_discussions.id, users.username, users.profile_img
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS reply_count
+                FROM discussion_replies
+                GROUP BY discussion_id
+            ) AS reply_counts ON forum_discussions.id = reply_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS like_count
+                FROM discussion_likes
+                GROUP BY discussion_id
+            ) AS like_counts ON forum_discussions.id = like_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS dislike_count
+                FROM discussion_dislikes
+                GROUP BY discussion_id
+            ) AS dislike_counts ON forum_discussions.id = dislike_counts.discussion_id
+            GROUP BY forum_discussions.id, users.username, users.profile_img, reply_counts.reply_count, like_counts.like_count, dislike_counts.dislike_count
             ORDER BY forum_discussions.created_at DESC
         `);
-
         // Get the discussions
         const discussions = result.rows;
 
@@ -74,8 +84,25 @@ router.get('/', async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
+        
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows;
+
+        // fetch most viewed posts
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
     
         // locals and render the post page
         const locals = {
@@ -91,7 +118,8 @@ router.get('/', async (req, res) => {
                 tags: tags,
                 hotTags,
                 countries,
-                categories,
+                hotDiscussions,
+                hotPosts,
             }
         );
 
@@ -107,10 +135,6 @@ router.get('/', async (req, res) => {
 // GET - new discussion page
 router.get('/new-question', ensureAuthenticated, async (req, res) => {
     let tags = [];
-
-    // Fetch all categories from the database
-    const categoriesResult = await db.query('SELECT * FROM categories');
-    const categories = categoriesResult.rows;
 
     // Fetch the top 10 most frequently used tags
     const hotTagsResult = await db.query(`
@@ -132,8 +156,25 @@ router.get('/new-question', ensureAuthenticated, async (req, res) => {
         ORDER BY count DESC
         LIMIT 5
     `);
-
     const countries = countriesResult.rows.map(row => row.country);
+
+    // fetch most viewed discussions
+    const hotDiscussionsResult = await db.query(`
+        SELECT title, slug, view_count
+        FROM forum_discussions
+        ORDER BY view_count DESC
+        LIMIT 5
+    `)
+    const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+
+    // fetch most viewed posts
+    const hotPostsResult = await db.query(`
+        SELECT title, slug, view_count
+        FROM posts
+        ORDER BY view_count DESC
+        LIMIT 5
+    `)
+    const hotPosts = hotPostsResult.rows;
 
     try {
         // locals and render the post page
@@ -149,7 +190,8 @@ router.get('/new-question', ensureAuthenticated, async (req, res) => {
                 tags: tags,
                 hotTags,
                 countries,
-                categories,
+                hotDiscussions,
+                hotPosts,
             }
         );
     } catch (error) {
@@ -245,10 +287,6 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
         // Get the slug from the URL
         const slug = req.params.slug;
 
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
         // fetch discussion from db
         const result = await db.query(`
             SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
@@ -279,8 +317,25 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
+
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+
+        // fetch most viewed posts
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
 
         // check if a discussion was found
         if (result.rows.length === 0) {
@@ -307,7 +362,8 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
                     tags: tags,
                     hotTags,
                     countries,
-                    categories,
+                    hotDiscussions,
+                    hotPosts,
                 }
             );
         }
@@ -437,19 +493,20 @@ router.get('/discussion/:slug', async (req, res) => {
         // Get the slug from the URL
         const slug = req.params.slug;
 
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
         // fetch discussion from db
         const discussionResult = await db.query(`
-            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
+            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name, users.id AS author_id, COUNT(discussion_likes.user_id) AS likes_count, COUNT(discussion_dislikes.user_id) AS dislikes_count,
+            CASE WHEN discussion_likes.user_id = $2 THEN true ELSE false END AS liked,
+            CASE WHEN discussion_dislikes.user_id = $2 THEN true ELSE false END AS disliked
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
+            LEFT JOIN discussion_likes ON forum_discussions.id = discussion_likes.discussion_id
+            LEFT JOIN discussion_dislikes ON forum_discussions.id = discussion_dislikes.discussion_id
             LEFT JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
             LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
             WHERE forum_discussions.slug = $1
-        `, [slug]);
+            GROUP BY forum_discussions.id, users.username, users.profile_img, users.id, discussion_likes.user_id, discussion_dislikes.user_id, tags.tag
+        `, [slug, req.user ? req.user.id : null]);
 
         // check if a discussion was found
         if (discussionResult.rows.length === 0) {
@@ -461,6 +518,9 @@ router.get('/discussion/:slug', async (req, res) => {
             const discussion = discussionResult.rows[0];
             // Get the tags
             const tags = discussionResult.rows.map(row => row.tag_name).filter(tag => tag !== null);
+
+            // Increment the view count
+            await db.query('UPDATE forum_discussions SET view_count = view_count + 1 WHERE slug = $1', [slug]);
 
             // Fetch the top 10 most frequently used tags
             const hotTagsResult = await db.query(`
@@ -484,6 +544,41 @@ router.get('/discussion/:slug', async (req, res) => {
             `);
             const countries = countriesResult.rows.map(row => row.country);
 
+            // replies
+            const discussionId = discussion.id
+
+            const repliesResult = await db.query(`
+                SELECT discussion_replies.*, users.username AS author_username, users.profile_img AS author_img, users.id AS author_id, COUNT(discussion_reply_likes.user_id) AS likes_count, COUNT(discussion_reply_dislikes.user_id) AS dislikes_count,
+                CASE WHEN discussion_reply_likes.user_id = $2 THEN true ELSE false END AS liked,
+                CASE WHEN discussion_reply_dislikes.user_id = $2 THEN true ELSE false END AS disliked
+                FROM discussion_replies
+                INNER JOIN users ON discussion_replies.author_id = users.id
+                LEFT JOIN discussion_reply_likes ON discussion_replies.id = discussion_reply_likes.reply_id
+                LEFT JOIN discussion_reply_dislikes ON discussion_replies.id = discussion_reply_dislikes.reply_id
+                WHERE discussion_replies.discussion_id = $1
+                GROUP BY discussion_replies.id, users.username, users.profile_img, users.id, discussion_reply_likes.user_id, discussion_reply_dislikes.user_id
+                ORDER BY discussion_replies.created_at DESC
+            `, [discussionId, req.user ? req.user.id : null]);
+            const discussionReplies = repliesResult.rows;
+
+            // fetch most viewed discussions
+            const hotDiscussionsResult = await db.query(`
+                SELECT title, slug, view_count
+                FROM forum_discussions
+                ORDER BY view_count DESC
+                LIMIT 5
+            `)
+            const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+
+            // fetch most viewed posts
+            const hotPostsResult = await db.query(`
+                SELECT title, slug, view_count
+                FROM posts
+                ORDER BY view_count DESC
+                LIMIT 5
+            `)
+            const hotPosts = hotPostsResult.rows;
+
             // locals and render the post page
             const locals = {
                 title: 'Fórum da Gringa',
@@ -498,7 +593,9 @@ router.get('/discussion/:slug', async (req, res) => {
                     tags: tags,
                     hotTags,
                     countries,
-                    categories,
+                    discussionReplies,
+                    hotDiscussions,
+                    hotPosts,
                 }
             );
         }
@@ -530,21 +627,30 @@ router.get('/tag/:tag', async (req, res) => {
         // Get the tag from the URL
         const tag = req.params.tag;
 
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
         // fetch discussions from db
         const discussionsResult = await db.query(`
-            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name
+            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name, COALESCE(reply_counts.reply_count, 0) AS reply_count, COALESCE(like_counts.like_count, 0) AS like_count, COALESCE(dislike_counts.dislike_count, 0) AS dislike_count
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
             INNER JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
             INNER JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS reply_count
+                FROM discussion_replies
+                GROUP BY discussion_id
+            ) AS reply_counts ON forum_discussions.id = reply_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS like_count
+                FROM discussion_likes
+                GROUP BY discussion_id
+            ) AS like_counts ON forum_discussions.id = like_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS dislike_count
+                FROM discussion_dislikes
+                GROUP BY discussion_id
+            ) AS dislike_counts ON forum_discussions.id = dislike_counts.discussion_id
             WHERE tags.tag = $1
         `, [tag]);
-
-        // Get the discussions
         const discussions = discussionsResult.rows;
 
         // Fetch the top 10 most frequently used tags
@@ -567,8 +673,25 @@ router.get('/tag/:tag', async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
+
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+
+        // fetch most viewed posts
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
 
         // locals and render the post page
         const locals = {
@@ -584,7 +707,8 @@ router.get('/tag/:tag', async (req, res) => {
                 tag: tag,
                 hotTags,
                 countries,
-                categories,
+                hotDiscussions,
+                hotPosts,
             }
         );
     } catch (error) {
@@ -600,19 +724,30 @@ router.get('/country/:country', async (req, res) => {
         // Get the tag from the URL
         const country = req.params.country;
 
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
-
-        // fetch discussions from db
+        // Get the discussion per countries
         const countryResult = await db.query(`
-            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img
+            SELECT DISTINCT ON (forum_discussions.id) forum_discussions.*, users.username AS author_username, users.profile_img AS author_img, tags.tag AS tag_name, COALESCE(reply_counts.reply_count, 0) AS reply_count, COALESCE(like_counts.like_count, 0) AS like_count, COALESCE(dislike_counts.dislike_count, 0) AS dislike_count
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
+            INNER JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
+            INNER JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS reply_count
+                FROM discussion_replies
+                GROUP BY discussion_id
+            ) AS reply_counts ON forum_discussions.id = reply_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS like_count
+                FROM discussion_likes
+                GROUP BY discussion_id
+            ) AS like_counts ON forum_discussions.id = like_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS dislike_count
+                FROM discussion_dislikes
+                GROUP BY discussion_id
+            ) AS dislike_counts ON forum_discussions.id = dislike_counts.discussion_id
             WHERE forum_discussions.country = $1
         `, [country]);
-
-        // Get the discussions
         const discussions = countryResult.rows;
 
         // Fetch the top 10 most frequently used tags
@@ -635,8 +770,25 @@ router.get('/country/:country', async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
+
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+
+        // fetch most viewed posts
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
 
         // locals and render the post page
         const locals = {
@@ -652,7 +804,8 @@ router.get('/country/:country', async (req, res) => {
                 hotTags,
                 country,
                 countries,
-                categories,
+                hotDiscussions,
+                hotPosts,
             }
         );
 
@@ -663,5 +816,141 @@ router.get('/country/:country', async (req, res) => {
     }
 });
 
+// POST - Discussion replies
+router.post('/discussion-reply', async (req, res) => {
+    const reply_text = sanitizeHtml(req.body.discussionReply);
+    const discussion_id = req.body.discussionId;
+    const author_id = req.user.id;
+
+    try {
+        // Insert the new comment into the database
+        await db.query('INSERT INTO discussion_replies (reply, author_id, discussion_id) VALUES ($1, $2, $3)', [reply_text, author_id, discussion_id]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Comment added successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to add the comment. Please try again.' });
+    }
+});
+
+// DELETE - Discussion reply
+router.delete('/discussion-reply/:id', async (req, res) => {
+    const discussionReplyId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        // Check if the comment exists and belongs to the current user
+        const discussionReply = await db.query('SELECT * FROM discussion_replies WHERE id = $1 AND author_id = $2', [discussionReplyId, userId]);
+        if (discussionReply.rowCount === 0) {
+            return res.json({ success: false, message: 'Comment not found or you do not have permission to delete this comment.' });
+        }
+
+        // Delete the comment
+        await db.query('DELETE FROM discussion_replies WHERE id = $1', [discussionReplyId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Comment deleted successfully.' });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to delete the comment. Please try again.' });
+    }
+});
+
+// POST - like discussion
+router.post('/like-discussion', async (req, res) => {
+    const discussionId = req.body.discussionId;
+    const userId = req.user.id;
+
+    try {
+        // Check if the user has already liked the comment
+        const like = await db.query('SELECT * FROM discussion_likes WHERE discussion_id = $1 AND user_id = $2', [discussionId, userId]);
+        if (like.rowCount > 0) {
+            await db.query('DELETE FROM discussion_likes WHERE discussion_id = $1 AND user_id = $2', [discussionId, userId]);
+            return res.json({ success: false, message: 'You have already liked this discussion.', liked: false });
+        }
+
+        // Like the comment
+        await db.query('INSERT INTO discussion_likes (discussion_id, user_id) VALUES ($1, $2)', [discussionId, userId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Discussion liked successfully.', liked: true });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to like the comment. Please try again.' });
+    }
+});
+
+// POST - dislike discussion
+router.post('/dislike-discussion', async (req, res) => {
+    const discussionId = req.body.discussionId;
+    const userId = req.user.id;
+
+    try {
+        // Check if the user has already liked the comment
+        const like = await db.query('SELECT * FROM discussion_dislikes WHERE discussion_id = $1 AND user_id = $2', [discussionId, userId]);
+        if (like.rowCount > 0) {
+            await db.query('DELETE FROM discussion_dislikes WHERE discussion_id = $1 AND user_id = $2', [discussionId, userId]);
+            return res.json({ success: false, message: 'You have already disliked this discussion.', liked: false });
+        }
+
+        // Like the comment
+        await db.query('INSERT INTO discussion_dislikes (discussion_id, user_id) VALUES ($1, $2)', [discussionId, userId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Discussion disliked successfully.', liked: true });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to dislike the discussion. Please try again.' });
+    }
+});
+
+// POST - like reply
+router.post('/like-discussion-reply', async (req, res) => {
+    const discussionReplyId = req.body.discussionReplyId;
+    const userId = req.user.id;
+
+    try {
+        // Check if the user has already liked the comment
+        const like = await db.query('SELECT * FROM discussion_reply_likes WHERE reply_id = $1 AND user_id = $2', [discussionReplyId, userId]);
+        if (like.rowCount > 0) {
+            await db.query('DELETE FROM discussion_reply_likes WHERE reply_id = $1 AND user_id = $2', [discussionReplyId, userId]);
+            return res.json({ success: false, message: 'You have already liked this reply.', liked: false });
+        }
+
+        // Like the comment
+        await db.query('INSERT INTO discussion_reply_likes (reply_id, user_id) VALUES ($1, $2)', [discussionReplyId, userId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Reply liked successfully.', liked: true });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to like the reply. Please try again.' });
+    }
+});
+
+// POST - dislike reply
+router.post('/dislike-discussion-reply', async (req, res) => {
+    const discussionReplyId = req.body.discussionReplyId;
+    const userId = req.user.id;
+
+    try {
+        // Check if the user has already liked the comment
+        const like = await db.query('SELECT * FROM discussion_reply_dislikes WHERE reply_id = $1 AND user_id = $2', [discussionReplyId, userId]);
+        if (like.rowCount > 0) {
+            await db.query('DELETE FROM discussion_reply_dislikes WHERE reply_id = $1 AND user_id = $2', [discussionReplyId, userId]);
+            return res.json({ success: false, message: 'You have already disliked this reply.', disliked: false });
+        }
+
+        // Like the comment
+        await db.query('INSERT INTO discussion_reply_dislikes (reply_id, user_id) VALUES ($1, $2)', [discussionReplyId, userId]);
+
+        // If successful, send a success response
+        res.json({ success: true, message: 'Reply disliked successfully.', disliked: true });
+    } catch (error) {
+        // If an error occurred, send an error response
+        res.json({ success: false, message: 'An error occurred while trying to like the reply. Please try again.' });
+    }
+});
 
 export default router;
