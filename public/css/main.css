@@ -350,18 +350,6 @@ transform: scaleX(1);
     background-image: url('../img/IMG_8389.jpeg');
 }
 
-/* SIDE NAV */
-.about img {
-    max-width: 80%;
-}
-
-.about p {
-    padding: 2rem 0;
-}
-
-.about img {
-    margin: 0 auto;
-}
 
 /* SIGN UP */
 #counter {

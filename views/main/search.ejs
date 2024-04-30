@@ -21,7 +21,6 @@
                         <!-- check if there are discutions -->
                         <% if (discussions && discussions.length > 0) { %>
                             <% discussions.forEach(discussion => { %>
-                                <h5 class="mb-3">Discussões no Fórum:</h5>
                                 <li class="list-group-item forum-questions d-flex">
                                     <div class="forum-author-image p-2">
                                         <img src="<%= discussion.author_img %>" alt="">
@@ -31,7 +30,7 @@
                                         <a href="/forum/discussion/<%= discussion.slug %>">
                                             <h6><%= discussion.title %></h6>
                                         </a>
-                                        <p class="small text-secondary">Por <strong><%= discussion.author_username %></strong>, <strong class="comment-time"><%= discussion.created_at %></strong>
+                                        <p class="small text-secondary">Por <strong><%= discussion.author_username %></strong>, <span class="comment-time"><%= discussion.created_at %></span>
                                         </p>
                                     </div>
                                     <div class="forum-category p-2">
@@ -42,21 +41,20 @@
                                     <div class="forum-reactions p-2">
                                         <div class="forum-reaction text-body-secondary">
                                             <i class="fa-regular fa-thumbs-up like-icon"></i>
-                                            <span class="mx-1">(100)</span>
+                                            <span class="mx-1">(<%= discussion.like_count %>)</span>
                                             <i class="fa-regular fa-thumbs-down dislike-icon"></i>
-                                            <span class="mx-1">(10)</span>
+                                            <span class="mx-1">(<%= discussion.dislike_count %>)</span>
                                             <br>
                                             <i class="fa-regular fa-comment-dots"></i>
-                                            <span class="mx-1">(10)</span>
+                                            <span class="mx-1">(<%= discussion.reply_count %>)</span>
                                             <i class="fa-regular fa-eye"></i>
-                                            <span class="mx-1">(723)</span>
+                                            <span class="mx-1">(<%= discussion.view_count %>)</span>
                                         </div>
                                     </div>
                                 </li>
                             <% }) %>
                         <% } else { %>
-                            <h5 class="mb-3">Discussões no Fórum:</h5>
-                            <p class="fw-bold mx-3 text-secondary">Nenhuma discussão encontrada com essas palavras-chaves.</p>
+                            <p class="p-3">Nenhuma discussão aberta no fórum</p>
                         <% } %>
                     </ul>
                 </div>

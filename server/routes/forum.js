@@ -165,7 +165,7 @@ router.get('/new-question', ensureAuthenticated, async (req, res) => {
         ORDER BY view_count DESC
         LIMIT 5
     `)
-    const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+    const hotDiscussions = hotDiscussionsResult.rows;
 
     // fetch most viewed posts
     const hotPostsResult = await db.query(`
@@ -326,7 +326,7 @@ router.get('/edit-discussion/:slug', ensureAuthenticated, async (req, res) => {
             ORDER BY view_count DESC
             LIMIT 5
         `)
-        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+        const hotDiscussions = hotDiscussionsResult.rows;
 
         // fetch most viewed posts
         const hotPostsResult = await db.query(`
@@ -568,7 +568,7 @@ router.get('/discussion/:slug', async (req, res) => {
                 ORDER BY view_count DESC
                 LIMIT 5
             `)
-            const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+            const hotDiscussions = hotDiscussionsResult.rows;
 
             // fetch most viewed posts
             const hotPostsResult = await db.query(`
@@ -682,7 +682,7 @@ router.get('/tag/:tag', async (req, res) => {
             ORDER BY view_count DESC
             LIMIT 5
         `)
-        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+        const hotDiscussions = hotDiscussionsResult.rows;
 
         // fetch most viewed posts
         const hotPostsResult = await db.query(`
@@ -779,7 +779,7 @@ router.get('/country/:country', async (req, res) => {
             ORDER BY view_count DESC
             LIMIT 5
         `)
-        const hotDiscussions = hotDiscussionsResult.rows.map(row => row.title)
+        const hotDiscussions = hotDiscussionsResult.rows;
 
         // fetch most viewed posts
         const hotPostsResult = await db.query(`

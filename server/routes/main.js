@@ -211,18 +211,34 @@ router.get('/search', async (req, res) => {
             WHERE posts.content ILIKE $1 OR posts.title ILIKE $1 OR posts.intro ILIKE $1
             ORDER BY COALESCE(posts.updated_at, posts.created_at) DESC
         `, [`%${searchTerm}%`]);
-
         const posts = postsResult.rows;
 
         // Fetch discussions from the forum_discussions table
         const discussionsResult = await db.query(`
-            SELECT forum_discussions.*, users.username AS author_username, users.profile_img AS author_img 
+            SELECT forum_discussions.id, forum_discussions.title, forum_discussions.content, forum_discussions.user_id, forum_discussions.country, forum_discussions.slug, forum_discussions.created_at, forum_discussions.view_count, users.username AS author_username, users.profile_img AS author_img, ARRAY_AGG(tags.tag) AS tag_names, COALESCE(reply_counts.reply_count, 0) AS reply_count, COALESCE(like_counts.like_count, 0) AS like_count, COALESCE(dislike_counts.dislike_count, 0) AS dislike_count
             FROM forum_discussions
             INNER JOIN users ON forum_discussions.user_id = users.id
-            WHERE forum_discussions.content ILIKE $1 OR forum_discussions.title ILIKE $1 OR forum_discussions.country ILIKE $1
+            LEFT JOIN forum_discussion_tags ON forum_discussions.id = forum_discussion_tags.discussion_id
+            LEFT JOIN forum_tags AS tags ON forum_discussion_tags.tag_id = tags.id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS reply_count
+                FROM discussion_replies
+                GROUP BY discussion_id
+            ) AS reply_counts ON forum_discussions.id = reply_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS like_count
+                FROM discussion_likes
+                GROUP BY discussion_id
+            ) AS like_counts ON forum_discussions.id = like_counts.discussion_id
+            LEFT JOIN (
+                SELECT discussion_id, COUNT(*) AS dislike_count
+                FROM discussion_dislikes
+                GROUP BY discussion_id
+            ) AS dislike_counts ON forum_discussions.id = dislike_counts.discussion_id
+            WHERE forum_discussions.content ILIKE $1 OR forum_discussions.title ILIKE $1
+            GROUP BY forum_discussions.id, users.username, users.profile_img, reply_counts.reply_count, like_counts.like_count, dislike_counts.dislike_count
             ORDER BY forum_discussions.created_at DESC
         `, [`%${searchTerm}%`]);
-
         const discussions = discussionsResult.rows;
 
         // Fetch the top 10 most frequently used tags
@@ -245,12 +261,25 @@ router.get('/search', async (req, res) => {
             ORDER BY count DESC
             LIMIT 5
         `);
-
         const countries = countriesResult.rows.map(row => row.country);
 
-        // Fetch all categories from the database
-        const categoriesResult = await db.query('SELECT * FROM categories');
-        const categories = categoriesResult.rows;
+        // fetch most viewed discussions
+        const hotDiscussionsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM forum_discussions
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotDiscussions = hotDiscussionsResult.rows;
+
+        // fetch most viewed posts
+        const hotPostsResult = await db.query(`
+            SELECT title, slug, view_count
+            FROM posts
+            ORDER BY view_count DESC
+            LIMIT 5
+        `)
+        const hotPosts = hotPostsResult.rows;
 
         const locals = {
             title: 'Busca no blog e fórum',
@@ -262,18 +291,18 @@ router.get('/search', async (req, res) => {
             user: req.user,
             posts,
             discussions,
-            categories,
             searchTerm,
             req: req,
             hotTags,
-            countries
+            countries,
+            hotDiscussions,
+            hotPosts,
         });
     } catch (error) {
         console.error('Error fetching posts and discussions:', error);
         // Render an error page
-        res.status(500).render('500.ejs', { message: 'An error occurred while fetching the posts and discussions' });
+        res.status(500).render('500.ejs', { message: 'Um erro aconteceu enquanto carregavamos os posts e discussões, por favor tente novamente' });
     }
 });
-
 
 export default router;
